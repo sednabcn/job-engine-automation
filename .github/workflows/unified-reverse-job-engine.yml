@@ -679,38 +679,39 @@ jobs:
           baseline = state['baseline_score']
           improvement = score - baseline
           
-          report_content = f"""# Reverse-Engine Job Search Progress
+          report_content = f"""
+          # Reverse-Engine Job Search Progress
+          
+          **Generated:** {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+          **Mode:** {state.get('mode', 'N/A').upper()}
 
-**Generated:** {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
-**Mode:** {state.get('mode', 'N/A').upper()}
+          ---
 
----
+          ## 📊 Match Score Progress
 
-## 📊 Match Score Progress
+          | Metric | Value |
+          |--------|-------|
+          | Baseline Score | {baseline}% |
+          | Current Score | {score}% |
+          | Improvement | +{improvement}% |
+          | Target Score | {state.get('target_score', 90)}% |
+          | Remaining | {state.get('target_score', 90) - score}% |
 
-| Metric | Value |
-|--------|-------|
-| Baseline Score | {baseline}% |
-| Current Score | {score}% |
-| Improvement | +{improvement}% |
-| Target Score | {state.get('target_score', 90)}% |
-| Remaining | {state.get('target_score', 90) - score}% |
+          ---
 
----
+          ## 🎯 Skills Mastered ({len(state.get('skills_mastered', []))})
 
-## 🎯 Skills Mastered ({len(state.get('skills_mastered', []))})
-
-"""
+          """
           
           for skill in state.get('skills_mastered', []):
               report_content += f"- ✅ {skill}\n"
           
           report_content += f"""
----
+          ---
 
-## 🏗️ Projects Completed ({len(state.get('projects_completed', []))})
+          ## 🏗️ Projects Completed ({len(state.get('projects_completed', []))})
 
-"""
+          """
           
           for i, proj in enumerate(state.get('projects_completed', []), 1):
               report_content += f"{i}. **{proj['goal']}**\n"
@@ -718,56 +719,56 @@ jobs:
               report_content += f"   - URL: {proj['url']}\n\n"
           
           report_content += f"""
----
+          ---
 
-## 🚪 Quality Gates
+          ## 🚪 Quality Gates
 
-| Gate | Status | Required |
-|------|--------|----------|
-| Foundation | {'✅ Passed' if 'foundation' in state.get('quality_gates_passed', []) else '⏳ Pending'} | 65% score, 2 projects |
-| Competency | {'✅ Passed' if 'competency' in state.get('quality_gates_passed', []) else '⏳ Pending'} | 80% score, 4 projects |
-| Mastery | {'✅ Passed' if 'mastery' in state.get('quality_gates_passed', []) else '⏳ Pending'} | 90% score, 5 projects |
-| Application Ready | {'✅ Passed' if state.get('application_ready') else '⏳ Pending'} | All gates + branding |
+          | Gate | Status | Required |
+          |------|--------|----------|
+          | Foundation | {'✅ Passed' if 'foundation' in state.get('quality_gates_passed', []) else '⏳ Pending'} | 65% score, 2 projects |
+          | Competency | {'✅ Passed' if 'competency' in state.get('quality_gates_passed', []) else '⏳ Pending'} | 80% score, 4 projects |
+          | Mastery | {'✅ Passed' if 'mastery' in state.get('quality_gates_passed', []) else '⏳ Pending'} | 90% score, 5 projects |
+          | Application Ready | {'✅ Passed' if state.get('application_ready') else '⏳ Pending'} | All gates + branding |
+          
+          ---
 
----
+          ## 📈 Sprint Progress
 
-## 📈 Sprint Progress
+          - **Total Sprints:** {state.get('current_sprint', 0)}
+          - **Current Stage:** {state.get('current_stage', 'baseline').replace('_', ' ').title()}
+          - **Started:** {state.get('started_date', 'N/A')[:10]}
 
-- **Total Sprints:** {state.get('current_sprint', 0)}
-- **Current Stage:** {state.get('current_stage', 'baseline').replace('_', ' ').title()}
-- **Started:** {state.get('started_date', 'N/A')[:10]}
+         ---
 
----
+         ## 🎯 Current Status
 
-## 🎯 Current Status
-
-"""
+         """
           
           if score < 65:
               report_content += """**Focus:** Foundation Building
-- Master Tier 1 critical skills
-- Build foundational projects
-- Pass beginner-level tests
-"""
+              - Master Tier 1 critical skills
+              - Build foundational projects
+              - Pass beginner-level tests
+              """
           elif score < 80:
               report_content += """**Focus:** Skill Development
-- Deepen intermediate skills
-- Build complex projects
-- Pass intermediate tests
-"""
+              - Deepen intermediate skills
+              - Build complex projects
+              - Pass intermediate tests
+              """
           elif score < 90:
-              report_content += """**Focus:** Advanced Mastery
-- Master advanced concepts
-- Build production-grade projects
-- Pass advanced tests
-"""
+            report_content += """**Focus:** Advanced Mastery
+            - Master advanced concepts
+            - Build production-grade projects
+            - Pass advanced tests
+            """
           else:
               report_content += """**Focus:** Application Preparation
-- Polish professional brand
-- Build network connections
-- Prepare application materials
-- **YOU'RE READY TO APPLY! 🎉**
-"""
+              - Polish professional brand
+              - Build network connections
+              - Prepare application materials
+              - **YOU'RE READY TO APPLY! 🎉**
+              """
           
           # Save report
           report_path = Path("PROGRESS_REPORT.md")

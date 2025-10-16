@@ -112,16 +112,17 @@ jobs:
                 history.extend(json.load(f))
         
         # Generate progress report
-        report = f"""# Monthly Progress Report - {datetime.now().strftime('%B %Y')}
+        report = f"""
+        # Monthly Progress Report - {datetime.now().strftime('%B %Y')}
 
-## Summary
+        ## Summary
 
-Total Jobs Analyzed: {len(results)}
-Average Score: {sum(r['score'] for r in results if r['status'] == 'success') / len([r for r in results if r['status'] == 'success']):.1f}%
+        Total Jobs Analyzed: {len(results)}
+        Average Score: {sum(r['score'] for r in results if r['status'] == 'success') / len([r for r in results if r['status'] == 'success']):.1f}%
 
-## Job Scores
-
-"""
+        ## Job Scores
+        
+        """
         
         for result in sorted(results, key=lambda x: x['score'], reverse=True):
             status_emoji = "✅" if result['score'] >= 75 else "⚠️" if result['score'] >= 60 else "❌"

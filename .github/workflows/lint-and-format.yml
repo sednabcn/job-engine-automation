@@ -1,7 +1,6 @@
 
 ### .github/workflows/lint-and-format.yml
 
-```yaml
 name: Lint and Format
 
 on:
@@ -35,4 +34,4 @@ jobs:
       - name: Type check with mypy
         run: |
           mypy src/ --ignore-missing-imports
-```
+
