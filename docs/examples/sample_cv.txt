@@ -1,0 +1,156 @@
+ALEX JOHNSON
+Senior Software Engineer
+alex.johnson@email.com | +1 (555) 123-4567 | linkedin.com/in/alexjohnson | github.com/alexj
+San Francisco, CA | Open to Remote
+
+PROFESSIONAL SUMMARY
+Results-driven Senior Software Engineer with 8+ years of experience building scalable distributed systems and cloud-native applications. Expert in Python, microservices architecture, and DevOps practices. Proven track record of leading technical teams and delivering high-impact solutions in fast-paced environments. Passionate about automation, clean code, and continuous improvement.
+
+TECHNICAL SKILLS
+
+Programming Languages:
+- Python (Expert, 8 years) - Django, Flask, FastAPI, pandas, numpy
+- JavaScript (Advanced, 5 years) - Node.js, React, TypeScript, Express
+- Go (Intermediate, 2 years) - Built microservices and CLI tools
+- SQL (Advanced, 7 years) - PostgreSQL, MySQL, complex query optimization
+- Bash/Shell (Advanced, 6 years) - Automation scripts, DevOps tooling
+
+Cloud & Infrastructure:
+- AWS (Advanced, 5 years) - EC2, S3, Lambda, RDS, CloudFormation, ECS, EKS
+- Docker (Expert, 6 years) - Multi-stage builds, optimization, Docker Compose
+- Kubernetes (Advanced, 4 years) - Helm, operators, monitoring, scaling
+- Terraform (Intermediate, 3 years) - Infrastructure as Code, state management
+- Linux/Unix (Expert, 8 years) - System administration, performance tuning
+
+DevOps & CI/CD:
+- Jenkins (Advanced, 4 years) - Pipeline creation, shared libraries
+- GitLab CI (Advanced, 3 years) - Complex pipelines, runners
+- GitHub Actions (Intermediate, 2 years) - Workflow automation
+- Ansible (Intermediate, 2 years) - Configuration management
+- Prometheus/Grafana (Advanced, 3 years) - Monitoring and alerting
+
+Databases:
+- PostgreSQL (Expert, 7 years) - Performance tuning, replication, sharding
+- MongoDB (Advanced, 4 years) - Aggregation pipelines, indexing
+- Redis (Advanced, 5 years) - Caching strategies, pub/sub
+- Elasticsearch (Intermediate, 2 years) - Search optimization, aggregations
+
+Software Development:
+- Microservices Architecture (Expert, 6 years)
+- RESTful API Design (Expert, 7 years)
+- Test-Driven Development (Advanced, 6 years) - pytest, unittest, Jest
+- Agile/Scrum (Expert, 8 years) - Sprint planning, retrospectives
+- CI/CD Best Practices (Advanced, 5 years)
+- System Design (Advanced, 6 years) - Scalability, reliability, performance
+
+Message Queues & Streaming:
+- RabbitMQ (Advanced, 4 years) - Message routing, dead letter queues
+- Apache Kafka (Intermediate, 2 years) - Stream processing, producers/consumers
+- Celery (Advanced, 5 years) - Distributed task queues
+
+Version Control & Collaboration:
+- Git (Expert, 8 years) - Branching strategies, conflict resolution
+- GitHub/GitLab (Expert, 8 years) - Code review, PR management
+- JIRA (Advanced, 6 years) - Project tracking, sprint management
+- Confluence (Advanced, 5 years) - Documentation, knowledge base
+
+PROFESSIONAL EXPERIENCE
+
+Senior Software Engineer | TechCorp Solutions | San Francisco, CA
+June 2020 - Present (4+ years)
+
+Led the development and architecture of cloud-native microservices platform serving 2M+ daily active users.
+
+Key Achievements:
+- Architected and implemented a distributed microservices platform using Python, Docker, and Kubernetes, reducing deployment time by 75% and improving system reliability to 99.95% uptime
+- Led a team of 6 engineers in migrating monolithic application to microservices, completing the project 2 months ahead of schedule and reducing infrastructure costs by 40%
+- Designed and built a real-time analytics pipeline using Kafka and Elasticsearch, processing 500K+ events per second with sub-second latency
+- Implemented comprehensive CI/CD pipelines using GitHub Actions and ArgoCD, enabling 20+ deployments per day with zero-downtime releases
+- Established monitoring and alerting infrastructure using Prometheus, Grafana, and ELK stack, reducing MTTR by 60%
+- Mentored 4 junior engineers, conducting code reviews and technical workshops on system design and best practices
+
+Technologies: Python, FastAPI, Docker, Kubernetes, AWS (EKS, RDS, S3), PostgreSQL, Redis, Kafka, Elasticsearch, Prometheus, Grafana, GitHub Actions, Terraform
+
+Software Engineer | DataStream Inc. | San Francisco, CA
+March 2018 - May 2020 (2 years 3 months)
+
+Developed scalable backend services and data processing pipelines for B2B SaaS platform.
+
+Key Achievements:
+- Built RESTful APIs using Python (Flask) and Node.js serving 100K+ requests per minute
+- Designed and implemented automated data ingestion pipeline processing 10TB+ data daily using Python, Airflow, and AWS Lambda
+- Optimized database queries and indexing strategies, reducing query time by 80% and improving application performance
+- Implemented Redis caching layer, reducing database load by 50% and improving response times by 65%
+- Developed automated testing framework achieving 90% code coverage using pytest and continuous integration
+- Collaborated with DevOps team to containerize applications using Docker, improving development workflow and deployment consistency
+
+Technologies: Python, Flask, Node.js, Express, Docker, AWS (Lambda, S3, EC2), PostgreSQL, MongoDB, Redis, Airflow, Jenkins, Git
+
+Junior Software Engineer | StartupXYZ | Palo Alto, CA
+July 2016 - February 2018 (1 year 8 months)
+
+Contributed to full-stack development of e-commerce platform and internal tools.
+
+Key Achievements:
+- Developed backend features using Python (Django) and implemented RESTful APIs for mobile and web applications
+- Built automated deployment scripts using Bash and Python, reducing deployment time from 2 hours to 15 minutes
+- Implemented user authentication and authorization system using JWT and OAuth2
+- Created comprehensive unit and integration tests using pytest, improving code quality and reducing production bugs by 40%
+- Participated in Agile development process, attended daily standups, sprint planning, and retrospectives
+- Assisted in database schema design and query optimization for PostgreSQL
+
+Technologies: Python, Django, JavaScript, React, PostgreSQL, Redis, Docker, Git, AWS (EC2, RDS)
+
+EDUCATION
+
+Bachelor of Science in Computer Science
+University of California, Berkeley | Berkeley, CA
+Graduated: May 2016 | GPA: 3.7/4.0
+
+Relevant Coursework:
+- Data Structures and Algorithms
+- Distributed Systems
+- Database Systems
+- Operating Systems
+- Software Engineering
+- Computer Networks
+
+CERTIFICATIONS
+
+- AWS Certified Solutions Architect - Associate (Valid until: Dec 2025)
+- Certified Kubernetes Administrator (CKA) (Valid until: Aug 2025)
+- Docker Certified Associate (Valid until: Jan 2026)
+
+PROJECTS
+
+Open Source Contributions:
+- Kubernetes - Contributed bug fixes and documentation improvements (100+ stars on related PRs)
+- FastAPI - Implemented new features and performance optimizations
+- Django REST Framework - Bug fixes and test coverage improvements
+
+Personal Projects:
+- CloudWatch Log Analyzer: Python tool for analyzing AWS CloudWatch logs with ML-based anomaly detection (500+ GitHub stars)
+- K8s Deploy Manager: CLI tool for managing Kubernetes deployments across multiple clusters (200+ GitHub stars)
+- API Rate Limiter: Distributed rate limiting library using Redis and Lua scripts (150+ GitHub stars)
+
+SPEAKING & COMMUNITY
+
+- Technical Speaker at PyBay Conference 2023: "Building Resilient Microservices with Python"
+- Organizer of San Francisco Python Meetup (2022-Present)
+- Regular contributor to dev.to and Medium, focusing on DevOps and Python best practices
+- Mentor at Code2040 program, helping underrepresented minorities in tech
+
+PROFESSIONAL DEVELOPMENT
+
+Recent Training & Courses:
+- Advanced Kubernetes Patterns and Anti-Patterns (2024)
+- System Design for Interviews (2024)
+- AWS Advanced Networking Specialty (In Progress)
+- Machine Learning Engineering on AWS (2023)
+
+ADDITIONAL INFORMATION
+
+Languages: English (Native), Spanish (Intermediate)
+Interests: Open source contribution, technical writing, automation, cloud architecture
+Availability: 2 weeks notice required
+Work Authorization: US Citizen

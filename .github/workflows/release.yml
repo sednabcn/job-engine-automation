@@ -1,0 +1,440 @@
+name: Release Automation
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'  # Trigger on version tags like v1.0.0, v2.1.3
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version (e.g., 1.0.0)'
+        required: true
+        type: string
+      prerelease:
+        description: 'Mark as pre-release'
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  packages: write
+  discussions: write
+
+jobs:
+  validate:
+    name: Validate Release
+    runs-on: ubuntu-latest
+    
+    outputs:
+      version: ${{ steps.get_version.outputs.version }}
+      is_prerelease: ${{ steps.check_prerelease.outputs.prerelease }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Get version from tag or input
+        id: get_version
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            VERSION="${{ github.event.inputs.version }}"
+            echo "version=$VERSION" >> $GITHUB_OUTPUT
+            echo "📦 Manual release: v$VERSION"
+          else
+            VERSION=${GITHUB_REF#refs/tags/v}
+            echo "version=$VERSION" >> $GITHUB_OUTPUT
+            echo "📦 Tag release: v$VERSION"
+          fi
+      
+      - name: Validate version format
+        run: |
+          VERSION="${{ steps.get_version.outputs.version }}"
+          if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9]+)?$ ]]; then
+            echo "❌ Invalid version format: $VERSION"
+            echo "Expected format: X.Y.Z or X.Y.Z-suffix (e.g., 1.0.0 or 1.0.0-beta)"
+            exit 1
+          fi
+          echo "✅ Valid version format: $VERSION"
+      
+      - name: Check if version exists
+        run: |
+          VERSION="${{ steps.get_version.outputs.version }}"
+          if git tag | grep -q "^v$VERSION$"; then
+            echo "⚠️  Version v$VERSION already exists"
+            if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+              echo "❌ Cannot create duplicate release"
+              exit 1
+            fi
+          fi
+      
+      - name: Check for pre-release
+        id: check_prerelease
+        run: |
+          VERSION="${{ steps.get_version.outputs.version }}"
+          if [[ "$VERSION" =~ -(alpha|beta|rc) ]] || [ "${{ github.event.inputs.prerelease }}" = "true" ]; then
+            echo "prerelease=true" >> $GITHUB_OUTPUT
+            echo "🔖 This is a pre-release"
+          else
+            echo "prerelease=false" >> $GITHUB_OUTPUT
+            echo "✅ This is a stable release"
+          fi
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install -r requirements-dev.txt
+      
+      - name: Run tests
+        run: |
+          echo "🧪 Running test suite..."
+          python -m pytest tests/ -v --cov=src --cov-report=term-missing
+          echo "✅ All tests passed"
+
+  build:
+    name: Build Release Artifacts
+    needs: validate
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Install build tools
+        run: |
+          pip install --upgrade pip
+          pip install build twine wheel setuptools
+      
+      - name: Update version in files
+        run: |
+          VERSION="${{ needs.validate.outputs.version }}"
+          echo "📝 Updating version to $VERSION"
+          
+          # Update version in setup.py
+          sed -i "s/version='.*'/version='$VERSION'/" setup.py
+          
+          # Update version in pyproject.toml
+          sed -i "s/version = \".*\"/version = \"$VERSION\"/" pyproject.toml
+          
+          # Update version in __init__.py
+          echo "__version__ = '$VERSION'" > src/__init__.py
+      
+      - name: Build distribution packages
+        run: |
+          python -m build
+          echo "✅ Built distribution packages:"
+          ls -lh dist/
+      
+      - name: Verify distributions
+        run: |
+          twine check dist/*
+          echo "✅ Distribution packages verified"
+      
+      - name: Create source archive
+        run: |
+          VERSION="${{ needs.validate.outputs.version }}"
+          tar -czf "advanced-job-engine-$VERSION-source.tar.gz" \
+            --exclude='.git' \
+            --exclude='dist' \
+            --exclude='build' \
+            --exclude='*.pyc' \
+            --exclude='__pycache__' \
+            --exclude='.pytest_cache' \
+            --exclude='job_search_data' \
+            .
+          echo "✅ Created source archive"
+      
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-packages
+          path: |
+            dist/
+            *.tar.gz
+          retention-days: 7
+
+  generate-changelog:
+    name: Generate Changelog
+    needs: validate
+    runs-on: ubuntu-latest
+    
+    outputs:
+      changelog: ${{ steps.changelog.outputs.changelog }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Generate changelog
+        id: changelog
+        run: |
+          VERSION="${{ needs.validate.outputs.version }}"
+          PREVIOUS_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
+          
+          if [ -z "$PREVIOUS_TAG" ]; then
+            echo "📝 First release - generating full changelog"
+            CHANGELOG=$(git log --pretty=format:"- %s (%h)" --reverse)
+          else
+            echo "📝 Generating changelog since $PREVIOUS_TAG"
+            CHANGELOG=$(git log $PREVIOUS_TAG..HEAD --pretty=format:"- %s (%h)")
+          fi
+          
+          # Create formatted changelog
+          cat > RELEASE_NOTES.md << EOF
+          ## What's Changed in v$VERSION
+          
+          $CHANGELOG
+          
+          ## Installation
+          
+          \`\`\`bash
+          pip install advanced-job-engine==$VERSION
+          \`\`\`
+          
+          Or download the source and install:
+          
+          \`\`\`bash
+          pip install -r requirements.txt
+          python setup.py install
+          \`\`\`
+          
+          ## Full Changelog
+          
+          See the [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md) for complete details.
+          
+          ## Documentation
+          
+          📚 [View Documentation](https://github.com/${{ github.repository }}/wiki)
+          EOF
+          
+          # Set output (handle multi-line)
+          {
+            echo 'changelog<<EOF'
+            cat RELEASE_NOTES.md
+            echo EOF
+          } >> $GITHUB_OUTPUT
+      
+      - name: Upload changelog
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-notes
+          path: RELEASE_NOTES.md
+
+  create-release:
+    name: Create GitHub Release
+    needs: [validate, build, generate-changelog]
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: '*'
+          merge-multiple: true
+      
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ needs.validate.outputs.version }}
+          release_name: Release v${{ needs.validate.outputs.version }}
+          body: ${{ needs.generate-changelog.outputs.changelog }}
+          draft: false
+          prerelease: ${{ needs.validate.outputs.is_prerelease }}
+      
+      - name: Upload wheel to release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./dist/advanced_job_engine-${{ needs.validate.outputs.version }}-py3-none-any.whl
+          asset_name: advanced_job_engine-${{ needs.validate.outputs.version }}-py3-none-any.whl
+          asset_content_type: application/zip
+      
+      - name: Upload source distribution to release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./dist/advanced-job-engine-${{ needs.validate.outputs.version }}.tar.gz
+          asset_name: advanced-job-engine-${{ needs.validate.outputs.version }}.tar.gz
+          asset_content_type: application/gzip
+      
+      - name: Upload source archive to release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./advanced-job-engine-${{ needs.validate.outputs.version }}-source.tar.gz
+          asset_name: advanced-job-engine-${{ needs.validate.outputs.version }}-source.tar.gz
+          asset_content_type: application/gzip
+
+  publish-pypi:
+    name: Publish to PyPI
+    needs: [validate, create-release]
+    runs-on: ubuntu-latest
+    if: needs.validate.outputs.is_prerelease == 'false'  # Only publish stable releases to PyPI
+    
+    environment:
+      name: pypi
+      url: https://pypi.org/p/advanced-job-engine
+    
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: dist-packages
+      
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          password: ${{ secrets.PYPI_API_TOKEN }}
+          packages-dir: dist/
+          skip-existing: true
+          verbose: true
+
+  publish-test-pypi:
+    name: Publish to Test PyPI
+    needs: [validate, create-release]
+    runs-on: ubuntu-latest
+    if: needs.validate.outputs.is_prerelease == 'true'  # Publish pre-releases to Test PyPI
+    
+    environment:
+      name: test-pypi
+      url: https://test.pypi.org/p/advanced-job-engine
+    
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: dist-packages
+      
+      - name: Publish to Test PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          password: ${{ secrets.TEST_PYPI_API_TOKEN }}
+          repository-url: https://test.pypi.org/legacy/
+          packages-dir: dist/
+          skip-existing: true
+          verbose: true
+
+  update-changelog:
+    name: Update CHANGELOG.md
+    needs: [validate, create-release]
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Update CHANGELOG
+        run: |
+          VERSION="${{ needs.validate.outputs.version }}"
+          DATE=$(date +%Y-%m-%d)
+          
+          # Create new changelog entry
+          cat > changelog_entry.md << EOF
+          ## [v$VERSION] - $DATE
+          
+          ### Added
+          - New features in this release
+          
+          ### Changed
+          - Updates and improvements
+          
+          ### Fixed
+          - Bug fixes
+          
+          ### Security
+          - Security updates
+          
+          EOF
+          
+          # Prepend to existing changelog
+          if [ -f CHANGELOG.md ]; then
+            cat CHANGELOG.md >> changelog_entry.md
+            mv changelog_entry.md CHANGELOG.md
+          else
+            echo "# Changelog" > CHANGELOG.md
+            echo "" >> CHANGELOG.md
+            cat changelog_entry.md >> CHANGELOG.md
+          fi
+          
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git add CHANGELOG.md
+          git commit -m "docs: update CHANGELOG for v$VERSION [skip ci]" || echo "No changes to commit"
+          git push origin HEAD:main || echo "Nothing to push"
+
+  notify:
+    name: Send Notifications
+    needs: [validate, create-release, publish-pypi, publish-test-pypi]
+    runs-on: ubuntu-latest
+    if: always()
+    
+    steps:
+      - name: Create release summary
+        run: |
+          VERSION="${{ needs.validate.outputs.version }}"
+          PRERELEASE="${{ needs.validate.outputs.is_prerelease }}"
+          
+          cat >> $GITHUB_STEP_SUMMARY << EOF
+          ## 🚀 Release v$VERSION
+          
+          **Type:** $([ "$PRERELEASE" = "true" ] && echo "Pre-release" || echo "Stable Release")
+          **Tag:** \`v$VERSION\`
+          **Commit:** \`${{ github.sha }}\`
+          **Released by:** @${{ github.actor }}
+          
+          ### Deployment Status
+          - ✅ GitHub Release Created
+          - $([ "$PRERELEASE" = "true" ] && echo "✅ Published to Test PyPI" || echo "✅ Published to PyPI")
+          - ✅ Changelog Updated
+          - ✅ Artifacts Built
+          
+          ### Links
+          - 📦 [Release Page](https://github.com/${{ github.repository }}/releases/tag/v$VERSION)
+          - 📚 [Documentation](https://github.com/${{ github.repository }}/wiki)
+          - 🐍 [PyPI Package](https://pypi.org/project/advanced-job-engine/$VERSION/)
+          
+          ### Installation
+          \`\`\`bash
+          pip install advanced-job-engine==$VERSION
+          \`\`\`
+          EOF
+      
+      - name: Success message
+        if: success()
+        run: |
+          echo "🎉 Release v${{ needs.validate.outputs.version }} completed successfully!"
+      
+      - name: Failure message
+        if: failure()
+        run: |
+          echo "❌ Release v${{ needs.validate.outputs.version }} failed!"
+          echo "Please check the logs and try again."

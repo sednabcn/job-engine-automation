@@ -1,0 +1,43 @@
+
+---
+
+## 📄 **templates/cv_template.txt**
+```
+[YOUR NAME]
+[Email] | [Phone] | [LinkedIn] | [GitHub]
+
+PROFESSIONAL SUMMARY
+Brief summary of your experience and goals (2-3 sentences)
+
+EXPERIENCE
+[Job Title] | [Company Name] | [Start Date] - [End Date]
+- Achievement or responsibility 1
+- Achievement or responsibility 2
+- Achievement or responsibility 3 (include metrics where possible)
+
+[Previous Job Title] | [Previous Company] | [Start Date] - [End Date]
+- Achievement or responsibility 1
+- Achievement or responsibility 2
+
+SKILLS
+Technical Skills:
+- Programming: Python, Java, JavaScript
+- Frameworks: React, Django, Flask
+- Tools: Docker, Kubernetes, Git
+- Databases: PostgreSQL, MongoDB
+- Cloud: AWS, Azure
+
+Soft Skills: Leadership, Communication, Problem-solving
+
+EDUCATION
+[Degree] in [Field] | [University] | [Year]
+- Relevant coursework or achievements
+
+PROJECTS
+[Project Name]
+- Description and technologies used
+- Link: https://github.com/user/project
+
+CERTIFICATIONS
+- [Certification Name], [Issuing Organization], [Year]
+```

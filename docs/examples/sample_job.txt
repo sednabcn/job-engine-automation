@@ -1,0 +1,147 @@
+CLOUDNATIVE SYSTEMS
+Staff Backend Engineer
+
+Location: Remote (US)
+Employment Type: Full-time
+Salary Range: $180,000 - $230,000 + Equity
+Experience Level: 8+ years
+
+ABOUT US
+
+CloudNative Systems is a fast-growing B2B SaaS company (Series C/D stage) revolutionizing cloud infrastructure management for Fortune 500 companies. We process over 10 billion API requests daily and serve enterprise clients with mission-critical workloads. Our engineering team of 150+ is building the next generation of cloud-native infrastructure tools.
+
+THE ROLE
+
+We're seeking a Staff Backend Engineer to join our Platform Engineering team. You'll architect and build highly scalable distributed systems, mentor engineers, and drive technical excellence across the organization. This role offers significant impact and visibility, working on systems that power critical infrastructure for the world's largest companies.
+
+REQUIRED QUALIFICATIONS
+
+Core Programming:
+- Expert-level proficiency in Python OR Go (5+ years production experience)
+- Strong understanding of data structures, algorithms, and system design
+- Experience building production-grade, maintainable code
+
+Distributed Systems & Architecture:
+- Expert-level experience with microservices architecture (5+ years)
+- Deep understanding of distributed systems patterns and challenges
+- Experience with event-driven architectures and message queues
+- Strong API design skills (REST, understanding of GraphQL principles)
+
+Cloud & Infrastructure:
+- Advanced AWS experience (EKS, RDS, S3, Lambda, CloudFormation)
+- Advanced Kubernetes experience (4+ years in production)
+- Expert Docker and containerization skills
+- Experience with infrastructure as code (Terraform, CloudFormation)
+
+Data & Databases:
+- Advanced experience with PostgreSQL or similar relational databases
+- Experience with Redis, MongoDB, or other NoSQL databases
+- Understanding of database optimization, replication, and sharding
+- Experience handling high-throughput data systems
+
+DevOps & Reliability:
+- Strong CI/CD experience (GitHub Actions, Jenkins, or similar)
+- Experience with monitoring and observability (Prometheus, Grafana, Datadog)
+- Understanding of SRE principles and practices
+- Experience with incident response and post-mortems
+
+Experience Requirements:
+- 8+ years of professional software engineering experience
+- 5+ years building scalable backend systems
+- Experience leading technical projects and mentoring engineers
+- Track record of delivering high-impact systems at scale
+
+PREFERRED QUALIFICATIONS
+
+- Experience with GraphQL and Apollo Server
+- Knowledge of service mesh technologies (Istio, Linkerd)
+- Experience with gRPC and Protocol Buffers
+- Contributions to open source projects
+- Experience with multiple cloud providers (AWS, GCP, Azure)
+- Background in SRE or Platform Engineering
+- Experience with observability tools (OpenTelemetry, Jaeger)
+- Knowledge of security best practices and compliance (SOC2, HIPAA)
+- Previous experience at high-growth startups or large tech companies
+
+RESPONSIBILITIES
+
+Technical Leadership:
+- Design and implement highly scalable, distributed backend systems
+- Lead architectural decisions for critical platform components
+- Establish engineering best practices and coding standards
+- Drive technical strategy for the Platform Engineering team
+
+Development & Delivery:
+- Build robust, production-grade microservices handling billions of requests
+- Optimize system performance, reliability, and scalability
+- Implement comprehensive testing and monitoring strategies
+- Participate in on-call rotation for production systems
+
+Mentorship & Collaboration:
+- Mentor senior and mid-level engineers
+- Conduct thorough code reviews with actionable feedback
+- Collaborate with Product, Design, and other Engineering teams
+- Share knowledge through tech talks and documentation
+
+Innovation & Improvement:
+- Identify and resolve technical debt proactively
+- Evaluate and adopt new technologies and tools
+- Contribute to engineering culture and team processes
+- Drive continuous improvement initiatives
+
+TECHNICAL STACK
+
+Languages: Python, Go, JavaScript/TypeScript
+Infrastructure: AWS, Kubernetes, Docker, Terraform
+Databases: PostgreSQL, Redis, MongoDB
+Message Queues: Kafka, RabbitMQ
+Monitoring: Prometheus, Grafana, Datadog
+CI/CD: GitHub Actions, ArgoCD
+API: REST, GraphQL (Apollo), gRPC
+
+WHAT WE OFFER
+
+Compensation:
+- Competitive salary: $180,000 - $230,000 (based on experience)
+- Significant equity package with strong growth potential
+- Annual performance bonuses
+
+Benefits:
+- Comprehensive health, dental, and vision insurance
+- 401(k) with company match
+- Unlimited PTO policy
+- Remote work flexibility
+- Home office stipend ($2,000)
+- Professional development budget ($3,000/year)
+- Conference and training opportunities
+
+Culture & Growth:
+- Work with cutting-edge technologies
+- High-impact projects with Fortune 500 clients
+- Collaborative, learning-focused environment
+- Regular tech talks and hackathons
+- Clear career progression paths
+- Diverse and inclusive team
+
+INTERVIEW PROCESS
+
+1. Initial screening call (30 minutes)
+2. Technical phone screen (60 minutes) - coding and system design
+3. Virtual onsite (4 hours):
+   - System design interview (90 minutes)
+   - Coding interview (60 minutes)
+   - Behavioral interview (45 minutes)
+   - Team fit conversation (45 minutes)
+4. Final conversation with Engineering Leadership (30 minutes)
+
+We strive to complete the process within 2-3 weeks and provide feedback at each stage.
+
+EQUAL OPPORTUNITY
+
+CloudNative Systems is an equal opportunity employer. We celebrate diversity and are committed to creating an inclusive environment for all employees. We do not discriminate based on race, religion, color, national origin, gender, sexual orientation, age, marital status, veteran status, or disability status.
+
+TO APPLY
+
+Please submit your resume and a brief cover letter explaining why you're interested in CloudNative Systems and this role. Include links to your GitHub, portfolio, or relevant projects if available.
+
+We look forward to hearing from you!

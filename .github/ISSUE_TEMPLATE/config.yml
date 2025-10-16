@@ -1,0 +1,21 @@
+blank_issues_enabled: true
+contact_links:
+  - name: 📚 Documentation
+    url: https://github.com/YOUR_USERNAME/advanced-job-engine/blob/main/docs/index.md
+    about: Check out our comprehensive documentation
+  
+  - name: 💬 Discussions
+    url: https://github.com/YOUR_USERNAME/advanced-job-engine/discussions
+    about: Ask questions, share ideas, and connect with the community
+  
+  - name: 🔒 Security Issues
+    url: https://github.com/YOUR_USERNAME/advanced-job-engine/blob/main/SECURITY.md
+    about: Report security vulnerabilities privately
+  
+  - name: 📖 User Guide
+    url: https://github.com/YOUR_USERNAME/advanced-job-engine/blob/main/docs/user-guide.md
+    about: Step-by-step guide for using the Job Engine
+  
+  - name: 🛠️ Troubleshooting
+    url: https://github.com/YOUR_USERNAME/advanced-job-engine/blob/main/docs/troubleshooting.md
+    about: Common issues and solutions

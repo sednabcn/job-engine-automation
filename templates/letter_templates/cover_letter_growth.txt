@@ -1,0 +1,52 @@
+## **File 2: cover_letter_growth.txt**
+```
+[Your Name]
+[Your Address]
+[City, State ZIP Code]
+[Your Email]
+[Your Phone Number]
+[Date]
+
+[Hiring Manager's Name]
+[Company Name]
+[Company Address]
+[City, State ZIP Code]
+
+Dear [Hiring Manager's Name],
+
+I am excited to apply for the [Job Title] position at [Company Name]. While I am actively developing expertise in [gap area], my strong foundation in [core strength areas] and my proven ability to rapidly master new technologies make me an excellent candidate for this role.
+
+CORE STRENGTHS:
+I bring substantial experience in [primary matching skill], demonstrated through [specific achievement]. At [Previous Company], I [concrete example with results]. This foundation provides me with [how it relates to the role].
+
+Additionally, my expertise in [secondary matching skill] has enabled me to [achievement/impact]. I am confident these skills will translate effectively to your needs in [job requirement].
+
+GROWTH TRAJECTORY:
+I am actively bridging gaps in [skill gap 1] through [specific learning activities]. I have already [progress made] and am on track to [completion timeline]. My learning plan includes:
+- [Specific course/certification in progress]
+- [Hands-on project/practice]
+- [Timeline and milestones]
+
+Similarly, I am developing proficiency in [skill gap 2] through [learning approach]. My background in [related skill] provides a strong foundation for quickly mastering this area.
+
+LEARNING AGILITY:
+Throughout my career, I have demonstrated rapid skill acquisition. For example, I [example of quickly learning a new technology/skill and applying it successfully]. I thrive in environments that challenge me to grow and expand my capabilities.
+
+What draws me to [Company Name] is [specific aspect of company culture, mission, or growth opportunities]. I am particularly excited about [specific project or initiative] and believe my combination of proven skills and growth mindset would make me a valuable long-term contributor.
+
+I would welcome the opportunity to discuss how my experience, combined with my commitment to continuous learning, aligns with your team's needs. I am confident that my ability to deliver results while actively developing new competencies will benefit [Company Name].
+
+Thank you for considering my application. I look forward to speaking with you about this exciting opportunity.
+
+Sincerely,
+[Your Name]
+
+---
+CUSTOMIZATION NOTES:
+- This template is for roles where you have 60-80% match
+- Emphasize your learning plan and commitment to growth
+- Show related transferable skills
+- Demonstrate learning agility with past examples
+- Express enthusiasm for development opportunities
+```
+

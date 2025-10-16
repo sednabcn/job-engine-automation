@@ -1,0 +1,239 @@
+name: Batch Job Analysis
+
+on:
+  workflow_dispatch:
+    inputs:
+      cv_file:
+        description: 'Path to CV file'
+        required: false
+        default: 'data/my_cv.pdf'
+      job_files:
+        description: 'Comma-separated list of job files (e.g., data/job1.pdf,data/job2.pdf)'
+        required: true
+      generate_comparison:
+        description: 'Generate comparison report?'
+        required: false
+        type: boolean
+        default: true
+
+jobs:
+  batch-analyze:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+        cache: 'pip'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Create output directories
+      run: |
+        mkdir -p output
+        mkdir -p batch_results
+
+    - name: Run batch analysis
+      id: batch
+      run: |
+        python << 'EOF'
+        from src.python_advanced_job_engine import AdvancedJobEngine
+        import json
+        import os
+        from datetime import datetime
+        from pathlib import Path
+        
+        engine = AdvancedJobEngine()
+        
+        cv_file = "${{ github.event.inputs.cv_file }}"
+        job_files_input = "${{ github.event.inputs.job_files }}"
+        generate_comparison = "${{ github.event.inputs.generate_comparison }}" == "true"
+        
+        # Parse job files
+        job_files = [f.strip() for f in job_files_input.split(',') if f.strip()]
+        
+        print(f"🎯 Batch Analysis Started")
+        print(f"📄 CV: {cv_file}")
+        print(f"🎯 Jobs: {len(job_files)}")
+        print(f"📅 Date: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+        
+        results = []
+        
+        for idx, job_file in enumerate(job_files, 1):
+            print(f"\n{'='*60}")
+            print(f"📋 Job {idx}/{len(job_files)}: {job_file}")
+            print(f"{'='*60}")
+            
+            try:
+                # Run analysis
+                analysis = engine.analyze_from_files(
+                    cv_file=cv_file,
+                    job_file=job_file
+                )
+                
+                job_id = analysis['job_id']
+                score = analysis['score']['total_score']
+                
+                # Create job-specific directory
+                job_dir = f"batch_results/{job_id}"
+                os.makedirs(job_dir, exist_ok=True)
+                
+                # Save individual job results
+                with open(f"{job_dir}/match_score.json", 'w') as f:
+                    json.dump(analysis['score'], f, indent=2)
+                
+                with open(f"{job_dir}/gap_analysis.json", 'w') as f:
+                    json.dump(analysis['gaps'], f, indent=2)
+                
+                # Generate learning plan
+                learning_plan = engine.create_learning_plan(analysis)
+                with open(f"{job_dir}/learning_plan.json", 'w') as f:
+                    json.dump(learning_plan, f, indent=2)
+                
+                # Generate strategy
+                strategy = engine.create_improvement_strategy(analysis, learning_plan)
+                with open(f"{job_dir}/improvement_strategy.md", 'w') as f:
+                    f.write(strategy)
+                
+                # Store result
+                results.append({
+                    'job_file': job_file,
+                    'job_id': job_id,
+                    'score': score,
+                    'breakdown': analysis['score']['breakdown'],
+                    'missing_skills': len(analysis['gaps']['missing_required_skills']),
+                    'status': 'success'
+                })
+                
+                print(f"✅ Score: {score}% - Saved to {job_dir}/")
+                
+            except Exception as e:
+                print(f"❌ Error: {str(e)}")
+                results.append({
+                    'job_file': job_file,
+                    'score': 0,
+                    'status': 'error',
+                    'error': str(e)
+                })
+        
+        # Generate comparison report
+        if generate_comparison and len(results) > 1:
+            print("\n📊 Generating comparison report...")
+            
+            report = f"""# Batch Job Analysis Comparison Report
+
+Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+CV Analyzed: {cv_file}
+Total Jobs: {len(results)}
+
+---
+
+## Summary Ranking
+
+"""
+            
+            # Sort by score
+            sorted_results = sorted(
+                [r for r in results if r['status'] == 'success'],
+                key=lambda x: x['score'],
+                reverse=True
+            )
+            
+            for rank, result in enumerate(sorted_results, 1):
+                emoji = "🥇" if rank == 1 else "🥈" if rank == 2 else "🥉" if rank == 3 else f"{rank}."
+                status = "✅ Apply Now" if result['score'] >= 75 else "⚠️ Improve First" if result['score'] >= 60 else "❌ Major Gaps"
+                
+                report += f"{emoji} **{result['job_id']}** - {result['score']}% - {status}\n"
+                report += f"   - File: `{result['job_file']}`\n"
+                report += f"   - Missing Skills: {result['missing_skills']}\n\n"
+            
+            report += "\n---\n\n## Detailed Comparison\n\n"
+            report += "| Rank | Job | Score | Required Skills | Experience | Keywords | Preferred | Education |\n"
+            report += "|------|-----|-------|-----------------|------------|----------|-----------|------------|\n"
+            
+            for rank, result in enumerate(sorted_results, 1):
+                breakdown = result['breakdown']
+                report += f"| {rank} | {result['job_id'][:20]} | **{result['score']}%** | "
+                report += f"{breakdown.get('required_skills', 0)}% | "
+                report += f"{breakdown.get('experience', 0)}% | "
+                report += f"{breakdown.get('keywords', 0)}% | "
+                report += f"{breakdown.get('preferred_skills', 0)}% | "
+                report += f"{breakdown.get('education', 0)}% |\n"
+            
+            report += "\n---\n\n## Recommendations\n\n"
+            
+            if sorted_results:
+                best = sorted_results[0]
+                report += f"### 🎯 Best Match: {best['job_id']}\n"
+                report += f"**Score: {best['score']}%**\n\n"
+                
+                if best['score'] >= 75:
+                    report += "✅ **Action:** Apply immediately! You're a strong candidate.\n\n"
+                elif best['score'] >= 60:
+                    report += "⚠️ **Action:** Improve for 4-8 weeks, then apply.\n\n"
+                else:
+                    report += "❌ **Action:** Focus on skill development for 12+ weeks.\n\n"
+                
+                if len(sorted_results) > 1:
+                    report += f"### 📋 Other Options\n\n"
+                    for result in sorted_results[1:4]:  # Top 3 alternatives
+                        report += f"- **{result['job_id']}**: {result['score']}%"
+                        report += f" - {'Apply now' if result['score'] >= 75 else 'Improve first'}\n"
+            
+            with open('batch_results/comparison_report.md', 'w') as f:
+                f.write(report)
+            
+            print("✅ Comparison report generated!")
+        
+        # Save summary
+        with open('batch_results/summary.json', 'w') as f:
+            json.dump(results, f, indent=2)
+        
+        # Set outputs
+        successful = [r for r in results if r['status'] == 'success']
+        if successful:
+            avg_score = sum(r['score'] for r in successful) / len(successful)
+            best_score = max(r['score'] for r in successful)
+        else:
+            avg_score = 0
+            best_score = 0
+        
+        with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+            f.write(f"total_jobs={len(job_files)}\n")
+            f.write(f"successful={len(successful)}\n")
+            f.write(f"average_score={avg_score:.1f}\n")
+            f.write(f"best_score={best_score:.1f}\n")
+        
+        print(f"\n✅ Batch analysis complete!")
+        print(f"📊 Average Score: {avg_score:.1f}%")
+        print(f"🏆 Best Score: {best_score:.1f}%")
+        
+        EOF
+
+    - name: Upload batch results
+      uses: actions/upload-artifact@v4
+      with:
+        name: batch-analysis-results-${{ github.run_id }}
+        path: batch_results/
+        retention-days: 90
+
+    - name: Create summary
+      run: |
+        echo "## 🎯 Batch Analysis Complete!" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "**Total Jobs:** ${{ steps.batch.outputs.total_jobs }}" >> $GITHUB_STEP_SUMMARY
+        echo "**Successful:** ${{ steps.batch.outputs.successful }}" >> $GITHUB_STEP_SUMMARY
+        echo "**Average Score:** ${{ steps.batch.outputs.average_score }}%" >> $GITHUB_STEP_SUMMARY
+        echo "**Best Score:** ${{ steps.batch.outputs.best_score }}%" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        
+        if [ -f "batch_results/comparison_report.md" ]; then
+          cat batch_results/comparison_report.md >> $GITHUB_STEP_SUMMARY
+        fi

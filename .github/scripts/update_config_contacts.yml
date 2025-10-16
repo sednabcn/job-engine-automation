@@ -1,0 +1,214 @@
+#!/usr/bin/env python3
+"""
+Update Configuration Contacts - GitHub Actions Script
+Updates contact information in configuration from environment variables or arguments
+"""
+
+import json
+import sys
+import os
+import argparse
+from pathlib import Path
+from datetime import datetime
+
+
+def load_config(config_path: str = "job_search_data/config.json") -> dict:
+    """Load configuration file"""
+    path = Path(config_path)
+    
+    if not path.exists():
+        print(f"⚠️  Configuration file not found: {config_path}")
+        print("Creating default configuration...")
+        return create_default_config(path)
+    
+    try:
+        with open(path, 'r') as f:
+            return json.load(f)
+    except Exception as e:
+        print(f"❌ Error loading config: {e}")
+        sys.exit(1)
+
+
+def create_default_config(path: Path) -> dict:
+    """Create default configuration"""
+    default_config = {
+        "version": "2.0.0",
+        "automation": {"enabled": True, "schedule": "0 9 * * MON", "batch_analysis": False},
+        "notifications": {"enabled": False, "email": None, "slack_webhook": None},
+        "analysis": {"generate_learning_plans": True, "generate_application_materials": True},
+        "candidate": {"cv_path": "data/my_cv.pdf", "name": "Your Name", "email": "your.email@example.com"},
+        "preferences": {"min_match_score": 70, "target_companies": [], "remote_only": False},
+        "last_updated": datetime.now().isoformat()
+    }
+    
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with open(path, 'w') as f:
+        json.dump(default_config, f, indent=2)
+    
+    return default_config
+
+
+def save_config(config: dict, config_path: str = "job_search_data/config.json"):
+    """Save configuration to file"""
+    config['last_updated'] = datetime.now().isoformat()
+    
+    path = Path(config_path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    
+    try:
+        with open(path, 'w') as f:
+            json.dump(config, f, indent=2)
+        print(f"✅ Configuration saved to: {config_path}")
+        return True
+    except Exception as e:
+        print(f"❌ Error saving config: {e}")
+        return False
+
+
+def update_contacts(config: dict, args: argparse.Namespace) -> dict:
+    """Update contact information in configuration"""
+    updates_made = []
+    
+    # Update candidate information
+    if args.name or os.getenv('CANDIDATE_NAME'):
+        new_name = args.name or os.getenv('CANDIDATE_NAME')
+        config['candidate']['name'] = new_name
+        updates_made.append(f"Name: {new_name}")
+    
+    if args.email or os.getenv('CANDIDATE_EMAIL'):
+        new_email = args.email or os.getenv('CANDIDATE_EMAIL')
+        config['candidate']['email'] = new_email
+        updates_made.append(f"Email: {new_email}")
+    
+    if args.cv_path or os.getenv('CV_PATH'):
+        new_cv_path = args.cv_path or os.getenv('CV_PATH')
+        config['candidate']['cv_path'] = new_cv_path
+        updates_made.append(f"CV Path: {new_cv_path}")
+    
+    # Update notification settings
+    if args.notification_email or os.getenv('NOTIFICATION_EMAIL'):
+        notification_email = args.notification_email or os.getenv('NOTIFICATION_EMAIL')
+        config['notifications']['email'] = notification_email
+        config['notifications']['enabled'] = True
+        updates_made.append(f"Notification Email: {notification_email}")
+    
+    if args.slack_webhook or os.getenv('SLACK_WEBHOOK'):
+        slack_webhook = args.slack_webhook or os.getenv('SLACK_WEBHOOK')
+        config['notifications']['slack_webhook'] = slack_webhook
+        config['notifications']['enabled'] = True
+        updates_made.append(f"Slack Webhook: Configured")
+    
+    # Update automation settings
+    if args.schedule or os.getenv('AUTOMATION_SCHEDULE'):
+        schedule = args.schedule or os.getenv('AUTOMATION_SCHEDULE')
+        config['automation']['schedule'] = schedule
+        updates_made.append(f"Schedule: {schedule}")
+    
+    if args.enable_automation is not None:
+        config['automation']['enabled'] = args.enable_automation
+        status = "Enabled" if args.enable_automation else "Disabled"
+        updates_made.append(f"Automation: {status}")
+    
+    # Update preferences
+    if args.min_match_score:
+        config['preferences']['min_match_score'] = args.min_match_score
+        updates_made.append(f"Min Match Score: {args.min_match_score}%")
+    
+    if args.remote_only is not None:
+        config['preferences']['remote_only'] = args.remote_only
+        status = "Yes" if args.remote_only else "No"
+        updates_made.append(f"Remote Only: {status}")
+    
+    if args.salary_min:
+        config['preferences']['salary_min'] = args.salary_min
+        updates_made.append(f"Min Salary: ${args.salary_min:,}")
+    
+    return config, updates_made
+
+
+def display_summary(updates_made: list):
+    """Display summary of updates"""
+    print("\n" + "=" * 70)
+    print("📝 CONFIGURATION UPDATE SUMMARY")
+    print("=" * 70)
+    
+    if updates_made:
+        print(f"\n✅ Updated {len(updates_made)} setting(s):\n")
+        for update in updates_made:
+            print(f"  • {update}")
+    else:
+        print("\n⚠️  No updates made - no new values provided")
+    
+    print("\n" + "=" * 70)
+
+
+def main():
+    """Main execution"""
+    parser = argparse.ArgumentParser(
+        description='Update job search automation configuration contacts'
+    )
+    
+    # Candidate information
+    parser.add_argument('--name', help='Candidate name')
+    parser.add_argument('--email', help='Candidate email')
+    parser.add_argument('--cv-path', help='Path to CV file')
+    
+    # Notification settings
+    parser.add_argument('--notification-email', help='Email for notifications')
+    parser.add_argument('--slack-webhook', help='Slack webhook URL')
+    
+    # Automation settings
+    parser.add_argument('--schedule', help='Cron schedule for automation')
+    parser.add_argument('--enable-automation', type=bool, help='Enable/disable automation')
+    
+    # Preferences
+    parser.add_argument('--min-match-score', type=int, help='Minimum match score')
+    parser.add_argument('--remote-only', type=bool, help='Remote only jobs')
+    parser.add_argument('--salary-min', type=int, help='Minimum salary')
+    
+    # Config file path
+    parser.add_argument('--config', default='job_search_data/config.json', 
+                       help='Path to config file')
+    
+    args = parser.parse_args()
+    
+    print("\n🔧 Updating Configuration...")
+    
+    # Load configuration
+    config = load_config(args.config)
+    
+    # Update contacts
+    config, updates_made = update_contacts(config, args)
+    
+    # Save configuration
+    if updates_made:
+        if save_config(config, args.config):
+            display_summary(updates_made)
+            
+            # Set GitHub Actions output
+            if 'GITHUB_OUTPUT' in os.environ:
+                with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+                    f.write(f"updates_count={len(updates_made)}\n")
+                    f.write(f"config_updated=true\n")
+            
+            sys.exit(0)
+        else:
+            sys.exit(1)
+    else:
+        display_summary(updates_made)
+        
+        # Set GitHub Actions output
+        if 'GITHUB_OUTPUT' in os.environ:
+            with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+                f.write(f"updates_count=0\n")
+                f.write(f"config_updated=false\n")
+        
+        sys.exit(0)
+
+
+if __name__ == '__main__':
+    main()
+
+# python update_config_contacts.py --name "John Doe" --email "john@example.com"
+# python update_config_contacts.py --notification-email "alerts@example.com"
+# python update_config_contacts.py --schedule "0 9 * * MON"

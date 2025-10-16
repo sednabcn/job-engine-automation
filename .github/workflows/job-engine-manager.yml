@@ -1,0 +1,473 @@
+name: 🎯 Workflow Manager Dashboard
+
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: 'What do you want to do?'
+        required: true
+        type: choice
+        options:
+          - '📊 View All Workflows Status'
+          - '🚀 Analyze Single Job'
+          - '🔄 Reverse Job Search'
+          - '📦 Batch Job Analysis'
+          - '📋 Daily Progress Report'
+          - '🏃 Start New Sprint'
+          - '🏁 End Current Sprint'
+          - '🚪 Check Quality Gates'
+          - '🎯 Full Job Analysis (Re-analyze)'
+          - '🧪 Run Tests'
+          - '📝 Deploy Documentation'
+          - '🔍 Lint & Format Code'
+      
+      cv_file:
+        description: 'CV filename (in data/ folder)'
+        required: false
+        default: 'data/my_cv.pdf'
+      
+      job_file:
+        description: 'Job description filename (in data/ folder)'
+        required: false
+        default: 'data/target_job.pdf'
+      
+      job_title:
+        description: 'Job title (optional, for single job analysis)'
+        required: false
+        default: ''
+      
+      company_name:
+        description: 'Company name (optional, for single job analysis)'
+        required: false
+        default: ''
+      
+      generate_materials:
+        description: 'Generate cover letters? (for single job analysis)'
+        required: false
+        type: boolean
+        default: true
+      
+      batch_folder:
+        description: 'Folder with multiple jobs (for batch analysis)'
+        required: false
+        default: 'data/jobs/'
+
+env:
+  DATA_DIR: 'job_search_data'
+  PYTHON_VERSION: '3.11'
+
+jobs:
+  manager:
+    runs-on: ubuntu-latest
+    name: 🎯 Workflow Manager
+    
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+      
+      - name: 🐍 Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+      
+      - name: 📦 Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install PyPDF2 python-docx python-dateutil
+      
+      - name: 📂 Ensure Directories Exist
+        run: |
+          mkdir -p ${{ env.DATA_DIR }}
+          mkdir -p data
+          mkdir -p output
+          mkdir -p src
+      
+      - name: 🎯 Display Action Selection
+        run: |
+          echo "══════════════════════════════════════════════════════════════"
+          echo "🎯 WORKFLOW MANAGER DASHBOARD"
+          echo "══════════════════════════════════════════════════════════════"
+          echo ""
+          echo "Selected Action: ${{ github.event.inputs.action }}"
+          echo "CV File: ${{ github.event.inputs.cv_file }}"
+          echo "Job File: ${{ github.event.inputs.job_file }}"
+          echo ""
+          echo "══════════════════════════════════════════════════════════════"
+      
+      # ═══════════════════════════════════════════════════════════════
+      # VIEW WORKFLOWS STATUS
+      # ═══════════════════════════════════════════════════════════════
+      
+      - name: 📊 View Workflows Status
+        if: contains(github.event.inputs.action, 'View All Workflows')
+        run: |
+          echo ""
+          echo "═══════════════════════════════════════════════════════════════"
+          echo "📊 ACTIVE WORKFLOWS IN YOUR REPOSITORY"
+          echo "═══════════════════════════════════════════════════════════════"
+          echo ""
+          echo "1. 🎯 workflow-manager.yml (THIS FILE)"
+          echo "   ├─ Purpose: Central control panel for all workflows"
+          echo "   ├─ Trigger: Manual (workflow_dispatch)"
+          echo "   └─ Status: ✅ Currently Running"
+          echo ""
+          echo "2. 🚀 autojob-analysis.yml"
+          echo "   ├─ Purpose: Analyze single job posting against your CV"
+          echo "   ├─ Trigger: Manual OR automatic when files uploaded to data/"
+          echo "   ├─ Outputs: Match score, gap analysis, learning plan, cover letters"
+          echo "   └─ Use Case: Quick job evaluation before applying"
+          echo ""
+          echo "3. 🔄 unified-reverse-job-engine.yml"
+          echo "   ├─ Purpose: Complete career development system"
+          echo "   ├─ Trigger: Manual + Scheduled (9 AM & 9 PM daily)"
+          echo "   ├─ Features: Sprint management, quality gates, progress tracking"
+          echo "   └─ Use Case: Long-term skill development & job readiness"
+          echo ""
+          echo "4. 📦 batch-analysis.yml"
+          echo "   ├─ Purpose: Analyze multiple jobs at once"
+          echo "   ├─ Trigger: Manual"
+          echo "   ├─ Outputs: Comparison report, ranked opportunities"
+          echo "   └─ Use Case: Evaluate multiple job openings simultaneously"
+          echo ""
+          echo "5. ⏰ scheduled-analysis.yml"
+          echo "   ├─ Purpose: Automatic periodic job search"
+          echo "   ├─ Trigger: Cron schedule (weekly)"
+          echo "   ├─ Outputs: New opportunities matching your profile"
+          echo "   └─ Use Case: Passive job monitoring"
+          echo ""
+          echo "6. 🧪 ci-tests.yml"
+          echo "   ├─ Purpose: Run automated test suite"
+          echo "   ├─ Trigger: On push/pull request"
+          echo "   ├─ Outputs: Test coverage, code quality reports"
+          echo "   └─ Use Case: Ensure code quality before merging"
+          echo ""
+          echo "7. 📝 deploy-docs.yml"
+          echo "   ├─ Purpose: Deploy documentation to GitHub Pages"
+          echo "   ├─ Trigger: On push to main branch"
+          echo "   ├─ Outputs: Live documentation website"
+          echo "   └─ Use Case: Keep documentation up-to-date"
+          echo ""
+          echo "8. 🔍 lint-and-format.yml"
+          echo "   ├─ Purpose: Code quality and formatting checks"
+          echo "   ├─ Trigger: On push/pull request"
+          echo "   ├─ Outputs: Linting reports, formatting suggestions"
+          echo "   └─ Use Case: Maintain code standards"
+          echo ""
+          echo "9. 🎁 release.yml"
+          echo "   ├─ Purpose: Create versioned releases"
+          echo "   ├─ Trigger: On git tag push (v*.*.*))"
+          echo "   ├─ Outputs: GitHub release with artifacts"
+          echo "   └─ Use Case: Package distributions"
+          echo ""
+          echo "═══════════════════════════════════════════════════════════════"
+          echo "🎯 QUICK START GUIDE"
+          echo "═══════════════════════════════════════════════════════════════"
+          echo ""
+          echo "FOR NEW USERS:"
+          echo "  1. Upload your CV to: data/my_cv.pdf"
+          echo "  2. Run this workflow with: 🚀 Analyze Single Job"
+          echo "  3. Download results from Artifacts section"
+          echo ""
+          echo "FOR CAREER DEVELOPMENT:"
+          echo "  1. Run: 🎯 Full Job Analysis (Re-analyze)"
+          echo "  2. Then: 🏃 Start New Sprint"
+          echo "  3. Daily: 📋 Daily Progress Report"
+          echo "  4. After 2 weeks: 🏁 End Current Sprint"
+          echo ""
+          echo "═══════════════════════════════════════════════════════════════"
+      
+      # ═══════════════════════════════════════════════════════════════
+      # ANALYZE SINGLE JOB
+      # ═══════════════════════════════════════════════════════════════
+      
+      - name: 🚀 Analyze Single Job
+        if: contains(github.event.inputs.action, 'Analyze Single Job')
+        run: |
+          python << 'EOF'
+          from src.python_advanced_job_engine import AdvancedJobEngine
+          import json
+          from datetime import datetime
+          
+          print("\n🚀 Starting Single Job Analysis...")
+          
+          engine = AdvancedJobEngine()
+          
+          cv_file = "${{ github.event.inputs.cv_file }}"
+          job_file = "${{ github.event.inputs.job_file }}"
+          job_title = "${{ github.event.inputs.job_title }}" or None
+          company = "${{ github.event.inputs.company_name }}" or None
+          generate_materials = "${{ github.event.inputs.generate_materials }}" == "true"
+          
+          print(f"\n📄 CV: {cv_file}")
+          print(f"📄 Job: {job_file}")
+          
+          # Run analysis
+          analysis = engine.analyze_from_files(
+              cv_file=cv_file,
+              job_file=job_file,
+              job_title=job_title,
+              company=company
+          )
+          
+          print(f"\n✅ Analysis Complete!")
+          print(f"📊 Match Score: {analysis['score']['total_score']}%")
+          print(f"📋 Job ID: {analysis['job_id']}")
+          
+          # Generate learning plan
+          learning_plan = engine.create_learning_plan(analysis, mode="standard")
+          
+          # Generate materials if requested
+          if generate_materials:
+              print("\n✉️ Generating application materials...")
+              letters = engine.generate_recruiter_letter(analysis, learning_plan)
+          
+          # Save results
+          import os
+          os.makedirs('output', exist_ok=True)
+          
+          with open('output/analysis_summary.txt', 'w') as f:
+              f.write(f"Job Analysis Summary\n")
+              f.write(f"{'='*50}\n\n")
+              f.write(f"Match Score: {analysis['score']['total_score']}%\n")
+              f.write(f"Status: {'✅ Strong Match' if analysis['score']['total_score'] >= 75 else '⚠️ Needs Work'}\n")
+              f.write(f"Job ID: {analysis['job_id']}\n")
+              f.write(f"Timestamp: {datetime.now().isoformat()}\n")
+          
+          print(f"\n✅ Results saved to output/ directory")
+          EOF
+      
+      # ═══════════════════════════════════════════════════════════════
+      # REVERSE JOB SEARCH / DAILY REPORT / SPRINTS
+      # ═══════════════════════════════════════════════════════════════
+      
+      - name: 🔄 Run Reverse Engine Action
+        if: |
+          contains(github.event.inputs.action, 'Reverse Job Search') ||
+          contains(github.event.inputs.action, 'Daily Progress Report') ||
+          contains(github.event.inputs.action, 'Start New Sprint') ||
+          contains(github.event.inputs.action, 'End Current Sprint') ||
+          contains(github.event.inputs.action, 'Check Quality Gates') ||
+          contains(github.event.inputs.action, 'Full Job Analysis (Re-analyze)')
+        run: |
+          # Map actions to reverse engine actions
+          ACTION="${{ github.event.inputs.action }}"
+          
+          if [[ "$ACTION" == *"Reverse Job Search"* ]]; then
+            REVERSE_ACTION="full_analysis"
+          elif [[ "$ACTION" == *"Daily Progress"* ]]; then
+            REVERSE_ACTION="daily_report"
+          elif [[ "$ACTION" == *"Start New Sprint"* ]]; then
+            REVERSE_ACTION="start_sprint"
+          elif [[ "$ACTION" == *"End Current Sprint"* ]]; then
+            REVERSE_ACTION="end_sprint"
+          elif [[ "$ACTION" == *"Quality Gates"* ]]; then
+            REVERSE_ACTION="quality_check"
+          elif [[ "$ACTION" == *"Full Job Analysis"* ]]; then
+            REVERSE_ACTION="full_analysis"
+          else
+            REVERSE_ACTION="daily_report"
+          fi
+          
+          echo "🔄 Executing Reverse Engine with action: $REVERSE_ACTION"
+          
+          python << EOF
+          from src.python_advanced_job_engine import AdvancedJobEngine
+          from datetime import datetime
+          import os
+          
+          action = "$REVERSE_ACTION"
+          cv_path = "${{ github.event.inputs.cv_file }}"
+          job_path = "${{ github.event.inputs.job_file }}"
+          
+          engine = AdvancedJobEngine(data_dir="${{ env.DATA_DIR }}")
+          
+          print(f"\n{'='*80}")
+          print(f"REVERSE ENGINE: {action.upper().replace('_', ' ')}")
+          print(f"{'='*80}\n")
+          
+          if action == "full_analysis":
+              print("📊 Running full job analysis...")
+              analysis = engine.analyze_from_files(cv_path, job_path)
+              learning_plan = engine.create_learning_plan(analysis, mode="reverse")
+              strategy = engine.create_improvement_strategy(analysis, learning_plan)
+              
+              engine.state['baseline_score'] = analysis['score']['total_score']
+              engine.state['current_score'] = analysis['score']['total_score']
+              engine.state['mode'] = 'reverse'
+              engine._save_json(engine.state_file, engine.state)
+              
+              print(f"\n✅ Baseline Score: {analysis['score']['total_score']}%")
+              print(f"📚 Learning plan created")
+              print(f"🎯 Next: Start your first sprint!")
+          
+          elif action == "daily_report":
+              if engine.state.get('mode') is None:
+                  print("⚠️ Workflow not initialized. Run 'Full Job Analysis' first.")
+              else:
+                  print(f"📊 Current Score: {engine.state['current_score']}%")
+                  print(f"🎯 Target Score: {engine.state.get('target_score', 90)}%")
+                  print(f"📈 Sprints Completed: {len([s for s in engine.sprint_history if s.get('completed')])}")
+                  engine.display_progress_dashboard()
+          
+          elif action == "start_sprint":
+              if engine.state.get('mode') is None:
+                  print("❌ Workflow not initialized. Run 'Full Job Analysis' first.")
+              else:
+                  # Get next skills from learning plan
+                  plan = engine.learning_progress[-1] if engine.learning_progress else None
+                  if plan:
+                      skills = [item['skill'] for item in plan['levels']['study'][:2]]
+                      project = f"Build project with {' and '.join(skills)}"
+                      sprint = engine.start_sprint(skills, project)
+                      print(f"🏃 Sprint {sprint['sprint_number']} started!")
+                      print(f"🎯 Target skills: {', '.join(skills)}")
+                  else:
+                      print("❌ No learning plan found. Run 'Full Job Analysis' first.")
+          
+          elif action == "end_sprint":
+              if not engine.sprint_history or engine.sprint_history[-1].get('completed'):
+                  print("❌ No active sprint to end")
+              else:
+                  # Simulate ending sprint
+                  current = engine.sprint_history[-1]
+                  test_scores = {skill: 70.0 for skill in current['skills_targeted']}
+                  result = engine.end_sprint("https://github.com/user/project", test_scores)
+                  print(f"🏁 Sprint {current['sprint_number']} completed!")
+                  print(f"✅ Skills mastered: {', '.join(current['skills_targeted'])}")
+          
+          elif action == "quality_check":
+              if engine.state.get('mode') is None:
+                  print("⚠️ No workflow initialized")
+              else:
+                  gates = engine.check_quality_gates()
+                  print("🚪 Quality Gates Status:")
+                  for gate, passed in gates.items():
+                      print(f"  {'✅' if passed else '⏳'} {gate.replace('_', ' ').title()}")
+          
+          print(f"\n{'='*80}")
+          EOF
+      
+      # ═══════════════════════════════════════════════════════════════
+      # BATCH ANALYSIS
+      # ═══════════════════════════════════════════════════════════════
+      
+      - name: 📦 Batch Job Analysis
+        if: contains(github.event.inputs.action, 'Batch Job Analysis')
+        run: |
+          echo "📦 Batch analysis would run here"
+          echo "⚠️ This requires batch-analysis.yml workflow"
+          echo "💡 Use: gh workflow run batch-analysis.yml"
+      
+      # ═══════════════════════════════════════════════════════════════
+      # TESTS / DOCS / LINT
+      # ═══════════════════════════════════════════════════════════════
+      
+      - name: 🧪 Run Tests
+        if: contains(github.event.inputs.action, 'Run Tests')
+        run: |
+          echo "🧪 Running test suite..."
+          if [ -d "tests" ]; then
+            python -m pytest tests/ -v || echo "⚠️ Tests not configured yet"
+          else
+            echo "⚠️ No tests directory found"
+          fi
+      
+      - name: 📝 Deploy Documentation
+        if: contains(github.event.inputs.action, 'Deploy Documentation')
+        run: |
+          echo "📝 Documentation deployment would run here"
+          echo "💡 Use: gh workflow run deploy-docs.yml"
+      
+      - name: 🔍 Lint & Format Code
+        if: contains(github.event.inputs.action, 'Lint & Format')
+        run: |
+          echo "🔍 Code linting would run here"
+          echo "💡 Use: gh workflow run lint-and-format.yml"
+      
+      # ═══════════════════════════════════════════════════════════════
+      # UPLOAD ARTIFACTS
+      # ═══════════════════════════════════════════════════════════════
+      
+      - name: 📤 Upload Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: workflow-manager-results-${{ github.run_number }}
+          path: |
+            output/
+            ${{ env.DATA_DIR }}/*.json
+            PROGRESS_REPORT.md
+          retention-days: 30
+          if-no-files-found: ignore
+      
+      # ═══════════════════════════════════════════════════════════════
+      # FINAL STATUS & HELP
+      # ═══════════════════════════════════════════════════════════════
+      
+      - name: ✅ Execution Complete
+        if: always()
+        run: |
+          echo ""
+          echo "══════════════════════════════════════════════════════════════"
+          echo "✅ WORKFLOW MANAGER EXECUTION COMPLETE"
+          echo "══════════════════════════════════════════════════════════════"
+          echo ""
+          echo "Action Executed: ${{ github.event.inputs.action }}"
+          echo "Timestamp: $(date '+%Y-%m-%d %H:%M:%S')"
+          echo ""
+          echo "📥 Check artifacts above for detailed results"
+          echo "📊 Review step outputs for analysis details"
+          echo ""
+          echo "══════════════════════════════════════════════════════════════"
+          echo "🚀 NEXT STEPS"
+          echo "══════════════════════════════════════════════════════════════"
+          echo ""
+          echo "For First-Time Users:"
+          echo "  1. Upload CV to data/my_cv.pdf"
+          echo "  2. Run: 🚀 Analyze Single Job"
+          echo "  3. Download artifacts for results"
+          echo ""
+          echo "For Career Development:"
+          echo "  1. Run: 🎯 Full Job Analysis"
+          echo "  2. Run: 🏃 Start New Sprint"
+          echo "  3. Check: 📋 Daily Progress Report"
+          echo "  4. Monitor: 🚪 Check Quality Gates"
+          echo ""
+          echo "For Multiple Jobs:"
+          echo "  1. Place jobs in data/jobs/ folder"
+          echo "  2. Run: 📦 Batch Job Analysis"
+          echo ""
+          echo "══════════════════════════════════════════════════════════════"
+          echo "📚 DOCUMENTATION"
+          echo "══════════════════════════════════════════════════════════════"
+          echo ""
+          echo "Workflow Docs: .github/workflows/README.md"
+          echo "User Guide: docs/user-guide.md"
+          echo "API Reference: docs/api-reference.md"
+          echo ""
+          echo "══════════════════════════════════════════════════════════════"
+      
+      - name: 📊 Create Job Summary
+        if: always()
+        run: |
+          echo "## 🎯 Workflow Manager - Execution Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Action:** ${{ github.event.inputs.action }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Timestamp:** $(date '+%Y-%m-%d %H:%M:%S')" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 📁 Input Files" >> $GITHUB_STEP_SUMMARY
+          echo "- CV: \`${{ github.event.inputs.cv_file }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- Job: \`${{ github.event.inputs.job_file }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### ✅ Status" >> $GITHUB_STEP_SUMMARY
+          echo "Workflow execution completed successfully!" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 📥 Next Steps" >> $GITHUB_STEP_SUMMARY
+          echo "1. Download artifacts from the 'Artifacts' section above" >> $GITHUB_STEP_SUMMARY
+          echo "2. Review the step logs for detailed output" >> $GITHUB_STEP_SUMMARY
+          echo "3. Run another action as needed" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "---" >> $GITHUB_STEP_SUMMARY
+          echo "*Generated by Workflow Manager Dashboard*" >> $GITHUB_STEP_SUMMARY

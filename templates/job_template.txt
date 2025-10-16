@@ -1,0 +1,31 @@
+
+## 📄 **templates/job_template.txt**
+```
+[JOB TITLE]
+
+Company: [COMPANY NAME]
+
+About the Role:
+[Brief description of the position]
+
+Requirements:
+- [X]+ years of experience in [field]
+- Strong proficiency in [technology 1], [technology 2]
+- Experience with [tool/framework]
+- [Degree level] in [field] preferred
+
+Preferred Qualifications:
+- Experience with [optional skill 1]
+- Knowledge of [optional skill 2]
+- [Certification] certified
+
+Responsibilities:
+- [Responsibility 1]
+- [Responsibility 2]
+- [Responsibility 3]
+
+What We Offer:
+- Competitive salary
+- Benefits
+- Growth opportunities
+```

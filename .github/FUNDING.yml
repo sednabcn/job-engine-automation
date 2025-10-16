@@ -1,0 +1,10 @@
+
+### .github/FUNDING.yml
+
+```yaml
+# Funding options for the project
+
+github: [yourusername]
+patreon: yourpatreon
+custom: ["https://yourwebsite.com/donate", "https://buymeacoffee.com/yourname"]
+```

@@ -1,0 +1,823 @@
+{
+  "analysis_metadata": {
+    "analysis_date": "2024-10-15T20:30:00Z",
+    "engine_version": "2.0.0",
+    "analysis_mode": "standard",
+    "cv_file": "sample_cv.txt",
+    "job_file": "sample_job.txt",
+    "processing_time_seconds": 3.45
+  },
+  "job_details": {
+    "title": "Staff Backend Engineer",
+    "company": "CloudNative Systems",
+    "location": "Remote (US)",
+    "salary_range": "$180,000 - $230,000",
+    "experience_required_years": 8,
+    "seniority_level": "Staff/Principal"
+  },
+  "candidate_profile": {
+    "name": "Alex Johnson",
+    "current_title": "Senior Software Engineer",
+    "total_experience_years": 8.3,
+    "skills_count": 42,
+    "certifications": 3,
+    "education_level": "Bachelor's Degree"
+  },
+  "match_scores": {
+    "overall_score": 87.5,
+    "technical_skills_score": 92.0,
+    "experience_score": 85.0,
+    "education_score": 80.0,
+    "soft_skills_score": 88.0,
+    "scoring_breakdown": {
+      "technical_skills_weight": 0.40,
+      "experience_weight": 0.30,
+      "education_weight": 0.15,
+      "soft_skills_weight": 0.15
+    },
+    "weighted_calculation": {
+      "technical_contribution": 36.8,
+      "experience_contribution": 25.5,
+      "education_contribution": 12.0,
+      "soft_skills_contribution": 13.2
+    }
+  },
+  "skill_analysis": {
+    "required_skills_matched": 18,
+    "required_skills_total": 22,
+    "required_skills_coverage": 81.8,
+    "preferred_skills_matched": 8,
+    "preferred_skills_total": 15,
+    "preferred_skills_coverage": 53.3,
+    "average_skill_level": 3.4,
+    "expert_skills_count": 8,
+    "advanced_skills_count": 14,
+    "intermediate_skills_count": 12
+  },
+  "matching_skills": {
+    "exact_matches": [
+      {
+        "skill": "Python",
+        "candidate_level": 5,
+        "required_level": 5,
+        "years_experience": 8,
+        "match_quality": "excellent",
+        "evidence": [
+          "Expert level with 8 years experience",
+          "Used in all professional roles",
+          "FastAPI, Django, Flask expertise"
+        ]
+      },
+      {
+        "skill": "Docker",
+        "candidate_level": 5,
+        "required_level": 4,
+        "years_experience": 6,
+        "match_quality": "excellent",
+        "evidence": [
+          "Expert level with 6 years experience",
+          "Multi-stage builds and optimization",
+          "Used extensively at TechCorp Solutions"
+        ]
+      },
+      {
+        "skill": "Kubernetes",
+        "candidate_level": 4,
+        "required_level": 4,
+        "years_experience": 4,
+        "match_quality": "excellent",
+        "evidence": [
+          "Advanced level with 4 years production experience",
+          "CKA certified",
+          "Architected K8s platform at current role"
+        ]
+      },
+      {
+        "skill": "AWS",
+        "candidate_level": 4,
+        "required_level": 4,
+        "years_experience": 5,
+        "match_quality": "excellent",
+        "evidence": [
+          "Advanced level with 5 years experience",
+          "AWS Solutions Architect certified",
+          "EKS, RDS, S3, Lambda, CloudFormation"
+        ]
+      },
+      {
+        "skill": "PostgreSQL",
+        "candidate_level": 5,
+        "required_level": 4,
+        "years_experience": 7,
+        "match_quality": "excellent",
+        "evidence": [
+          "Expert level with 7 years experience",
+          "Performance tuning, replication, sharding",
+          "Used in all professional roles"
+        ]
+      },
+      {
+        "skill": "Redis",
+        "candidate_level": 4,
+        "required_level": 3,
+        "years_experience": 5,
+        "match_quality": "excellent",
+        "evidence": [
+          "Advanced level with 5 years experience",
+          "Caching strategies, pub/sub",
+          "Reduced database load by 50%"
+        ]
+      },
+      {
+        "skill": "Microservices Architecture",
+        "candidate_level": 5,
+        "required_level": 5,
+        "years_experience": 6,
+        "match_quality": "excellent",
+        "evidence": [
+          "Expert level with 6 years experience",
+          "Led migration from monolith to microservices",
+          "Designed distributed platform at TechCorp"
+        ]
+      },
+      {
+        "skill": "Terraform",
+        "candidate_level": 3,
+        "required_level": 3,
+        "years_experience": 3,
+        "match_quality": "good",
+        "evidence": [
+          "Intermediate level with 3 years experience",
+          "Infrastructure as Code, state management",
+          "Used at TechCorp Solutions"
+        ]
+      },
+      {
+        "skill": "CI/CD",
+        "candidate_level": 4,
+        "required_level": 4,
+        "years_experience": 5,
+        "match_quality": "excellent",
+        "evidence": [
+          "Advanced level with 5 years experience",
+          "GitHub Actions, Jenkins, GitLab CI",
+          "Enabled 20+ deployments per day"
+        ]
+      },
+      {
+        "skill": "REST API Design",
+        "candidate_level": 5,
+        "required_level": 4,
+        "years_experience": 7,
+        "match_quality": "excellent",
+        "evidence": [
+          "Expert level with 7 years experience",
+          "Built APIs serving 100K+ req/min",
+          "Designed robust APIs at multiple companies"
+        ]
+      },
+      {
+        "skill": "Prometheus",
+        "candidate_level": 4,
+        "required_level": 3,
+        "years_experience": 3,
+        "match_quality": "excellent",
+        "evidence": [
+          "Advanced level with 3 years experience",
+          "Monitoring and alerting setup",
+          "Reduced MTTR by 60%"
+        ]
+      },
+      {
+        "skill": "Kafka",
+        "candidate_level": 3,
+        "required_level": 3,
+        "years_experience": 2,
+        "match_quality": "good",
+        "evidence": [
+          "Intermediate level with 2 years experience",
+          "Stream processing, producers/consumers",
+          "Built analytics pipeline processing 500K+ events/sec"
+        ]
+      }
+    ],
+    "exceeding_requirements": [
+      {
+        "skill": "Python",
+        "candidate_level": 5,
+        "required_level": 5,
+        "advantage": "Matches exactly at expert level"
+      },
+      {
+        "skill": "Docker",
+        "candidate_level": 5,
+        "required_level": 4,
+        "advantage": "Exceeds requirement by 1 level"
+      },
+      {
+        "skill": "PostgreSQL",
+        "candidate_level": 5,
+        "required_level": 4,
+        "advantage": "Exceeds requirement by 1 level"
+      }
+    ]
+  },
+  "skill_gaps": {
+    "critical_gaps": [
+      {
+        "skill": "Go",
+        "current_level": 3,
+        "required_level": 5,
+        "gap_size": 2,
+        "priority": 95,
+        "impact": "high",
+        "category": "critical",
+        "justification": "Listed as required 'Expert-level proficiency in Python or Go' - currently at intermediate",
+        "estimated_learning_time_hours": 80,
+        "market_demand": "very_high"
+      },
+      {
+        "skill": "GraphQL",
+        "current_level": 0,
+        "required_level": 3,
+        "gap_size": 3,
+        "priority": 75,
+        "impact": "high",
+        "category": "important",
+        "justification": "Preferred qualification, used in tech stack (Apollo)",
+        "estimated_learning_time_hours": 40,
+        "market_demand": "high"
+      }
+    ],
+    "important_gaps": [
+      {
+        "skill": "Service Mesh (Istio/Linkerd)",
+        "current_level": 0,
+        "required_level": 2,
+        "gap_size": 2,
+        "priority": 60,
+        "impact": "medium",
+        "category": "nice-to-have",
+        "justification": "Preferred qualification for advanced Kubernetes",
+        "estimated_learning_time_hours": 30,
+        "market_demand": "medium"
+      },
+      {
+        "skill": "gRPC",
+        "current_level": 0,
+        "required_level": 2,
+        "gap_size": 2,
+        "priority": 55,
+        "impact": "medium",
+        "category": "nice-to-have",
+        "justification": "Listed as API design principle",
+        "estimated_learning_time_hours": 25,
+        "market_demand": "medium"
+      }
+    ],
+    "minor_gaps": [
+      {
+        "skill": "MongoDB",
+        "current_level": 4,
+        "required_level": 4,
+        "gap_size": 0,
+        "priority": 40,
+        "impact": "low",
+        "category": "nice-to-have",
+        "justification": "Already at required level, room for deeper expertise",
+        "estimated_learning_time_hours": 20,
+        "market_demand": "medium"
+      }
+    ],
+    "total_gaps": 4,
+    "critical_count": 1,
+    "important_count": 2,
+    "minor_count": 1
+  },
+  "strengths": [
+    {
+      "area": "Cloud-Native Architecture",
+      "evidence": [
+        "Architected microservices platform at TechCorp Solutions",
+        "Expert in Docker and Kubernetes with certifications",
+        "Built distributed systems serving 2M+ users"
+      ],
+      "impact": "Directly aligns with company's cloud-native focus"
+    },
+    {
+      "area": "Python Expertise",
+      "evidence": [
+        "8 years of expert-level Python experience",
+        "Experience with FastAPI, Django, Flask",
+        "Built high-performance APIs and data pipelines"
+      ],
+      "impact": "Meets primary language requirement perfectly"
+    },
+    {
+      "area": "DevOps & SRE Practices",
+      "evidence": [
+        "Implemented comprehensive monitoring reducing MTTR by 60%",
+        "Built CI/CD pipelines enabling 20+ daily deployments",
+        "Established observability infrastructure"
+      ],
+      "impact": "Strong alignment with Staff-level responsibilities"
+    },
+    {
+      "area": "Technical Leadership",
+      "evidence": [
+        "Led team of 6 engineers successfully",
+        "Mentored 4 junior engineers",
+        "Conducted code reviews and technical workshops"
+      ],
+      "impact": "Matches Staff Engineer mentorship expectations"
+    },
+    {
+      "area": "Scale & Performance",
+      "evidence": [
+        "Built systems processing 500K+ events per second",
+        "Optimized queries reducing time by 80%",
+        "Achieved 99.95% uptime"
+      ],
+      "impact": "Proven ability to work at required scale (billions of requests)"
+    }
+  ],
+  "experience_analysis": {
+    "years_required": 8,
+    "years_candidate": 8.3,
+    "meets_requirement": true,
+    "senior_experience_years": 4.3,
+    "staff_level_ready": true,
+    "relevant_experience_percentage": 95,
+    "company_size_match": "good",
+    "industry_relevance": "excellent"
+  },
+  "quality_gates": {
+    "foundational": {
+      "status": "passed",
+      "criteria": {
+        "required_skills_coverage": {
+          "threshold": 0.80,
+          "actual": 0.818,
+          "passed": true
+        },
+        "minimum_skill_level": {
+          "threshold": 2.0,
+          "actual": 3.4,
+          "passed": true
+        },
+        "critical_skills_met": {
+          "threshold": 1.0,
+          "actual": 0.95,
+          "passed": true
+        },
+        "experience_years": {
+          "threshold": 8,
+          "actual": 8.3,
+          "passed": true
+        }
+      },
+      "overall_readiness": "ready_to_apply",
+      "confidence": "high"
+    },
+    "competitive": {
+      "status": "passed",
+      "criteria": {
+        "required_skills_coverage": {
+          "threshold": 0.90,
+          "actual": 0.818,
+          "passed": false
+        },
+        "preferred_skills_coverage": {
+          "threshold": 0.50,
+          "actual": 0.533,
+          "passed": true
+        },
+        "minimum_skill_level": {
+          "threshold": 3.0,
+          "actual": 3.4,
+          "passed": true
+        },
+        "standout_skills": {
+          "threshold": 2,
+          "actual": 8,
+          "passed": true
+        }
+      },
+      "overall_readiness": "nearly_competitive",
+      "confidence": "medium-high",
+      "recommendation": "Close gap in Go language proficiency to reach fully competitive level"
+    },
+    "excellence": {
+      "status": "not_passed",
+      "criteria": {
+        "required_skills_coverage": {
+          "threshold": 1.0,
+          "actual": 0.818,
+          "passed": false
+        },
+        "preferred_skills_coverage": {
+          "threshold": 0.75,
+          "actual": 0.533,
+          "passed": false
+        },
+        "expert_skills": {
+          "threshold": 1,
+          "actual": 8,
+          "passed": true
+        },
+        "unique_strengths": {
+          "threshold": 2,
+          "actual": 3,
+          "passed": true
+        }
+      },
+      "overall_readiness": "room_for_improvement",
+      "confidence": "medium",
+      "recommendation": "Develop Go expertise and preferred skills to stand out"
+    }
+  },
+  "learning_plan": {
+    "total_duration_weeks": 8,
+    "total_estimated_hours": 175,
+    "study_hours_per_week": 12,
+    "recommended_start_date": "2024-10-21",
+    "estimated_completion_date": "2024-12-16",
+    "sprints": [
+      {
+        "sprint_number": 1,
+        "duration_weeks": 2,
+        "title": "Go Language Mastery - Foundations",
+        "goals": [
+          {
+            "skill": "Go",
+            "current_level": 3,
+            "target_level": 4,
+            "priority": "critical"
+          }
+        ],
+        "estimated_hours": 40,
+        "resources": [
+          {
+            "title": "Go: The Complete Developer's Guide",
+            "type": "course",
+            "provider": "Udemy",
+            "duration_hours": 12,
+            "level": "intermediate_to_advanced",
+            "url": "https://www.udemy.com/course/go-the-complete-developers-guide/",
+            "rating": 4.6,
+            "cost": "$19.99"
+          },
+          {
+            "title": "Concurrency in Go",
+            "type": "book",
+            "author": "Katherine Cox-Buday",
+            "duration_hours": 15,
+            "level": "advanced",
+            "isbn": "978-1491941195",
+            "rating": 4.7
+          },
+          {
+            "title": "Go by Example",
+            "type": "tutorial",
+            "provider": "Official Go",
+            "duration_hours": 8,
+            "level": "all_levels",
+            "url": "https://gobyexample.com/",
+            "cost": "free"
+          }
+        ],
+        "practice_projects": [
+          "Build a REST API using Gin framework",
+          "Create a CLI tool for Kubernetes management",
+          "Implement a distributed cache system"
+        ],
+        "success_criteria": [
+          "Complete 3 production-quality Go projects",
+          "Pass Go proficiency assessment with 80%+ score",
+          "Contribute to an open-source Go project"
+        ]
+      },
+      {
+        "sprint_number": 2,
+        "duration_weeks": 2,
+        "title": "Go Language Mastery - Advanced Patterns",
+        "goals": [
+          {
+            "skill": "Go",
+            "current_level": 4,
+            "target_level": 5,
+            "priority": "critical"
+          }
+        ],
+        "estimated_hours": 50,
+        "resources": [
+          {
+            "title": "Advanced Go Programming",
+            "type": "course",
+            "provider": "Pluralsight",
+            "duration_hours": 16,
+            "level": "advanced",
+            "rating": 4.5
+          },
+          {
+            "title": "Go Design Patterns",
+            "type": "book",
+            "author": "Mario Castro Contreras",
+            "duration_hours": 18,
+            "level": "advanced",
+            "isbn": "978-1786466204"
+          },
+          {
+            "title": "Production Go Best Practices",
+            "type": "articles",
+            "provider": "Various",
+            "duration_hours": 10,
+            "level": "expert"
+          }
+        ],
+        "practice_projects": [
+          "Build a microservice with gRPC",
+          "Implement custom Kubernetes operator in Go",
+          "Create performance monitoring tool"
+        ],
+        "success_criteria": [
+          "Optimize Go code for production use",
+          "Master goroutines and channels",
+          "Implement advanced concurrency patterns"
+        ]
+      },
+      {
+        "sprint_number": 3,
+        "duration_weeks": 2,
+        "title": "GraphQL & Modern API Design",
+        "goals": [
+          {
+            "skill": "GraphQL",
+            "current_level": 0,
+            "target_level": 3,
+            "priority": "important"
+          }
+        ],
+        "estimated_hours": 40,
+        "resources": [
+          {
+            "title": "GraphQL Fundamentals",
+            "type": "course",
+            "provider": "Frontend Masters",
+            "duration_hours": 8,
+            "level": "beginner_to_intermediate",
+            "rating": 4.7
+          },
+          {
+            "title": "Full-Stack GraphQL Applications",
+            "type": "course",
+            "provider": "Udemy",
+            "duration_hours": 12,
+            "level": "intermediate",
+            "rating": 4.5
+          },
+          {
+            "title": "Apollo Server Documentation",
+            "type": "documentation",
+            "provider": "Apollo GraphQL",
+            "duration_hours": 6,
+            "level": "all_levels",
+            "url": "https://www.apollographql.com/docs/apollo-server/",
+            "cost": "free"
+          },
+          {
+            "title": "Production-Ready GraphQL",
+            "type": "book",
+            "author": "Marc-André Giroux",
+            "duration_hours": 14,
+            "level": "advanced"
+          }
+        ],
+        "practice_projects": [
+          "Build GraphQL API with Apollo Server",
+          "Implement authentication and authorization",
+          "Create schema federation example"
+        ],
+        "success_criteria": [
+          "Design efficient GraphQL schemas",
+          "Implement N+1 query optimization",
+          "Build production-ready GraphQL API"
+        ]
+      },
+      {
+        "sprint_number": 4,
+        "duration_weeks": 2,
+        "title": "Service Mesh & gRPC",
+        "goals": [
+          {
+            "skill": "Service Mesh (Istio)",
+            "current_level": 0,
+            "target_level": 2,
+            "priority": "nice-to-have"
+          },
+          {
+            "skill": "gRPC",
+            "current_level": 0,
+            "target_level": 2,
+            "priority": "nice-to-have"
+          }
+        ],
+        "estimated_hours": 45,
+        "resources": [
+          {
+            "title": "Istio Service Mesh",
+            "type": "course",
+            "provider": "A Cloud Guru",
+            "duration_hours": 10,
+            "level": "intermediate",
+            "rating": 4.4
+          },
+          {
+            "title": "gRPC Microservices in Go",
+            "type": "course",
+            "provider": "Udemy",
+            "duration_hours": 8,
+            "level": "intermediate",
+            "rating": 4.6
+          },
+          {
+            "title": "Service Mesh Patterns",
+            "type": "articles",
+            "provider": "InfoQ",
+            "duration_hours": 6,
+            "level": "advanced"
+          }
+        ],
+        "practice_projects": [
+          "Deploy Istio on Kubernetes cluster",
+          "Build gRPC microservices communication",
+          "Implement traffic management with Istio"
+        ],
+        "success_criteria": [
+          "Configure service mesh for microservices",
+          "Implement gRPC services",
+          "Understand traffic routing and observability"
+        ]
+      }
+    ],
+    "milestones": [
+      {
+        "week": 2,
+        "milestone": "Go proficiency level 4 achieved",
+        "quality_gate": "foundational"
+      },
+      {
+        "week": 4,
+        "milestone": "Go expert level, ready for production work",
+        "quality_gate": "competitive"
+      },
+      {
+        "week": 6,
+        "milestone": "GraphQL proficiency established",
+        "quality_gate": "competitive"
+      },
+      {
+        "week": 8,
+        "milestone": "Service mesh and gRPC knowledge acquired",
+        "quality_gate": "excellence"
+      }
+    ],
+    "ongoing_learning": [
+      "Stay updated with Go release notes and new features",
+      "Follow GraphQL and Apollo community updates",
+      "Participate in cloud-native CNCF projects",
+      "Contribute to open source Go projects"
+    ]
+  },
+  "recommendations": {
+    "overall_assessment": "Strong candidate with excellent foundation. Primary focus should be advancing Go language skills from intermediate to expert level to fully match the 'or Go' requirement. Currently ready to apply but would be more competitive after Go skill development.",
+    "application_readiness": {
+      "can_apply_now": true,
+      "confidence_level": "medium-high",
+      "recommended_timeline": "Apply now while pursuing learning plan in parallel",
+      "expected_success_rate": "60-70%"
+    },
+    "application_strategy": [
+      "Emphasize Python expertise and 8+ years of experience",
+      "Highlight microservices architecture and Kubernetes mastery",
+      "Mention Go experience and active learning/projects",
+      "Focus on leadership and mentorship experience",
+      "Showcase scale and performance achievements"
+    ],
+    "interview_preparation": [
+      "Review distributed systems design patterns",
+      "Prepare examples of technical leadership",
+      "Practice system design for billion-request scale",
+      "Review Go code and be ready to discuss learning journey",
+      "Prepare questions about their GraphQL implementation"
+    ],
+    "cover_letter_focus": [
+      "Lead with Python expertise and microservices experience",
+      "Discuss architectural decisions at scale",
+      "Mention current Go learning trajectory",
+      "Highlight mentorship and leadership examples",
+      "Express enthusiasm for cloud-native technologies"
+    ],
+    "negotiation_points": [
+      "8+ years experience aligns with requirements",
+      "AWS certification and Kubernetes certification",
+      "Proven leadership and team building experience",
+      "Track record of system optimization and performance",
+      "Open source contributions and community involvement"
+    ],
+    "alternative_approaches": [
+      "Consider completing Go learning plan before applying for highest confidence",
+      "Apply to both Python-focused and Go-focused roles",
+      "Highlight willingness to deep-dive into Go full-time",
+      "Mention successful track record of learning new languages quickly"
+    ]
+  },
+  "risk_assessment": {
+    "application_risks": [
+      {
+        "risk": "Go expertise requirement not fully met",
+        "severity": "medium",
+        "mitigation": "Emphasize Python depth and Go learning trajectory"
+      },
+      {
+        "risk": "Staff level position requires broader impact demonstration",
+        "severity": "low",
+        "mitigation": "Highlight technical leadership and mentorship experience"
+      }
+    ],
+    "interview_risks": [
+      {
+        "risk": "Deep Go coding questions",
+        "severity": "medium-high",
+        "mitigation": "Complete Sprint 1-2 before interviewing, be honest about level"
+      },
+      {
+        "risk": "GraphQL system design questions",
+        "severity": "low",
+        "mitigation": "Quick study possible, highlight API design expertise"
+      }
+    ]
+  },
+  "generated_materials": {
+    "cover_letter_generated": true,
+    "linkedin_message_generated": true,
+    "followup_email_generated": true,
+    "networking_email_generated": true,
+    "materials_location": "job_search_data/export_20241015_203000/"
+  },
+  "next_steps": [
+    {
+      "step": 1,
+      "action": "Begin Go language learning (Sprint 1)",
+      "priority": "high",
+      "timeline": "Start immediately"
+    },
+    {
+      "step": 2,
+      "action": "Update resume to highlight Python and architecture work",
+      "priority": "high",
+      "timeline": "This week"
+    },
+    {
+      "step": 3,
+      "action": "Submit application with customized cover letter",
+      "priority": "high",
+      "timeline": "Within 3 days"
+    },
+    {
+      "step": 4,
+      "action": "Build 2-3 Go projects for portfolio",
+      "priority": "medium",
+      "timeline": "Weeks 1-4"
+    },
+    {
+      "step": 5,
+      "action": "Research CloudNative Systems architecture and tech blog",
+      "priority": "medium",
+      "timeline": "Before interview"
+    },
+    {
+      "step": 6,
+      "action": "Complete GraphQL learning (Sprint 3)",
+      "priority": "medium",
+      "timeline": "Weeks 5-6"
+    },
+    {
+      "step": 7,
+      "action": "Prepare system design examples for interviews",
+      "priority": "medium",
+      "timeline": "Ongoing"
+    }
+  ],
+  "market_insights": {
+    "role_competitiveness": "high",
+    "typical_applicant_pool_size": "200-500",
+    "estimated_qualified_candidates": "50-100",
+    "your_competitive_position": "top_30_percent",
+    "salary_market_rate": "$170k-$240k for Staff level in US",
+    "growth_trajectory": "excellent",
+    "company_stage": "growth_stage_series_c_d"
+  },
+  "timestamp": "2024-10-15T20:30:00Z",
+  "analysis_summary": "87.5% match - Strong candidate ready to apply. Focus on Go language development for maximum competitiveness. Excellent Python, cloud-native, and leadership experience. 8-week learning plan to close gaps and reach excellence level."
+}

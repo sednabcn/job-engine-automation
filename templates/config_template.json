@@ -1,0 +1,184 @@
+{
+  "personal_info": {
+    "name": "Your Full Name",
+    "email": "your.email@example.com",
+    "phone": "+1-234-567-8900",
+    "location": "City, State/Country",
+    "linkedin": "https://linkedin.com/in/yourprofile",
+    "github": "https://github.com/yourusername",
+    "portfolio": "https://yourportfolio.com"
+  },
+  
+  "target_role": {
+    "title": "Target Job Title",
+    "industry": "Target Industry",
+    "level": "Junior/Mid/Senior/Lead",
+    "work_preference": "Remote/Hybrid/On-site",
+    "salary_expectation": {
+      "min": 80000,
+      "max": 120000,
+      "currency": "USD"
+    }
+  },
+  
+  "analysis_settings": {
+    "matching_threshold": {
+      "strong_match": 80,
+      "moderate_match": 60,
+      "weak_match": 40
+    },
+    "skill_weights": {
+      "required_skills": 1.0,
+      "preferred_skills": 0.7,
+      "nice_to_have": 0.3
+    },
+    "gap_tolerance": 20,
+    "max_learning_time_months": 6
+  },
+  
+  "learning_preferences": {
+    "learning_style": ["visual", "hands-on", "reading", "video"],
+    "time_commitment_hours_per_week": 10,
+    "preferred_platforms": [
+      "Coursera",
+      "Udemy",
+      "Pluralsight",
+      "LinkedIn Learning",
+      "YouTube",
+      "Documentation"
+    ],
+    "budget": {
+      "monthly": 100,
+      "currency": "USD"
+    },
+    "certification_priority": "medium"
+  },
+  
+  "sprint_settings": {
+    "sprint_duration_weeks": 2,
+    "daily_study_hours": 2,
+    "quality_gates": {
+      "minimum_completion_rate": 80,
+      "minimum_quiz_score": 70,
+      "require_practical_project": true
+    }
+  },
+  
+  "output_preferences": {
+    "report_format": "detailed",
+    "include_cover_letter": true,
+    "include_linkedin_message": true,
+    "include_follow_up_templates": true,
+    "include_skill_tests": true,
+    "export_format": ["json", "txt", "markdown"]
+  },
+  
+  "automation_settings": {
+    "auto_analyze_on_commit": true,
+    "auto_generate_reports": true,
+    "notification_emails": [
+      "your.email@example.com"
+    ],
+    "slack_webhook": "",
+    "discord_webhook": ""
+  },
+  
+  "job_search_filters": {
+    "keywords": [
+      "python",
+      "data science",
+      "machine learning"
+    ],
+    "excluded_keywords": [
+      "senior manager",
+      "10+ years"
+    ],
+    "companies_of_interest": [
+      "Google",
+      "Microsoft",
+      "Amazon",
+      "Apple",
+      "Meta"
+    ],
+    "excluded_companies": [],
+    "location_preferences": [
+      "Remote",
+      "New York",
+      "San Francisco",
+      "London"
+    ]
+  },
+  
+  "skill_development": {
+    "priority_areas": [
+      "Machine Learning",
+      "Cloud Computing",
+      "System Design"
+    ],
+    "current_projects": [
+      {
+        "name": "Personal Project 1",
+        "skills_practiced": ["Python", "Django", "PostgreSQL"],
+        "status": "in_progress",
+        "completion_date": "2025-12-31"
+      }
+    ],
+    "certifications_in_progress": [
+      {
+        "name": "AWS Solutions Architect",
+        "provider": "Amazon",
+        "expected_completion": "2025-11-30"
+      }
+    ]
+  },
+  
+  "application_tracking": {
+    "track_applications": true,
+    "application_stages": [
+      "Applied",
+      "Phone Screen",
+      "Technical Interview",
+      "Final Interview",
+      "Offer",
+      "Rejected"
+    ],
+    "follow_up_reminder_days": 7,
+    "archive_after_days": 90
+  },
+  
+  "networking": {
+    "networking_goal_per_week": 5,
+    "preferred_channels": [
+      "LinkedIn",
+      "Industry Events",
+      "Meetups",
+      "Conferences"
+    ],
+    "informational_interviews_per_month": 2
+  },
+  
+  "advanced_features": {
+    "enable_ai_optimization": true,
+    "enable_market_analysis": true,
+    "enable_salary_insights": true,
+    "enable_company_research": true,
+    "enable_skill_trending": true
+  },
+  
+  "notifications": {
+    "email_on_new_match": true,
+    "email_on_sprint_complete": true,
+    "email_on_milestone": true,
+    "daily_digest": false,
+    "weekly_summary": true
+  },
+  
+  "privacy": {
+    "share_anonymized_data": false,
+    "allow_analytics": true,
+    "data_retention_days": 365
+  },
+  
+  "version": "1.0.0",
+  "last_updated": "2025-10-15"
+}
