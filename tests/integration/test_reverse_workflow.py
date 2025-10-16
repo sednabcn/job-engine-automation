@@ -1,5 +1,5 @@
 ## **File 2: test_reverse_workflow.py**
-```python
+
 """
 Integration tests for reverse workflow
 Tests end-to-end reverse mode workflow (skill building focus)

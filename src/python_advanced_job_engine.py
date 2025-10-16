@@ -1206,47 +1206,49 @@ class AdvancedJobEngine:
         job = analysis["job_info"]
         cv = analysis["cv_snapshot"]
         
-        letter = f"""Dear Hiring Manager,
+        letter = f"""
+        Dear Hiring Manager,
 
-I am writing to express my strong interest in the {job['title']} position at {job['company']}. With {cv['experience_years']} years of relevant experience and a proven track record in the key areas you're seeking, I am confident I would be a valuable addition to your team.
+        I am writing to express my strong interest in the {job['title']} position at {job['company']}. With {cv['experience_years']} years of relevant experience and a proven track record in the key areas you're seeking, I am confident I would be a valuable addition to your team.
 
-KEY QUALIFICATIONS:
+        KEY QUALIFICATIONS:
 
-"""
+        """
         # Add matching skills
         matching_skills = []
         for category in cv['skills'].values():
             matching_skills.extend(category[:3])
         
         for skill in matching_skills[:5]:
-            letter += f"✓ Proficient in {skill} with hands-on project experience\n"
+            letter += f"
+            ✓ Proficient in {skill} with hands-on project experience\n"
         
-        letter += f"""
-RELEVANT EXPERIENCE:
+            letter += f"""
+            RELEVANT EXPERIENCE:
 
-I have successfully delivered projects involving:
-"""
+            I have successfully delivered projects involving:
+            """
         
         for project in cv['projects'][:3]:
             letter += f"• {project}\n"
         
-        letter += f"""
-I am particularly excited about this opportunity because it aligns perfectly with my career goals and expertise. I am immediately available and eager to contribute to {job['company']}'s success.
+            letter += f"""
+            I am particularly excited about this opportunity because it aligns perfectly with my career goals and expertise. I am immediately available and eager to contribute to {job['company']}'s success.
 
-I would welcome the opportunity to discuss how my skills and experience can benefit your team. Thank you for considering my application.
+            I would welcome the opportunity to discuss how my skills and experience can benefit your team. Thank you for considering my application.
 
-Best regards,
-[Your Name]
-[Your Phone]
-[Your Email]
-[Your LinkedIn]
-
----
-ATTACHMENTS:
-- Resume/CV
-- Portfolio (if applicable)
-- References (upon request)
-"""
+            Best regards,
+            [Your Name]
+            [Your Phone]
+            [Your Email]
+            [Your LinkedIn]
+            
+            ---
+            ATTACHMENTS:
+            - Resume/CV
+            - Portfolio (if applicable)
+            - References (upon request)
+            """
         return letter
     
     def _generate_growth_letter(self, analysis: Dict) -> str:
@@ -1257,32 +1259,32 @@ ATTACHMENTS:
         
         letter = f"""Dear Hiring Manager,
 
-I am excited to apply for the {job['title']} position at {job['company']}. While I am actively developing expertise in some of the technologies you require, I bring strong foundational skills and a demonstrated ability to quickly learn and adapt.
+        I am excited to apply for the {job['title']} position at {job['company']}. While I am actively developing expertise in some of the technologies you require, I bring strong foundational skills and a demonstrated ability to quickly learn and adapt.
 
-CORE STRENGTHS:
+        CORE STRENGTHS:
 
-"""
+        """
         for skill in list(cv['skills'].get('programming', []))[:3]:
             letter += f"✓ Strong proficiency in {skill}\n"
         
         letter += f"""
-CURRENT DEVELOPMENT:
+        CURRENT DEVELOPMENT:
 
-I am currently upskilling in the following areas to match your requirements:
-"""
+        I am currently upskilling in the following areas to match your requirements:
+        """
         for skill in gaps["missing_required_skills"][:3]:
             letter += f"• {skill} - Actively learning through hands-on projects\n"
         
         letter += f"""
-I am a fast learner with a track record of mastering new technologies quickly. My {cv['experience_years']} years of experience have equipped me with strong problem-solving skills and the ability to deliver results under pressure.
+        I am a fast learner with a track record of mastering new technologies quickly. My {cv['experience_years']} years of experience have equipped me with strong problem-solving skills and the ability to deliver results under pressure.
 
-I would appreciate the opportunity to discuss how my current skills and enthusiasm for continuous learning make me a strong candidate for this role.
+        I would appreciate the opportunity to discuss how my current skills and enthusiasm for continuous learning make me a strong candidate for this role.
 
-Thank you for your consideration.
+        Thank you for your consideration.
 
-Best regards,
-[Your Name]
-"""
+        Best regards,
+        [Your Name]
+        """
         return letter
     
     def _generate_future_interest_letter(self, analysis: Dict, learning_plan: Dict = None) -> str:
@@ -1291,35 +1293,35 @@ Best regards,
         
         letter = f"""Dear Hiring Manager,
 
-I am writing to express my interest in future opportunities at {job['company']}, specifically in roles similar to the {job['title']} position.
+        I am writing to express my interest in future opportunities at {job['company']}, specifically in roles similar to the {job['title']} position.
 
-While I am currently building expertise in some key areas required for this role, I am highly motivated and following a structured learning plan to develop these skills. 
+        While I am currently building expertise in some key areas required for this role, I am highly motivated and following a structured learning plan to develop these skills. 
 
-"""
+        """
         
         if learning_plan:
             letter += f"""MY DEVELOPMENT PLAN:
 
-I am currently engaged in a {learning_plan['estimated_duration']} intensive learning program covering:
-"""
+            I am currently engaged in a {learning_plan['estimated_duration']} intensive learning program covering:
+            """
             for item in learning_plan["levels"]["study"][:3]:
                 letter += f"• {item['skill']}\n"
         
-        letter += f"""
-I am reaching out now to:
-1. Express my strong interest in {job['company']}
-2. Request to stay connected for future opportunities
-3. Seek any advice on skill development priorities
+                letter += f"""
+                I am reaching out now to:
+                1. Express my strong interest in {job['company']}
+                2. Request to stay connected for future opportunities
+                3. Seek any advice on skill development priorities
 
-I am targeting {datetime.now().month + 3} for actively applying to similar positions after completing my upskilling program.
+                I am targeting {datetime.now().month + 3} for actively applying to similar positions after completing my upskilling program.
+                
+                Would it be possible to schedule a brief informational call to learn more about your team and future opportunities?
 
-Would it be possible to schedule a brief informational call to learn more about your team and future opportunities?
+                Thank you for your time and consideration.
 
-Thank you for your time and consideration.
-
-Best regards,
-[Your Name]
-"""
+                Best regards,
+                [Your Name]
+                """
         return letter
     
     def _generate_linkedin_message(self, analysis: Dict) -> str:
@@ -1328,14 +1330,14 @@ Best regards,
         
         message = f"""Hi [Recruiter Name],
 
-I recently came across the {job['title']} opportunity at {job['company']} and am very interested in this role. 
+        I recently came across the {job['title']} opportunity at {job['company']} and am very interested in this role. 
 
-I have {analysis['cv_snapshot']['experience_years']}+ years of experience in related areas and would love to learn more about this position and {job['company']}.
+        I have {analysis['cv_snapshot']['experience_years']}+ years of experience in related areas and would love to learn more about this position and {job['company']}.
 
-Would you be open to connecting?
-
-Best regards,
-[Your Name]"""
+        Would you be open to connecting?
+        
+        Best regards,
+        [Your Name]"""
         
         return message
     
@@ -1345,22 +1347,22 @@ Best regards,
         
         email = f"""Subject: Following Up - {job['title']} Application
 
-Dear Hiring Manager,
+        Dear Hiring Manager,
 
-I wanted to follow up on my application for the {job['title']} position submitted on [DATE]. I remain very interested in this opportunity and wanted to reiterate my enthusiasm for joining {job['company']}.
+        I wanted to follow up on my application for the {job['title']} position submitted on [DATE]. I remain very interested in this opportunity and wanted to reiterate my enthusiasm for joining {job['company']}.
 
-Since submitting my application, I have:
-- [Recent achievement/project]
-- [Relevant skill development]
-- [Industry contribution]
+        Since submitting my application, I have:
+        - [Recent achievement/project]
+        - [Relevant skill development]
+        - [Industry contribution]
 
-I would welcome the opportunity to discuss how my skills align with your team's needs. Are you available for a brief conversation this week?
+        I would welcome the opportunity to discuss how my skills align with your team's needs. Are you available for a brief conversation this week?
 
-Thank you for your time and consideration.
+        Thank you for your time and consideration.
 
-Best regards,
-[Your Name]
-[Your Contact Information]"""
+        Best regards,
+        [Your Name]
+        [Your Contact Information]"""
         
         return email
     
@@ -1370,21 +1372,21 @@ Best regards,
         
         email = f"""Subject: Seeking Insights About {job['company']}
 
-Hi [Employee Name],
+        Hi [Employee Name],
 
-I hope this message finds you well. I am currently exploring opportunities in [field] and came across the {job['title']} position at {job['company']}.
+        I hope this message finds you well. I am currently exploring opportunities in [field] and came across the {job['title']} position at {job['company']}.
 
-I noticed your experience at {job['company']} on LinkedIn and would greatly appreciate any insights you could share about:
-- The team culture and working environment
-- Key skills that have proven valuable in your role
-- Any advice for someone interested in joining the team
+        I noticed your experience at {job['company']} on LinkedIn and would greatly appreciate any insights you could share about:
+        - The team culture and working environment
+        - Key skills that have proven valuable in your role
+        - Any advice for someone interested in joining the team
 
-Would you have 15 minutes for a brief informational chat? I'd be grateful for any guidance.
+        Would you have 15 minutes for a brief informational chat? I'd be grateful for any guidance.
 
-Thank you for considering my request.
+        Thank you for considering my request.
 
-Best regards,
-[Your Name]"""
+        Best regards,
+        [Your Name]"""
         
         return email
     
@@ -1754,21 +1756,21 @@ Best regards,
                                  strategy: Dict, tests: Dict, letters: Dict) -> str:
         """Generate comprehensive report"""
         report = f"""
-{'='*100}
-                    COMPLETE JOB SEARCH & DEVELOPMENT REPORT
-{'='*100}
+        {'='*100}
+        COMPLETE JOB SEARCH & DEVELOPMENT REPORT
+        {'='*100}
 
-Job: {analysis['job_info']['title']} at {analysis['job_info']['company']}
-Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+        Job: {analysis['job_info']['title']} at {analysis['job_info']['company']}
+        Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
 
-{'='*100}
-SECTION 1: JOB MATCH ANALYSIS
-{'='*100}
+        {'='*100}
+        SECTION 1: JOB MATCH ANALYSIS
+        {'='*100}
 
-Overall Match Score: {analysis['score']['total_score']}%
+        Overall Match Score: {analysis['score']['total_score']}%
 
-Category Breakdown:
-"""
+        Category Breakdown:
+        """
         for category, score in analysis['score']['category_scores'].items():
             weight = self.WEIGHTS[category]
             report += f"  • {category.replace('_', ' ').title():<25} {score:>6.1f}% (Weight: {weight:.0%})\n"
@@ -1776,17 +1778,17 @@ Category Breakdown:
         report += f"""
 Recommendation: {analysis['recommendations'][0]['action'] if analysis['recommendations'] else 'N/A'}
 
-{'='*100}
-SECTION 2: GAP ANALYSIS
-{'='*100}
+        {'='*100}
+        SECTION 2: GAP ANALYSIS
+        {'='*100}
 
-Missing Required Skills ({len(analysis['gaps']['missing_required_skills'])}):
+        Missing Required Skills ({len(analysis['gaps']['missing_required_skills'])}):
 """
         for skill in analysis['gaps']['missing_required_skills'][:10]:
             report += f"  ❌ {skill}\n"
         
         report += f"""
-Missing Preferred Skills ({len(analysis['gaps']['missing_preferred_skills'])}):
+        Missing Preferred Skills ({len(analysis['gaps']['missing_preferred_skills'])}):
 """
         for skill in analysis['gaps']['missing_preferred_skills'][:5]:
             report += f"  ⚠️  {skill}\n"
@@ -1795,12 +1797,12 @@ Missing Preferred Skills ({len(analysis['gaps']['missing_preferred_skills'])}):
             report += f"\nExperience Gap: {analysis['gaps']['experience_gap']} years\n"
         
         report += f"""
-{'='*100}
-SECTION 3: LEARNING PLAN ({learning_plan['estimated_duration']})
-{'='*100}
+        {'='*100}
+        SECTION 3: LEARNING PLAN ({learning_plan['estimated_duration']})
+        {'='*100}
 
-A) TO STUDY (New Content):
-"""
+        A) TO STUDY (New Content):
+        """
         for i, item in enumerate(learning_plan['levels']['study'], 1):
             report += f"\n{i}. {item['skill'].upper()} [{item['priority']}]\n"
             report += f"   Time: {item['estimated_time']}\n"
@@ -1818,15 +1820,15 @@ A) TO STUDY (New Content):
             report += f"\n{i}. {item['skill']} - {item['recommended_courses'][0]}\n"
         
         report += f"""
-{'='*100}
-SECTION 4: IMPROVEMENT STRATEGY
-{'='*100}
+        {'='*100}
+        SECTION 4: IMPROVEMENT STRATEGY
+        {'='*100}
 
-Timeline: {strategy['timeline']}
-Current Score: {strategy['current_score']}%
-Target Score: {strategy['target_score']}%
+        Timeline: {strategy['timeline']}
+        Current Score: {strategy['current_score']}%
+        Target Score: {strategy['target_score']}%
 
-"""
+        """
         for phase in strategy['phases']:
             report += f"\n--- PHASE {phase['phase']}: {phase['name']} ({phase['duration']}) ---\n"
             report += f"Focus: {phase['focus']}\n"
@@ -1836,29 +1838,29 @@ Target Score: {strategy['target_score']}%
                 report += f"  ✓ {criteria}\n"
         
         report += f"""
-{'='*100}
-SECTION 5: SKILL ASSESSMENT TESTS
-{'='*100}
+        {'='*100}
+        SECTION 5: SKILL ASSESSMENT TESTS
+        {'='*100}
 
-Test Suite ID: {tests['test_suite_id']}
-Skills Covered: {len(tests['skills_covered'])} skills
+        Test Suite ID: {tests['test_suite_id']}
+        Skills Covered: {len(tests['skills_covered'])} skills
 
-Test Structure:
-  • Beginner Level: 10 questions, 60% pass score, 50 min
-  • Intermediate Level: 15 questions, 70% pass score, 75 min
-  • Advanced Level: 20 questions, 80% pass score, 100 min
+        Test Structure:
+        • Beginner Level: 10 questions, 60% pass score, 50 min
+        • Intermediate Level: 15 questions, 70% pass score, 75 min
+        • Advanced Level: 20 questions, 80% pass score, 100 min
 
-Recommended Testing Schedule:
-  Week 4: Beginner tests
-  Week 8: Intermediate tests
-  Week 12: Advanced tests
+        Recommended Testing Schedule:
+        Week 4: Beginner tests
+        Week 8: Intermediate tests
+        Week 12: Advanced tests
 
-{'='*100}
-SECTION 6: UPDATED SKILLSET
-{'='*100}
-
-New Skills to Add After Completion:
-"""
+        {'='*100}
+        SECTION 6: UPDATED SKILLSET
+        {'='*100}
+        
+        New Skills to Add After Completion:
+        """
         all_skills = set()
         for item in learning_plan['levels']['study']:
             all_skills.add(item['skill'])
@@ -1870,84 +1872,84 @@ New Skills to Add After Completion:
             report += f"  + {skill}\n"
         
         report += f"""
-Current Total Skills: {self._count_total_skills()}
-Projected Total Skills: {self._count_total_skills() + len(all_skills)}
-"""
+        Current Total Skills: {self._count_total_skills()}
+        Projected Total Skills: {self._count_total_skills() + len(all_skills)}
+        """
         # Add Reverse Workflow Progress section if applicable
         if self.state["mode"] == "reverse":
             report += f"""
-{'='*100}
-SECTION 6.5: REVERSE WORKFLOW PROGRESS
-{'='*100}
+            {'='*100}
+            SECTION 6.5: REVERSE WORKFLOW PROGRESS
+            {'='*100}
 
-Sprint-Based Development Status:
+            Sprint-Based Development Status:
 
-Current Sprint: {self.state['current_sprint']}
-Total Learning Hours: {sum(s.get('total_hours', 0) for s in self.sprint_history if s.get('completed'))}h
-Skills Mastered: {len(self.state['skills_mastered'])}
-  → {', '.join(self.state['skills_mastered']) if self.state['skills_mastered'] else 'None yet'}
+            Current Sprint: {self.state['current_sprint']}
+            Total Learning Hours: {sum(s.get('total_hours', 0) for s in self.sprint_history if s.get('completed'))}h
+            Skills Mastered: {len(self.state['skills_mastered'])}
+            → {', '.join(self.state['skills_mastered']) if self.state['skills_mastered'] else 'None yet'}
 
-Projects Completed: {len(self.state['projects_completed'])}
-"""
+            Projects Completed: {len(self.state['projects_completed'])}
+            """
             for i, proj in enumerate(self.state['projects_completed'], 1):
                 report += f"  {i}. Sprint {proj['sprint']}: {proj['goal']}\n"
                 report += f"     URL: {proj['url']}\n"
             
             report += f"""
-Quality Gates Passed: {', '.join(self.state['quality_gates_passed']) or 'None yet'}
+            Quality Gates Passed: {', '.join(self.state['quality_gates_passed']) or 'None yet'}
 
-Current Stage: {self.state['current_stage'].replace('_', ' ').title()}
+            Current Stage: {self.state['current_stage'].replace('_', ' ').title()}
 
-Readiness Status:
-  Brand Ready: {'âœ…' if self.state.get('brand_ready') else 'â³ In Progress'}
-  Network Ready: {'âœ…' if self.state.get('network_ready') else 'â³ In Progress'}
-  Application Ready: {'âœ…' if self.state.get('application_ready') else 'â³ In Progress'}
-"""
+            Readiness Status:
+            Brand Ready: {'âœ…' if self.state.get('brand_ready') else 'â³ In Progress'}
+            Network Ready: {'âœ…' if self.state.get('network_ready') else 'â³ In Progress'}
+            Application Ready: {'âœ…' if self.state.get('application_ready') else 'â³ In Progress'}
+            """
         
         report += f"""
-{'='*100}
-SECTION 7: APPLICATION MATERIALS
-{'='*100}
+        {'='*100}
+        SECTION 7: APPLICATION MATERIALS
+        {'='*100}
 
-Generated Templates:
-  ✓ Cover Letter (tailored)
-  ✓ LinkedIn Connection Message
-  ✓ Follow-up Email
-  ✓ Networking Email
+        Generated Templates:
+        ✓ Cover Letter (tailored)
+        ✓ LinkedIn Connection Message
+        ✓ Follow-up Email
+        ✓ Networking Email
 
-Application Strategy:
-  1. Update CV with new skills and projects
-  2. Create LinkedIn profile highlighting progress
-  3. Reach out to company employees for networking
-  4. Submit application with customized cover letter
-  5. Follow up after 1 week
+        Application Strategy:
+        1. Update CV with new skills and projects
+        2. Create LinkedIn profile highlighting progress
+        3. Reach out to company employees for networking
+        4. Submit application with customized cover letter
+        5. Follow up after 1 week
 
-{'='*100}
-NEXT STEPS
-{'='*100}
+        {'='*100}
+        NEXT STEPS
+        {'='*100}
+        
+        IMMEDIATE (Week 1):
+        1. Enroll in priority courses
+        2. Set up development environment
+        3. Start first learning module
+        4. Connect with professionals on LinkedIn
 
-IMMEDIATE (Week 1):
-  1. Enroll in priority courses
-  2. Set up development environment
-  3. Start first learning module
-  4. Connect with professionals on LinkedIn
+        SHORT-TERM (Weeks 2-8):
+        5. Complete foundational learning
+        6. Build 3-5 portfolio projects
+        7. Take beginner and intermediate tests
+        8. Contribute to open source
 
-SHORT-TERM (Weeks 2-8):
-  5. Complete foundational learning
-  6. Build 3-5 portfolio projects
-  7. Take beginner and intermediate tests
-  8. Contribute to open source
+        MEDIUM-TERM (Weeks 9-12):
+        9. Complete advanced topics
+        10. Build comprehensive portfolio
+        11. Pass advanced level tests
+        12. Update CV and apply to jobs
 
-MEDIUM-TERM (Weeks 9-12):
-  9. Complete advanced topics
-  10. Build comprehensive portfolio
-  11. Pass advanced level tests
-  12. Update CV and apply to jobs
-
-{'='*100}
-REPORT END
-{'='*100}
-"""
+        {'='*100}
+        REPORT END
+        {'='*100}
+        """
         return report
     
     def export_all(self, job_id: str) -> str:
@@ -2025,56 +2027,56 @@ REPORT END
             print("   pip install python-docx")
     
     print("""
-This system provides:
-1. CV vs Job Analysis with Scoring (supports .txt, .pdf, .docx)
-2. Gap Identification & Recommendations    
-3. 3-Level Learning Plan (Study/Practice/Courses)
-4. Strategic Improvement Plan
-5. Multi-Level Skill Tests
-6. Automatic Skillset Updates
-7. Customized Recruiter Letters
+    This system provides:
+    1. CV vs Job Analysis with Scoring (supports .txt, .pdf, .docx)
+    2. Gap Identification & Recommendations    
+    3. 3-Level Learning Plan (Study/Practice/Courses)
+    4. Strategic Improvement Plan
+    5. Multi-Level Skill Tests
+    6. Automatic Skillset Updates
+    7. Customized Recruiter Letters
 
-Let's get started!
+    Let's get started!
     """)
     
     # Demo mode
     print("\n[DEMO MODE]")
     
     demo_cv = """
-John Smith
-Data Scientist
+    John Smith
+    Data Scientist
 
-Experience: 2 years in data analysis and machine learning
+    Experience: 2 years in data analysis and machine learning
 
-Skills:
-- Programming: Python, SQL
-- Tools: Pandas, Scikit-learn, Git
-- Visualization: Matplotlib, Tableau
+    Skills:
+    - Programming: Python, SQL
+    - Tools: Pandas, Scikit-learn, Git
+    - Visualization: Matplotlib, Tableau
 
-Education: Bachelor's in Computer Science
+    Education: Bachelor's in Computer Science
 
-Projects:
-- Built a customer churn prediction model
-- Created data dashboard for sales analytics
+    Projects:
+    - Built a customer churn prediction model
+    - Created data dashboard for sales analytics
     """
     
     demo_job = """
-Senior Machine Learning Engineer
+    Senior Machine Learning Engineer
 
-Company: TechCorp Inc.
+    Company: TechCorp Inc.
 
-Requirements:
-- 5+ years experience in ML/AI
-- Strong Python, PyTorch, TensorFlow
-- AWS, Docker, Kubernetes
-- MLOps experience
-- Master's degree preferred
-
-Skills:
-- Deep Learning
-- NLP
-- Computer Vision
-- Production ML systems
+    Requirements:
+    - 5+ years experience in ML/AI
+    - Strong Python, PyTorch, TensorFlow
+    - AWS, Docker, Kubernetes
+    - MLOps experience
+    - Master's degree preferred
+    
+    Skills:
+    - Deep Learning
+    - NLP
+    - Computer Vision
+    - Production ML systems
     """
     
     print("\n📊 Analyzing job opportunity...")
@@ -2247,150 +2249,150 @@ Skills:
     print("                                HOW TO USE")
     print("="*100)
     print("""
-INTERACTIVE MODE:
+    INTERACTIVE MODE:
 
-from advanced_job_engine import AdvancedJobEngine
+    from advanced_job_engine import AdvancedJobEngine
 
-# Initialize
-engine = AdvancedJobEngine()
+    # Initialize
+    engine = AdvancedJobEngine()
 
-# METHOD 1: Analyze from files (PDF, DOCX, TXT)
-analysis = engine.analyze_from_files(
+    # METHOD 1: Analyze from files (PDF, DOCX, TXT)
+    analysis = engine.analyze_from_files(
     cv_file="my_cv.pdf",
     job_file="job_description.docx",
     job_title="Senior ML Engineer",
     company="TechCorp"
-)
+    )
 
-# METHOD 2: Analyze from text
-analysis = engine.analyze_job_complete(cv_text, job_text, "Job Title", "Company")
+    # METHOD 2: Analyze from text
+    analysis = engine.analyze_job_complete(cv_text, job_text, "Job Title", "Company")
 
-# Step 3: Create learning plan
-learning_plan = engine.create_learning_plan(analysis)
+    # Step 3: Create learning plan
+    learning_plan = engine.create_learning_plan(analysis)
+    
+    # Step 4: Create improvement strategy
+    strategy = engine.create_improvement_strategy(analysis, learning_plan)
 
-# Step 4: Create improvement strategy
-strategy = engine.create_improvement_strategy(analysis, learning_plan)
+    # Step 5: Generate tests
+    tests = engine.generate_skill_tests(missing_skills_list)
 
-# Step 5: Generate tests
-tests = engine.generate_skill_tests(missing_skills_list)
+    # Step 6: Update skillset after learning
+    engine.update_skillset(["PyTorch", "Docker", "AWS"], category="technical")
 
-# Step 6: Update skillset after learning
-engine.update_skillset(["PyTorch", "Docker", "AWS"], category="technical")
+    # Step 7: Generate recruiter letters
+    letters = engine.generate_recruiter_letter(analysis, learning_plan)
 
-# Step 7: Generate recruiter letters
-letters = engine.generate_recruiter_letter(analysis, learning_plan)
+    # Export everything
+    engine.export_all(analysis['job_id'])
 
-# Export everything
-engine.export_all(analysis['job_id'])
+    # Generate complete report
+    report = engine.generate_complete_report(analysis, learning_plan, strategy, tests, letters)
+    print(report)
 
-# Generate complete report
-report = engine.generate_complete_report(analysis, learning_plan, strategy, tests, letters)
-print(report)
+    FILE FORMAT SUPPORT:
+    ==================
+    ✅ .txt  - Plain text files
+    ✅ .pdf  - PDF documents (requires: pip install PyPDF2)
+    ✅ .docx - Microsoft Word documents (requires: pip install python-docx)
 
-FILE FORMAT SUPPORT:
-==================
-✅ .txt  - Plain text files
-✅ .pdf  - PDF documents (requires: pip install PyPDF2)
-✅ .docx - Microsoft Word documents (requires: pip install python-docx)
+    INSTALLATION:
+    ============
+    # Install all dependencies
+    pip install PyPDF2 python-docx
 
-INSTALLATION:
-============
-# Install all dependencies
-pip install PyPDF2 python-docx
+    # Or install individually
+    pip install PyPDF2        # For PDF support
+    pip install python-docx   # For DOCX support
 
-# Or install individually
-pip install PyPDF2        # For PDF support
-pip install python-docx   # For DOCX support
+    EXAMPLES:
+    ========
+    # Analyze CV and job from PDF files
+    analysis = engine.analyze_from_files("cv.pdf", "job.pdf")
+    
+    # Mix formats
+    analysis = engine.analyze_from_files("cv.docx", "job.txt")
+    
+    # Read single document
+    cv_text = engine.read_document("my_cv.pdf")
+    job_text = engine.read_document("job_desc.docx")
 
-EXAMPLES:
-========
-# Analyze CV and job from PDF files
-analysis = engine.analyze_from_files("cv.pdf", "job.pdf")
-
-# Mix formats
-analysis = engine.analyze_from_files("cv.docx", "job.txt")
-
-# Read single document
-cv_text = engine.read_document("my_cv.pdf")
-job_text = engine.read_document("job_desc.docx")
-
-# Generate complete report
-report = engine.generate_complete_report(analysis, learning_plan, strategy, tests, letters)
-print(report)
+    # Generate complete report
+    report = engine.generate_complete_report(analysis, learning_plan, strategy, tests, letters)
+    print(report)
     """)
     
     print("\n" + "="*100)
     print("                         CUSTOMIZATION OPTIONS")
     print("="*100)
     print("""
-1. ADJUST SCORING WEIGHTS:
-   engine.WEIGHTS = {
+    1. ADJUST SCORING WEIGHTS:
+    engine.WEIGHTS = {
        "required_skills": 0.40,  # Increase importance
        "experience": 0.25,
        # ... adjust as needed
-   }
+    }
 
-2. ADD CUSTOM LEARNING RESOURCES:
-   engine.LEARNING_RESOURCES["your_skill"] = {
-       "study": ["Resource 1", "Resource 2"],
-       "practice": ["Practice 1", "Practice 2"],
-       "courses": ["Course 1", "Course 2"]
-   }
+    2. ADD CUSTOM LEARNING RESOURCES:
+    engine.LEARNING_RESOURCES["your_skill"] = {
+    "study": ["Resource 1", "Resource 2"],
+    "practice": ["Practice 1", "Practice 2"],
+    "courses": ["Course 1", "Course 2"]
+    }
 
-3. CUSTOMIZE TEST DIFFICULTY:
-   engine.TEST_LEVELS["expert"] = {
-       "questions": 25,
-       "pass_score": 90
-   }
+    3. CUSTOMIZE TEST DIFFICULTY:
+    engine.TEST_LEVELS["expert"] = {
+    "questions": 25,
+    "pass_score": 90
+    }
 
-4. MODIFY TIMELINE:
-   - Edit strategy timeline (default: 12 weeks)
-   - Adjust phase durations
-   - Customize milestone schedule
+    4. MODIFY TIMELINE:
+    - Edit strategy timeline (default: 12 weeks)
+    - Adjust phase durations
+    - Customize milestone schedule
     """)
     
     print("\n" + "="*100)
     print("                            WORKFLOW EXAMPLE")
     print("="*100)
     print("""
-SCENARIO: Applying for Senior ML Engineer Role
+    SCENARIO: Applying for Senior ML Engineer Role
 
-Week 0 (Planning):
-   1. Run job analysis → Get 55% match score
-   2. Review gap analysis → Missing: PyTorch, Docker, Kubernetes, AWS
-   3. Get learning plan → 12-week structured program
-   4. Review improvement strategy → 3 phases to reach 80% match
+    Week 0 (Planning):
+    1. Run job analysis → Get 55% match score
+    2. Review gap analysis → Missing: PyTorch, Docker, Kubernetes, AWS
+    3. Get learning plan → 12-week structured program
+    4. Review improvement strategy → 3 phases to reach 80% match
 
-Weeks 1-4 (Foundation):
-   5. Study PyTorch fundamentals
-   6. Complete Docker tutorials
-   7. Build 3 mini-projects
-   8. Take beginner-level tests → Pass with 70%
-   9. Update skillset → Add "PyTorch (beginner)"
+    Weeks 1-4 (Foundation):
+    5. Study PyTorch fundamentals
+    6. Complete Docker tutorials
+    7. Build 3 mini-projects
+    8. Take beginner-level tests → Pass with 70%
+    9. Update skillset → Add "PyTorch (beginner)"
 
-Weeks 5-8 (Development):
-   10. Advanced PyTorch course
-   11. Kubernetes hands-on practice
-   12. Build 2 portfolio projects
-   13. Take intermediate tests → Pass with 75%
-   14. Update skillset → Upgrade to "intermediate"
+    Weeks 5-8 (Development):
+    10. Advanced PyTorch course
+    11. Kubernetes hands-on practice
+    12. Build 2 portfolio projects
+    13. Take intermediate tests → Pass with 75%
+    14. Update skillset → Upgrade to "intermediate"
 
-Weeks 9-12 (Mastery):
-   15. Build advanced ML project with full MLOps
-   16. Deploy on AWS with Docker/K8s
-   17. Take advanced tests → Pass with 85%
-   18. Update skillset → Add all new skills
-   19. Run job analysis again → Now 82% match!
-   20. Generate recruiter letters
-   21. Apply to job with confidence
+    Weeks 9-12 (Mastery):
+    15. Build advanced ML project with full MLOps
+    16. Deploy on AWS with Docker/K8s
+    17. Take advanced tests → Pass with 85%
+    18. Update skillset → Add all new skills
+    19. Run job analysis again → Now 82% match!
+    20. Generate recruiter letters
+    21. Apply to job with confidence
 
-Week 13+ (Application):
-   22. Submit application with cover letter
-   23. Connect on LinkedIn with hiring manager
-   24. Send networking emails to team members
-   25. Follow up after 1 week
-   26. Interview preparation using test questions
-   27. Land the job! 🎉
+    Week 13+ (Application):
+    22. Submit application with cover letter
+    23. Connect on LinkedIn with hiring manager
+    24. Send networking emails to team members
+    25. Follow up after 1 week
+    26. Interview preparation using test questions
+    27. Land the job! 🎉
     """)
 
     print("\n" + "="*100)
@@ -2488,120 +2490,120 @@ Week 13+ (Application):
     print("                          KEY BENEFITS")
     print("="*100)
     print("""
-✨ STRATEGIC:
-   - Data-driven job targeting
-   - Clear skill gap identification
-   - Measurable progress tracking
-   - ROI-focused learning
+    ✨ STRATEGIC:
+    - Data-driven job targeting
+    - Clear skill gap identification
+    - Measurable progress tracking
+    - ROI-focused learning
 
-📚 COMPREHENSIVE:
-   - End-to-end learning plan
-   - Multiple learning modalities
-   - Real-world practice emphasis
-   - Portfolio building integrated
+    📚 COMPREHENSIVE:
+    - End-to-end learning plan
+    - Multiple learning modalities
+    - Real-world practice emphasis
+    - Portfolio building integrated
 
-⚡ EFFICIENT:
-   - Focused on job requirements
-   - Prioritized skill development
-   - Time-boxed learning phases
-   - Quick wins + long-term growth
+    ⚡ EFFICIENT:
+    - Focused on job requirements
+    - Prioritized skill development
+    - Time-boxed learning phases
+    - Quick wins + long-term growth
 
-🎯 ACTIONABLE:
-   - Specific action items
-   - Weekly schedules
-   - Clear success criteria
-   - Ready-to-use templates
+    🎯 ACTIONABLE:
+    - Specific action items
+    - Weekly schedules
+    - Clear success criteria
+    - Ready-to-use templates
 
-📊 MEASURABLE:
-   - Regular skill assessments
-   - Progress tracking
-   - Score improvements
-   - Portfolio growth
+    📊 MEASURABLE:
+    - Regular skill assessments
+    - Progress tracking
+    - Score improvements
+    - Portfolio growth
 
-💼 PROFESSIONAL:
-   - Customized application materials
-   - Multiple letter templates
-   - Networking strategies
-   - Interview preparation
+    💼 PROFESSIONAL:
+    - Customized application materials
+    - Multiple letter templates
+    - Networking strategies
+    - Interview preparation
     """)
     
     print("\n" + "="*100)
     print("                        ADVANCED FEATURES")
     print("="*100)
     print("""
-🔄 BATCH PROCESSING:
-   - Analyze multiple jobs simultaneously
-   - Compare opportunities side-by-side
-   - Prioritize based on match scores
-   - Identify common skill requirements
+    🔄 BATCH PROCESSING:
+    - Analyze multiple jobs simultaneously
+    - Compare opportunities side-by-side
+    - Prioritize based on match scores
+    - Identify common skill requirements
 
-📈 PROGRESS TRACKING:
-   - Historical skill development
-   - Before/after comparisons
-   - Learning velocity metrics
-   - Portfolio evolution
+    📈 PROGRESS TRACKING:
+    - Historical skill development
+    - Before/after comparisons
+    - Learning velocity metrics
+    - Portfolio evolution
 
-🤝 COLLABORATION:
-   - Export reports for mentors
-   - Share learning plans
-   - Team skill gap analysis
-   - Hiring manager insights
+    🤝 COLLABORATION:
+    - Export reports for mentors
+    - Share learning plans
+    - Team skill gap analysis
+    - Hiring manager insights
 
-🔍 ADVANCED ANALYTICS:
-   - Skill demand trends
-   - Learning effectiveness
-   - Time-to-proficiency estimates
-   - Career path recommendations
+    🔍 ADVANCED ANALYTICS:
+    - Skill demand trends
+    - Learning effectiveness
+    - Time-to-proficiency estimates
+    - Career path recommendations
 
-🎓 CERTIFICATION PLANNING:
-   - Identify cert requirements
-   - Study plan generation
-   - Exam preparation resources
-   - ROI analysis for certifications
+    🎓 CERTIFICATION PLANNING:
+    - Identify cert requirements
+    - Study plan generation
+    - Exam preparation resources
+    - ROI analysis for certifications
 
-💡 AI-POWERED (Future):
-   - Personalized learning paths
-   - Adaptive difficulty
-   - Smart resource recommendations
-   - Predictive success scoring
+    💡 AI-POWERED (Future):
+    - Personalized learning paths
+    - Adaptive difficulty
+    - Smart resource recommendations
+    - Predictive success scoring
     """)
     
     print("\n" + "="*100)
     print("                          SUCCESS METRICS")
     print("="*100)
     print("""
-Track your progress:
+    Track your progress:
 
-📊 Skill Score: 55% → 82% (+27%)
-📁 Portfolio Projects: 1 → 6 (+5)
-🎓 Certifications: 0 → 2 (+2)
-💼 Job Applications: 0% success → Ready to apply
-⏱️  Time to Job-Ready: 12 weeks
-📝 Tests Passed: 0 → 9 (Beginner + Intermediate + Advanced)
-🔧 Technical Skills: 8 → 18 (+10)
-📧 Applications Sent: Customized & targeted
-🤝 Network Connections: +20 relevant professionals
-🎯 Interview Success: Prepared & confident
+    📊 Skill Score: 55% → 82% (+27%)
+    📁 Portfolio Projects: 1 → 6 (+5)
+    🎓 Certifications: 0 → 2 (+2)
+    💼 Job Applications: 0% success → Ready to apply
+    ⏱️  Time to Job-Ready: 12 weeks
+    📝 Tests Passed: 0 → 9 (Beginner + Intermediate + Advanced)
+    🔧 Technical Skills: 8 → 18 (+10)
+    📧 Applications Sent: Customized & targeted
+    🤝 Network Connections: +20 relevant professionals
+    🎯 Interview Success: Prepared & confident
     """)
     
     print("\n" + "="*100)
     print("                      NEXT STEPS FOR YOU")
     print("="*100)
     print("""
-1. 📄 Prepare your CV text
-2. 🔍 Find job descriptions you're interested in
-3. 🚀 Run the analysis for each job
-4. 📊 Review match scores and gaps
-5. 📚 Get your personalized learning plan
-6. ⏰ Commit to 12-week development program
-7. 📝 Take regular skill assessments
-8. 🏗️  Build portfolio projects
-9. 🔄 Update your skillset as you learn
-10. ✉️  Use generated templates to apply
-11. 🎯 Land your dream job!
+    1. 📄 Prepare your CV text
+    2. 🔍 Find job descriptions you're interested in
+    3. 🚀 Run the analysis for each job
+    4. 📊 Review match scores and gaps
+    5. 📚 Get your personalized learning plan
+    6. ⏰ Commit to 12-week development program
+    7. 📝 Take regular skill assessments
+    8. 🏗️  Build portfolio projects
+    9. 🔄 Update your skillset as you learn
+    10. ✉️  Use generated templates to apply
+    11. 🎯 Land your dream job!
 
-Remember: Consistent daily effort beats sporadic intense study.
-Aim for 15-20 hours per week of focused learning and practice.
+    Remember: Consistent daily effort beats sporadic intense study.
+    Aim for 15-20 hours per week of focused learning and practice.
     """)
     
     print("\n" + "="*100)
