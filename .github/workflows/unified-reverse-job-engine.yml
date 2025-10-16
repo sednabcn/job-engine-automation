@@ -781,15 +781,13 @@ jobs:
       # =====================================================================
       # UPLOAD ARTIFACTS
       # =====================================================================
-      
+
       - name: 📤 Upload Progress Report
         if: always()
         uses: actions/upload-artifact@v3
         with:
           name: progress-report-${{ github.run_number }}
           path: |
-            PROGRESS_REPORT.m
-            path: |
             PROGRESS_REPORT.md
             ${{ env.DATA_DIR }}/*.json
           retention-days: 90
