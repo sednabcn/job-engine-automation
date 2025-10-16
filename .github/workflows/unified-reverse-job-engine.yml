@@ -650,11 +650,11 @@ jobs:
               for milestone in milestones:
                   print(f"\n   {milestone}")
               print("\n" + "="*80)
-          PYTHON_EOF
+        PYTHON_EOF
       
-      # =====================================================================
+      # ===================================================================
       # GENERATE SUMMARY REPORT
-      # =====================================================================
+      # ===================================================================
       
       - name: 📄 Generate Summary Report
         if: always()
@@ -776,7 +776,7 @@ jobs:
           
           print("\n✅ Summary report generated: PROGRESS_REPORT.md")
           print(report_content)
-          PYTHON_EOF
+        PYTHON_EOF
       
       # =====================================================================
       # UPLOAD ARTIFACTS

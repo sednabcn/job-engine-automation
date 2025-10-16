@@ -330,7 +330,7 @@ class ConfigValidator(Validator):
         """
         Validator.validate_not_empty(email, "Email")
         
-        pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}
+        pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}'
         if not re.match(pattern, email):
             raise ValidationError(f"Invalid email address: {email}")
     
@@ -348,7 +348,7 @@ class ConfigValidator(Validator):
         """
         Validator.validate_not_empty(url, field_name)
         
-        pattern = r'^https?://[^\s/$.?#].[^\s]*
+        pattern = r'^https?://[^\s/$.?#].[^\s]*'
         if not re.match(pattern, url, re.IGNORECASE):
             raise ValidationError(f"Invalid {field_name}: {url}")
     

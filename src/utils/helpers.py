@@ -881,6 +881,7 @@ def extract_urls(text: str, unique: bool = True) -> List[str]:
     if unique:
         return list(dict.fromkeys(urls))
     return urls
+    return urls
 
 
 # ============================================================================
