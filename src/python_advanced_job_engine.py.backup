@@ -582,16 +582,16 @@ class AdvancedJobEngine:
             if skill not in self.state["tests_passed"]:
                     self.state["tests_passed"][skill] = []
         
-                    if score >= 80:
-                        level = "advanced"
-                    elif score >= 70: 
-                        level = "intermediate"
-                    elif score >= 60:
-                        level = "beginner"
-                    else:
-                        level = "needs_improvement"
+                if score >= 80:
+                    level = "advanced"
+                elif score >= 70:
+                    level = "intermediate"
+                elif score >= 60:
+                    level = "beginner"
+                else:
+                    level = "needs_improvement"
         
-            if level not in self.state["tests_passed"][skill]:
+                if level not in self.state["tests_passed"][skill]:
                     self.state["tests_passed"][skill].append(level)
     
         # Add project
