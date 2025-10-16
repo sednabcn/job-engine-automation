@@ -8,7 +8,7 @@ import json
 import re
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Dict, List, Tuple, Optional
+from typing import Dict, List, Tuple, Optional, Any
 from collections import defaultdict
 import hashlib
 import io
@@ -149,7 +149,7 @@ class AdvancedJobEngine:
             )
         
         try:
-            doc = Document(path)
+            doc = Document(str(path))
             text = []
             
             # Extract text from paragraphs
@@ -333,6 +333,7 @@ class AdvancedJobEngine:
 
 
     def create_learning_plan(self, analysis: Dict, mode: str = "standard") -> Dict:
+    
         """
         STEP 3: Create detailed learning plan with three levels
     
@@ -348,7 +349,7 @@ class AdvancedJobEngine:
         # Set duration based on mode
         duration = "12 weeks" if mode == "standard" else "16-24 weeks"
     
-        plan = {
+        plan: Dict[str, Any] = {
             "plan_id": f"LP_{analysis['job_id']}_{datetime.now().strftime('%Y%m%d')}",
             "mode": mode,  # ADD THIS LINE
             "job_reference": {
@@ -530,55 +531,55 @@ class AdvancedJobEngine:
         print(f"   Concepts: {', '.join(concepts)}")
 
 
-        # ====================
-        # ADD NEW METHOD: end_sprint
-        # ====================
+    # ====================
+    # ADD NEW METHOD: end_sprint
+    # ====================
 
-        def end_sprint(self, project_url: str, test_scores: Dict[str, float]) -> Dict:
-            """
-            Complete current sprint and assess progress
-    
-            Args:
+    def end_sprint(self, project_url: str, test_scores: Dict[str, float]) -> Dict:
+        """
+        Complete current sprint and assess progress
+        
+        Args:
             project_url: URL to completed project (GitHub, portfolio, etc.)
             test_scores: Dictionary of {skill: score} from skill tests
     
-            Returns:
+        Returns:
             Sprint completion summary
-            """
-            if not self.sprint_history:
-                print("⚠️ No active sprint")
-                return {}
+        """
+        if not self.sprint_history:
+            print("⚠️ No active sprint")
+            return {}
     
-            current_sprint = self.sprint_history[-1]
+        current_sprint = self.sprint_history[-1]
     
-            if current_sprint.get("completed", False):
-                print("⚠️ Sprint already completed")
-                return {}
+        if current_sprint.get("completed", False):
+            print("⚠️ Sprint already completed")
+            return {}
     
-            sprint_num = current_sprint["sprint_number"]
+        sprint_num = current_sprint["sprint_number"]
     
-            print(f"\n🏁 Sprint {sprint_num} Assessment")
-            print("=" * 60)
-    
-            # Record results
-            current_sprint["completed"] = True
-            current_sprint["completion_date"] = datetime.now().isoformat()
-            current_sprint["project_url"] = project_url
-            current_sprint["test_scores"] = test_scores
-    
-            total_hours = sum(log["hours"] for log in current_sprint["daily_logs"])
-            current_sprint["total_hours"] = total_hours
-    
-            # Update mastered skills
-            newly_mastered = []
-            for skill, score in test_scores.items():
-                if score >= 60 and skill not in self.state["skills_mastered"]:
-                    self.state["skills_mastered"].append(skill)
-                    newly_mastered.append(skill)
-                    print(f"   ✅ Mastered: {skill} (Score: {score}%)")
+        print(f"\n🏁 Sprint {sprint_num} Assessment")
+        print("=" * 60)
         
-                # Track test level passed
-                if skill not in self.state["tests_passed"]:
+        # Record results
+        current_sprint["completed"] = True
+        current_sprint["completion_date"] = datetime.now().isoformat()
+        current_sprint["project_url"] = project_url
+        current_sprint["test_scores"] = test_scores
+        
+        total_hours = sum(log["hours"] for log in current_sprint["daily_logs"])
+        current_sprint["total_hours"] = total_hours
+    
+        # Update mastered skills
+        newly_mastered = []
+        for skill, score in test_scores.items():
+            if score >= 60 and skill not in self.state["skills_mastered"]:
+                self.state["skills_mastered"].append(skill)
+                newly_mastered.append(skill)
+                print(f"   ✅ Mastered: {skill} (Score: {score}%)")
+        
+            # Track test level passed
+            if skill not in self.state["tests_passed"]:
                     self.state["tests_passed"][skill] = []
         
                 if score >= 80:
@@ -593,24 +594,24 @@ class AdvancedJobEngine:
                 if level not in self.state["tests_passed"][skill]:
                     self.state["tests_passed"][skill].append(level)
     
-            # Add project
-            project_entry = {
+        # Add project
+        project_entry = {
                 "sprint": sprint_num,
                 "goal": current_sprint["project_goal"],
                 "url": project_url,
                 "skills": current_sprint["skills_targeted"],
                 "completion_date": datetime.now().isoformat()
             }
-            self.state["projects_completed"].append(project_entry)
+        self.state["projects_completed"].append(project_entry)
     
-            self._save_json(self.sprints_file, self.sprint_history)
-            self._save_json(self.state_file, self.state)
+        self._save_json(self.sprints_file, self.sprint_history)
+        self._save_json(self.state_file, self.state)
     
-            # Check quality gates
-            gates_passed = self.check_quality_gates()
+        # Check quality gates
+        gates_passed = self.check_quality_gates()
     
-            # Summary
-            summary = {
+        # Summary
+        summary = {
                 "sprint": sprint_num,
                 "total_hours": total_hours,
                 "skills_mastered": newly_mastered,
@@ -619,20 +620,20 @@ class AdvancedJobEngine:
                 "quality_gates_passed": [g for g, passed in gates_passed.items() if passed]
             }
     
-            print(f"\n📊 Sprint {sprint_num} Summary:")
-            print(f"   Total Hours: {total_hours}h")
-            print(f"   Skills Mastered: {len(self.state['skills_mastered'])}")
-            print(f"   Projects Completed: {len(self.state['projects_completed'])}")
-            print(f"   Quality Gates: {', '.join(summary['quality_gates_passed']) or 'None yet'}")
+        print(f"\n📊 Sprint {sprint_num} Summary:")
+        print(f"   Total Hours: {total_hours}h")
+        print(f"   Skills Mastered: {len(self.state['skills_mastered'])}")
+        print(f"   Projects Completed: {len(self.state['projects_completed'])}")
+        print(f"   Quality Gates: {', '.join(summary['quality_gates_passed']) or 'None yet'}")
     
-            return summary
+        return summary
 
 
-        # ====================
-        # ADD NEW METHOD: check_quality_gates
-        # ====================
+    # ====================
+    # ADD NEW METHOD: check_quality_gates
+    # ====================
 
-        def check_quality_gates(self) -> Dict[str, bool]:
+    def check_quality_gates(self) -> Dict[str, bool]:
             """
             Check which quality gates have been passed
             
@@ -688,11 +689,11 @@ class AdvancedJobEngine:
             return gates_status
 
 
-        # ====================
-        # ADD NEW METHOD: stage_positioning
-        # ====================
+    # ====================
+    # ADD NEW METHOD: stage_positioning
+    # ====================
 
-        def stage_positioning(self) -> Dict:
+    def stage_positioning(self) -> Dict:
             """
             STAGE 5: Build professional brand and visibility (before applying)
             
@@ -813,11 +814,11 @@ class AdvancedJobEngine:
             return checklist
 
 
-        # ====================
-        # ADD NEW METHOD: display_progress_dashboard
-        # ====================
+    # ====================
+    # ADD NEW METHOD: display_progress_dashboard
+    # ====================
 
-        def display_progress_dashboard(self):
+    def display_progress_dashboard(self):
             """Display comprehensive progress dashboard"""
             print("\n" + "="*80)
             print("PROGRESS DASHBOARD")
@@ -990,7 +991,7 @@ class AdvancedJobEngine:
         - Intermediate  
         - Advanced
         """
-        tests = {
+        tests: Dict[str, Any] = {
             "test_suite_id": f"TEST_{datetime.now().strftime('%Y%m%d_%H%M%S')}",
             "created_date": datetime.now().isoformat(),
             "skills_covered": skills,
@@ -1160,7 +1161,7 @@ class AdvancedJobEngine:
             "last_updated": self.master_skillset["last_updated"]
         }
     
-    def generate_recruiter_letter(self, analysis: Dict, learning_plan: Dict = None) -> Dict:
+    def generate_recruiter_letter(self, analysis: Dict, learning_plan: Optional[Dict] = None) -> Dict:
         """
         STEP 7: Generate customized recruiter letters based on analysis
         """
@@ -1287,7 +1288,7 @@ class AdvancedJobEngine:
         """
         return letter
     
-    def _generate_future_interest_letter(self, analysis: Dict, learning_plan: Dict = None) -> str:
+    def _generate_future_interest_letter(self, analysis: Dict, learning_plan: Optional[Dict] = None) -> str:
         """Generate letter expressing future interest"""
         job = analysis["job_info"]
         
@@ -1652,7 +1653,7 @@ class AdvancedJobEngine:
         
         return recs
     
-    def _get_resources(self, skill: str) -> Dict:
+    def _get_resources(self, skill: str) -> Dict[str, List[str]]:
         """Get learning resources for skill"""
         skill_lower = skill.lower()
         return self.LEARNING_RESOURCES.get(skill_lower, self.LEARNING_RESOURCES["default"])
