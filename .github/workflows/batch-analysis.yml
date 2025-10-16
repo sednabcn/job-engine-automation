@@ -127,17 +127,18 @@ jobs:
         if generate_comparison and len(results) > 1:
             print("\n📊 Generating comparison report...")
             
-            report = f"""# Batch Job Analysis Comparison Report
+            report = f"""
+            # Batch Job Analysis Comparison Report
 
-Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
-CV Analyzed: {cv_file}
-Total Jobs: {len(results)}
+            Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+            CV Analyzed: {cv_file}
+            Total Jobs: {len(results)}
+            
+            ---
 
----
+            ## Summary Ranking
 
-## Summary Ranking
-
-"""
+            """
             
             # Sort by score
             sorted_results = sorted(
