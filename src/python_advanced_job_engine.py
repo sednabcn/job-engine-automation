@@ -90,7 +90,7 @@ class AdvancedJobEngine:
             json.dump(data, f, indent=2, ensure_ascii=False)
 
 
-       def read_document(self, file_path: str) -> str:
+    def read_document(self, file_path: str) -> str:
         """
         Read document from file (supports .txt, .pdf, .docx)
         
@@ -1218,39 +1218,39 @@ class AdvancedJobEngine:
         matching_skills = []
         for category in cv['skills'].values():
             matching_skills.extend(category[:3])
-        
-        for skill in matching_skills[:5]:
-            letter += f"
-            ✓ Proficient in {skill} with hands-on project experience\n"
-        
-            letter += f"""
-            RELEVANT EXPERIENCE:
 
-            I have successfully delivered projects involving:
-            """
+
+        for skill in matching_skills[:5]:
+            letter += f"✓ Proficient in {skill} with hands-on project experience\n"
+        
+        letter += """
+        RELEVANT EXPERIENCE:
+        I have successfully delivered projects involving:
+        """
         
         for project in cv['projects'][:3]:
             letter += f"• {project}\n"
         
-            letter += f"""
-            I am particularly excited about this opportunity because it aligns perfectly with my career goals and expertise. I am immediately available and eager to contribute to {job['company']}'s success.
+        letter += f"""
+        I am particularly excited about this opportunity because it aligns perfectly with my career goals and expertise. I am immediately available and eager to contribute to {job['company']}'s success.
 
-            I would welcome the opportunity to discuss how my skills and experience can benefit your team. Thank you for considering my application.
+        I would welcome the opportunity to discuss how my skills and experience can benefit your team. Thank you for considering my application.
 
-            Best regards,
-            [Your Name]
-            [Your Phone]
-            [Your Email]
-            [Your LinkedIn]
-            
-            ---
-            ATTACHMENTS:
-            - Resume/CV
-            - Portfolio (if applicable)
-            - References (upon request)
-            """
-        return letter
-    
+        Best regards,
+        [Your Name]
+        [Your Phone]
+        [Your Email]
+        [Your LinkedIn]
+        
+        ---
+        ATTACHMENTS:
+        - Resume/CV
+        - Portfolio (if applicable)
+        - References (upon request)
+        """
+        
+        return letter    
+      
     def _generate_growth_letter(self, analysis: Dict) -> str:
         """Generate cover letter emphasizing growth potential"""
         job = analysis["job_info"]
@@ -2005,735 +2005,735 @@ Recommendation: {analysis['recommendations'][0]['action'] if analysis['recommend
         return f"✅ Exported {len(files_created)} files to {export_dir}"
 
 
- def main():
-    """Interactive CLI for Advanced Job Engine"""
-    print("\n" + "="*100)
-    print("                        ADVANCED JOB ENGINE - COMPLETE SYSTEM")
-    print("="*100)
+def main():
+        """Interactive CLI for Advanced Job Engine"""
+        print("\n" + "="*100)
+        print("                        ADVANCED JOB ENGINE - COMPLETE SYSTEM")
+        print("="*100)
     
-    engine = AdvancedJobEngine()
+        engine = AdvancedJobEngine()
     
-    # Check for required libraries
-    print("\n📚 Library Status:")
-    print(f"   PDF Support (.pdf): {'✅' if PDF_AVAILABLE else '❌ (install PyPDF2)'}")
-    print(f"   DOCX Support (.docx): {'✅' if DOCX_AVAILABLE else '❌ (install python-docx)'}")
-    print(f"   Text Support (.txt): ✅")
+        # Check for required libraries
+        print("\n📚 Library Status:")
+        print(f"   PDF Support (.pdf): {'✅' if PDF_AVAILABLE else '❌ (install PyPDF2)'}")
+        print(f"   DOCX Support (.docx): {'✅' if DOCX_AVAILABLE else '❌ (install python-docx)'}")
+        print(f"   Text Support (.txt): ✅")
     
-    if not PDF_AVAILABLE or not DOCX_AVAILABLE:
-        print("\n💡 To enable all formats, run:")
+        if not PDF_AVAILABLE or not DOCX_AVAILABLE:
+            print("\n💡 To enable all formats, run:")
         if not PDF_AVAILABLE:
             print("   pip install PyPDF2")
         if not DOCX_AVAILABLE:
             print("   pip install python-docx")
     
-    print("""
-    This system provides:
-    1. CV vs Job Analysis with Scoring (supports .txt, .pdf, .docx)
-    2. Gap Identification & Recommendations    
-    3. 3-Level Learning Plan (Study/Practice/Courses)
-    4. Strategic Improvement Plan
-    5. Multi-Level Skill Tests
-    6. Automatic Skillset Updates
-    7. Customized Recruiter Letters
+            print("""
+            This system provides:
+            1. CV vs Job Analysis with Scoring (supports .txt, .pdf, .docx)
+            2. Gap Identification & Recommendations    
+            3. 3-Level Learning Plan (Study/Practice/Courses)
+            4. Strategic Improvement Plan
+            5. Multi-Level Skill Tests
+            6. Automatic Skillset Updates
+            7. Customized Recruiter Letters
 
-    Let's get started!
-    """)
+            Let's get started!
+            """)
     
-    # Demo mode
-    print("\n[DEMO MODE]")
+            # Demo mode
+            print("\n[DEMO MODE]")
     
-    demo_cv = """
-    John Smith
-    Data Scientist
-
-    Experience: 2 years in data analysis and machine learning
-
-    Skills:
-    - Programming: Python, SQL
-    - Tools: Pandas, Scikit-learn, Git
-    - Visualization: Matplotlib, Tableau
-
-    Education: Bachelor's in Computer Science
-
-    Projects:
-    - Built a customer churn prediction model
-    - Created data dashboard for sales analytics
-    """
+            demo_cv = """
+            John Smith
+            Data Scientist
+            
+            Experience: 2 years in data analysis and machine learning
+            
+            Skills:
+            - Programming: Python, SQL
+            - Tools: Pandas, Scikit-learn, Git
+            - Visualization: Matplotlib, Tableau
+            
+            Education: Bachelor's in Computer Science
+            
+            Projects:
+            - Built a customer churn prediction model
+            - Created data dashboard for sales analytics
+            """
     
-    demo_job = """
-    Senior Machine Learning Engineer
+            demo_job = """
+            Senior Machine Learning Engineer
 
-    Company: TechCorp Inc.
+            Company: TechCorp Inc.
 
-    Requirements:
-    - 5+ years experience in ML/AI
-    - Strong Python, PyTorch, TensorFlow
-    - AWS, Docker, Kubernetes
-    - MLOps experience
-    - Master's degree preferred
+            Requirements:
+            - 5+ years experience in ML/AI
+            - Strong Python, PyTorch, TensorFlow
+            - AWS, Docker, Kubernetes
+            - MLOps experience
+            - Master's degree preferred
     
-    Skills:
-    - Deep Learning
-    - NLP
-    - Computer Vision
-    - Production ML systems
-    """
+            Skills:
+            - Deep Learning
+            - NLP
+            - Computer Vision
+            - Production ML systems
+            """
     
-    print("\n📊 Analyzing job opportunity...")
+            print("\n📊 Analyzing job opportunity...")
     
-    # Step 1-2: Analyze job
-    analysis = engine.analyze_job_complete(demo_cv, demo_job, 
+            # Step 1-2: Analyze job
+            analysis = engine.analyze_job_complete(demo_cv, demo_job, 
                                           "Senior ML Engineer", "TechCorp")
-    
-    print(f"\n✅ Match Score: {analysis['score']['total_score']}%")
-    print(f"📋 Missing {len(analysis['gaps']['missing_required_skills'])} required skills")
-    
-    # Step 3: Create learning plan
-    print("\n📚 Creating learning plan...")
-    learning_plan = engine.create_learning_plan(analysis)
-    print(f"✅ {learning_plan['estimated_duration']} plan created")
-    print(f"   - {len(learning_plan['levels']['study'])} skills to study")
-    print(f"   - {len(learning_plan['levels']['practice'])} skills to practice")
-    print(f"   - {len(learning_plan['levels']['courses'])} courses recommended")
-    
-    # Step 4: Create strategy
-    print("\n🎯 Creating improvement strategy...")
-    strategy = engine.create_improvement_strategy(analysis, learning_plan)
-    print(f"✅ {len(strategy['phases'])} phase strategy")
-    print(f"   Target: {strategy['target_score']}% match score")
-    
-    # Step 5: Generate tests
-    print("\n📝 Generating skill assessment tests...")
-    tests = engine.generate_skill_tests(analysis['gaps']['missing_required_skills'][:3])
-    print(f"✅ 3-level tests for {len(tests['skills_covered'])} skills")
-    
-    # Step 6: Update skillset (simulated)
-    print("\n🔄 Updating master skillset...")
-    new_skills = ["PyTorch", "Docker", "Kubernetes"]
-    update = engine.update_skillset(new_skills)
-    print(f"✅ Added {len(update['updated_skills'])} new skills")
-    print(f"   Total skills: {update['total_skills']}")
-    
-    # Step 7: Generate letters
-    print("\n✉️  Generating recruiter letters...")
-    letters = engine.generate_recruiter_letter(analysis, learning_plan)
-    print(f"✅ Generated {len(letters['templates'])} templates:")
-    for template_type in letters['templates'].keys():
-        print(f"   - {template_type}")
-    
-    # Export everything
-    print("\n📦 Exporting complete package...")
-    export_result = engine.export_all(analysis['job_id'])
-    print(export_result)
-    
-    # Generate and display complete report
-    print("\n" + "="*100)
-    print("COMPLETE REPORT")
-    print("="*100)
-    
-    report = engine.generate_complete_report(analysis, learning_plan, strategy, tests, letters)
-    print(report)
-    
-    print("\n✅ Demo completed successfully!")
-
-      # Demonstrate reverse workflow
-    print("\n" + "="*100)
-    print("REVERSE WORKFLOW DEMONSTRATION")
-    print("="*100)
-    print("""
-    The Reverse Workflow is an alternative approach focused on deep mastery before applying.
-
-    PHILOSOPHY: Master skills FIRST, apply LAST
-
-    Instead of:
-    Analyze → Study 12 weeks → Apply
-
-    You do:
-    Analyze → Sprint 1 (2 weeks) → Sprint 2 (2 weeks) → ... → Quality Gates → Apply
-
-    BENEFITS:
-    ✓ Deeper skill mastery through iteration
-    ✓ Real projects every 2 weeks
-    ✓ Regular testing and validation
-    ✓ Quality gates ensure readiness
-    ✓ Stronger portfolio before applying
-    """)
-    
-    print("\nStarting demo sprint...")
-    sprint = engine.start_sprint(
-        skills=["PyTorch", "Docker"],
-        project_goal="Build and deploy ML model with Docker container"
-    )
-    
-    print("\nSimulating daily learning logs...")
-    engine.log_daily(3.5, ["PyTorch tensors", "Neural network basics"], "Completed PyTorch tutorial")
-    engine.log_daily(4.0, ["Docker basics", "Containerization"], "Built first Docker image")
-    engine.log_daily(3.0, ["Training models", "Model persistence"], "Trained first PyTorch model")
-    
-    print("\nEnding sprint with assessment...")
-    result = engine.end_sprint(
-        project_url="https://github.com/user/pytorch-docker-ml",
-        test_scores={"PyTorch": 68, "Docker": 72}
-    )
-    
-    print(f"\n✅ Sprint completed! Results:")
-    print(f"   Skills mastered: {len(result.get('skills_mastered', []))}")
-    print(f"   Quality gates: {', '.join(result.get('quality_gates_passed', [])) or 'None yet'}")
-    
-    # Show progress dashboard
-    print("\nCurrent Progress:")
-    engine.display_progress_dashboard()
-    
-    print("\n" + "="*100)
-    print("                              SYSTEM FEATURES SUMMARY")
-    print("="*100)
-    print("""
-✅ STEP 1-2: CV vs Job Analysis
-   - Comprehensive skill matching
-   - Experience and education scoring
-   - Weighted scoring system (35% required skills, 20% experience, etc.)
-   - Overall match percentage
-
-✅ STEP 3: Three-Level Learning Plan
-   A) TO STUDY: New content to learn from scratch
-      - Detailed learning paths
-      - Prerequisites identification
-      - Resource recommendations
-   
-   B) TO PRACTICE: Existing skills to strengthen
-      - Practice activities
-      - Coding challenges
-      - Real-world applications
-   
-   C) COURSES: Structured learning programs
-      - Top-rated courses (Coursera, Udemy, etc.)
-      - Certification options
-      - Time estimates
-
-✅ STEP 4: Strategic Improvement Plan
-   - 12-week structured program
-   - 3 phases: Foundation → Development → Mastery
-   - Weekly schedules and milestones
-   - Expected score improvements
-   - Progress tracking system
-
-✅ STEP 5: Multi-Level Skill Tests
-   - Beginner Level: 10 questions, 60% pass
-   - Intermediate Level: 15 questions, 70% pass
-   - Advanced Level: 20 questions, 80% pass
-   - Question templates for each skill
-   - Assessment criteria and scoring
-
-✅ STEP 6: Automatic Skillset Updates
-   - Master skillset database
-   - Automatic categorization
-   - Skills tracking over time
-   - Portfolio building
-
-✅ STEP 7: Recruiter Letter Templates
-   - Customized cover letters (3 types based on match score)
-   - LinkedIn connection messages
-   - Follow-up email templates
-   - Networking email templates
-   - All tailored to job description
-
-📁 ALL DATA SAVED:
-   - job_search_data/master_skillset.json
-   - job_search_data/learning_progress.json
-   - job_search_data/analyzed_jobs.json
-   - job_search_data/skill_tests.json
-   - job_search_data/export_[job_id]/ (complete package)
-    """)
-    
-    print("\n" + "="*100)
-    print("                                HOW TO USE")
-    print("="*100)
-    print("""
-    INTERACTIVE MODE:
-
-    from advanced_job_engine import AdvancedJobEngine
-
-    # Initialize
-    engine = AdvancedJobEngine()
-
-    # METHOD 1: Analyze from files (PDF, DOCX, TXT)
-    analysis = engine.analyze_from_files(
-    cv_file="my_cv.pdf",
-    job_file="job_description.docx",
-    job_title="Senior ML Engineer",
-    company="TechCorp"
-    )
-
-    # METHOD 2: Analyze from text
-    analysis = engine.analyze_job_complete(cv_text, job_text, "Job Title", "Company")
-
-    # Step 3: Create learning plan
-    learning_plan = engine.create_learning_plan(analysis)
-    
-    # Step 4: Create improvement strategy
-    strategy = engine.create_improvement_strategy(analysis, learning_plan)
-
-    # Step 5: Generate tests
-    tests = engine.generate_skill_tests(missing_skills_list)
-
-    # Step 6: Update skillset after learning
-    engine.update_skillset(["PyTorch", "Docker", "AWS"], category="technical")
-
-    # Step 7: Generate recruiter letters
-    letters = engine.generate_recruiter_letter(analysis, learning_plan)
-
-    # Export everything
-    engine.export_all(analysis['job_id'])
-
-    # Generate complete report
-    report = engine.generate_complete_report(analysis, learning_plan, strategy, tests, letters)
-    print(report)
-
-    FILE FORMAT SUPPORT:
-    ==================
-    ✅ .txt  - Plain text files
-    ✅ .pdf  - PDF documents (requires: pip install PyPDF2)
-    ✅ .docx - Microsoft Word documents (requires: pip install python-docx)
-
-    INSTALLATION:
-    ============
-    # Install all dependencies
-    pip install PyPDF2 python-docx
-
-    # Or install individually
-    pip install PyPDF2        # For PDF support
-    pip install python-docx   # For DOCX support
-
-    EXAMPLES:
-    ========
-    # Analyze CV and job from PDF files
-    analysis = engine.analyze_from_files("cv.pdf", "job.pdf")
-    
-    # Mix formats
-    analysis = engine.analyze_from_files("cv.docx", "job.txt")
-    
-    # Read single document
-    cv_text = engine.read_document("my_cv.pdf")
-    job_text = engine.read_document("job_desc.docx")
-
-    # Generate complete report
-    report = engine.generate_complete_report(analysis, learning_plan, strategy, tests, letters)
-    print(report)
-    """)
-    
-    print("\n" + "="*100)
-    print("                         CUSTOMIZATION OPTIONS")
-    print("="*100)
-    print("""
-    1. ADJUST SCORING WEIGHTS:
-    engine.WEIGHTS = {
-       "required_skills": 0.40,  # Increase importance
-       "experience": 0.25,
-       # ... adjust as needed
-    }
-
-    2. ADD CUSTOM LEARNING RESOURCES:
-    engine.LEARNING_RESOURCES["your_skill"] = {
-    "study": ["Resource 1", "Resource 2"],
-    "practice": ["Practice 1", "Practice 2"],
-    "courses": ["Course 1", "Course 2"]
-    }
-
-    3. CUSTOMIZE TEST DIFFICULTY:
-    engine.TEST_LEVELS["expert"] = {
-    "questions": 25,
-    "pass_score": 90
-    }
-
-    4. MODIFY TIMELINE:
-    - Edit strategy timeline (default: 12 weeks)
-    - Adjust phase durations
-    - Customize milestone schedule
-    """)
-    
-    print("\n" + "="*100)
-    print("                            WORKFLOW EXAMPLE")
-    print("="*100)
-    print("""
-    SCENARIO: Applying for Senior ML Engineer Role
-
-    Week 0 (Planning):
-    1. Run job analysis → Get 55% match score
-    2. Review gap analysis → Missing: PyTorch, Docker, Kubernetes, AWS
-    3. Get learning plan → 12-week structured program
-    4. Review improvement strategy → 3 phases to reach 80% match
-
-    Weeks 1-4 (Foundation):
-    5. Study PyTorch fundamentals
-    6. Complete Docker tutorials
-    7. Build 3 mini-projects
-    8. Take beginner-level tests → Pass with 70%
-    9. Update skillset → Add "PyTorch (beginner)"
-
-    Weeks 5-8 (Development):
-    10. Advanced PyTorch course
-    11. Kubernetes hands-on practice
-    12. Build 2 portfolio projects
-    13. Take intermediate tests → Pass with 75%
-    14. Update skillset → Upgrade to "intermediate"
-
-    Weeks 9-12 (Mastery):
-    15. Build advanced ML project with full MLOps
-    16. Deploy on AWS with Docker/K8s
-    17. Take advanced tests → Pass with 85%
-    18. Update skillset → Add all new skills
-    19. Run job analysis again → Now 82% match!
-    20. Generate recruiter letters
-    21. Apply to job with confidence
-
-    Week 13+ (Application):
-    22. Submit application with cover letter
-    23. Connect on LinkedIn with hiring manager
-    24. Send networking emails to team members
-    25. Follow up after 1 week
-    26. Interview preparation using test questions
-    27. Land the job! 🎉
-    """)
-
-    print("\n" + "="*100)
-    print("REVERSE WORKFLOW EXAMPLE (DETAILED)")
-    print("="*100)
-    print("""
-    GOAL: Senior ML Engineer role requiring PyTorch, Docker, Kubernetes, AWS
-
-    PHASE 1: FOUNDATION (Weeks 1-4, 2 sprints)
-    ─────────────────────────────────────────
-    Sprint 1 (PyTorch fundamentals):
-    ├─ Day 1-7: Study PyTorch basics, tensors, autograd
-    ├─ Day 8-14: Build image classifier project
-    ├─ Test: PyTorch beginner (65% pass)
-    └─ Result: 1 project, PyTorch skill mastered
-  
-    Sprint 2 (Docker fundamentals):
-    ├─ Day 1-7: Docker basics, containers, images
-    ├─ Day 8-14: Containerize PyTorch project
-    ├─ Test: Docker beginner (70% pass)
-    └─ Result: 2 projects, Docker skill mastered
-  
-    ✅ Quality Gate: FOUNDATION (2 projects, 65% score)
-
-    PHASE 2: SKILL BUILDING (Weeks 5-12, 4 sprints)
-    ─────────────────────────────────────────────
-    Sprint 3 (Advanced PyTorch + Kubernetes intro):
-    ├─ Build complex neural network architecture
-    ├─ Deploy on Kubernetes cluster locally
-    ├─ Tests: PyTorch intermediate (75%), K8s beginner (62%)
-    └─ Result: 3 projects
-  
-    Sprint 4 (AWS basics + MLOps):
-    ├─ Deploy model on AWS with Docker
-    ├─ Set up CI/CD pipeline
-    ├─ Tests: AWS beginner (68%), DevOps concepts (70%)
-    └─ Result: 4 projects
-  
-    Sprint 5 (Integration project):
-    ├─ End-to-end ML pipeline: PyTorch → Docker → K8s → AWS
-    ├─ Monitoring and logging
-    ├─ Tests: PyTorch advanced (82%), Docker intermediate (78%)
-    └─ Result: 5 projects
-    
-    Sprint 6 (Production ML):
-    ├─ Build production-grade ML system
-    ├─ Scalability, reliability, monitoring
-    ├─ Tests: All intermediate+ levels (75-85%)
-    └─ Result: 6 projects
-  
-    ✅ Quality Gate: COMPETENCY (4 projects, 80% score)
-
-    PHASE 3: MASTERY (Weeks 13-16, 2 sprints)
-    ──────────────────────────────────────────
-    Sprint 7 (Advanced architecture):
-    ├─ Complex system design with all technologies
-    ├─ Performance optimization
-    ├─ Tests: Advanced levels (85%+)
-    └─ Result: 7 projects
-  
-    Sprint 8 (Capstone project):
-    ├─ Industry-grade project showcasing all skills
-    ├─ Documentation, testing, deployment
-    ├─ Tests: All advanced levels (85-90%)
-    └─ Result: 8 projects, comprehensive portfolio
-  
-    ✅ Quality Gate: MASTERY (5+ projects, 90% score)
-
-    PHASE 4: POSITIONING (Weeks 17-20)
-    ───────────────────────────────────
-    No sprints - focus on branding:
-    ├─ Polish LinkedIn with all projects
-    ├─ Organize GitHub portfolio professionally
-    ├─ Write 3-5 technical blog posts
-    ├─ Build personal website
-    ├─ Network with 20+ professionals
-    └─ Request informational interviews
-  
-    ✅ Quality Gate: APPLICATION READY (brand + network ready)
-
-    PHASE 5: APPLICATION (Week 21+)
-    ────────────────────────────────
-    ├─ Re-analyze target jobs (now 90%+ match!)
-    ├─ Generate customized application materials
-    ├─ Apply to 10-15 target positions
-    ├─ Follow up professionally
-    ├─ Ace interviews with project portfolio
-    └─ Land the job! 🎉
-
-    TOTAL TIMELINE: 20-24 weeks
-    RESULT: Deep mastery, strong portfolio, confident applications
-    """)
-    
-    print("\n" + "="*100)
-    print("                          KEY BENEFITS")
-    print("="*100)
-    print("""
-    ✨ STRATEGIC:
-    - Data-driven job targeting
-    - Clear skill gap identification
-    - Measurable progress tracking
-    - ROI-focused learning
-
-    📚 COMPREHENSIVE:
-    - End-to-end learning plan
-    - Multiple learning modalities
-    - Real-world practice emphasis
-    - Portfolio building integrated
-
-    ⚡ EFFICIENT:
-    - Focused on job requirements
-    - Prioritized skill development
-    - Time-boxed learning phases
-    - Quick wins + long-term growth
-
-    🎯 ACTIONABLE:
-    - Specific action items
-    - Weekly schedules
-    - Clear success criteria
-    - Ready-to-use templates
-
-    📊 MEASURABLE:
-    - Regular skill assessments
-    - Progress tracking
-    - Score improvements
-    - Portfolio growth
-
-    💼 PROFESSIONAL:
-    - Customized application materials
-    - Multiple letter templates
-    - Networking strategies
-    - Interview preparation
-    """)
-    
-    print("\n" + "="*100)
-    print("                        ADVANCED FEATURES")
-    print("="*100)
-    print("""
-    🔄 BATCH PROCESSING:
-    - Analyze multiple jobs simultaneously
-    - Compare opportunities side-by-side
-    - Prioritize based on match scores
-    - Identify common skill requirements
-
-    📈 PROGRESS TRACKING:
-    - Historical skill development
-    - Before/after comparisons
-    - Learning velocity metrics
-    - Portfolio evolution
-
-    🤝 COLLABORATION:
-    - Export reports for mentors
-    - Share learning plans
-    - Team skill gap analysis
-    - Hiring manager insights
-
-    🔍 ADVANCED ANALYTICS:
-    - Skill demand trends
-    - Learning effectiveness
-    - Time-to-proficiency estimates
-    - Career path recommendations
-
-    🎓 CERTIFICATION PLANNING:
-    - Identify cert requirements
-    - Study plan generation
-    - Exam preparation resources
-    - ROI analysis for certifications
-
-    💡 AI-POWERED (Future):
-    - Personalized learning paths
-    - Adaptive difficulty
-    - Smart resource recommendations
-    - Predictive success scoring
-    """)
-    
-    print("\n" + "="*100)
-    print("                          SUCCESS METRICS")
-    print("="*100)
-    print("""
-    Track your progress:
-
-    📊 Skill Score: 55% → 82% (+27%)
-    📁 Portfolio Projects: 1 → 6 (+5)
-    🎓 Certifications: 0 → 2 (+2)
-    💼 Job Applications: 0% success → Ready to apply
-    ⏱️  Time to Job-Ready: 12 weeks
-    📝 Tests Passed: 0 → 9 (Beginner + Intermediate + Advanced)
-    🔧 Technical Skills: 8 → 18 (+10)
-    📧 Applications Sent: Customized & targeted
-    🤝 Network Connections: +20 relevant professionals
-    🎯 Interview Success: Prepared & confident
-    """)
-    
-    print("\n" + "="*100)
-    print("                      NEXT STEPS FOR YOU")
-    print("="*100)
-    print("""
-    1. 📄 Prepare your CV text
-    2. 🔍 Find job descriptions you're interested in
-    3. 🚀 Run the analysis for each job
-    4. 📊 Review match scores and gaps
-    5. 📚 Get your personalized learning plan
-    6. ⏰ Commit to 12-week development program
-    7. 📝 Take regular skill assessments
-    8. 🏗️  Build portfolio projects
-    9. 🔄 Update your skillset as you learn
-    10. ✉️  Use generated templates to apply
-    11. 🎯 Land your dream job!
-
-    Remember: Consistent daily effort beats sporadic intense study.
-    Aim for 15-20 hours per week of focused learning and practice.
-    """)
-    
-    print("\n" + "="*100)
-    print("Ready to transform your career? Let's go! 🚀")
-    print("="*100 + "\n")
-
-    # Interactive options
-    print("\nWould you like to:")
-    print("1. Analyze from text input")
-    print("2. Analyze from files (.txt, .pdf, .docx)")
-    print("3. View detailed demo report")
-    print("4. Export demo results")
-    print("5. Exit")
-    
-    choice = input("\nEnter choice (1-5): ").strip()
-    
-    if choice == "1":
-        print("\n--- Analyze Your CV and Job (Text Input) ---")     
-        print("\nPaste your CV (press Ctrl+D or Ctrl+Z on new line when done):")
-        cv_lines = []
-        try:
-            while True:
-                line = input()
-                cv_lines.append(line)
-        except EOFError:
-            pass
-        user_cv = "\n".join(cv_lines)
-        
-        print("\nPaste job description (press Ctrl+D or Ctrl+Z on new line when done):")
-        job_lines = []
-        try:
-            while True:
-                line = input()
-                job_lines.append(line)
-        except EOFError:
-            pass
-        user_job = "\n".join(job_lines)
-        
-        job_title = input("\nJob title: ")
-        company = input("Company name: ")
-        
-        print("\n⏳ Analyzing... This may take a moment...")
-        
-        # Run complete analysis
-        analysis = engine.analyze_job_complete(user_cv, user_job, job_title, company)
-        learning_plan = engine.create_learning_plan(analysis)
-        strategy = engine.create_improvement_strategy(analysis, learning_plan)
-        tests = engine.generate_skill_tests(analysis['gaps']['missing_required_skills'][:5])
-        letters = engine.generate_recruiter_letter(analysis, learning_plan)
-        
-        report = engine.generate_complete_report(analysis, learning_plan, strategy, tests, letters)
-        print("\n" + report)
-        
-        save = input("\nSave complete package? (y/n): ")
-        if save.lower() == 'y':
-            result = engine.export_all(analysis['job_id'])
-            print(result)
-    
-    elif choice == "2":
-        
-        print("\n--- Analyze from Files ---")
-        print("\nSupported formats: .txt, .pdf, .docx")
-        
-        cv_file = input("\nPath to your CV file: ").strip().strip('"\'')
-        job_file = input("Path to job description file: ").strip().strip('"\'')
-        
-        # Validate files exist
-        if not Path(cv_file).exists():
-            print(f"\n❌ Error: CV file not found: {cv_file}")
-            return
-        if not Path(job_file).exists():
-            print(f"\n❌ Error: Job file not found: {job_file}")
-            return
-        
-        job_title = input("Job title (optional): ").strip()
-        company = input("Company name (optional): ").strip()
-        
-        print("\n⏳ Processing files...")
-        
-        try:
-            # Run analysis from files
-            analysis = engine.analyze_from_files(cv_file, job_file, job_title, company)
             
-            print(f"\n✅ Analysis complete!")
-            print(f"   Match Score: {analysis['score']['total_score']}%")
-            print(f"   Missing Skills: {len(analysis['gaps']['missing_required_skills'])}")
-            
-            # Create learning plan and other materials
-            print("\n📚 Creating comprehensive plan...")
+            print(f"\n✅ Match Score: {analysis['score']['total_score']}%")
+            print(f"📋 Missing {len(analysis['gaps']['missing_required_skills'])} required skills")
+    
+            # Step 3: Create learning plan
+            print("\n📚 Creating learning plan...")
             learning_plan = engine.create_learning_plan(analysis)
+            print(f"✅ {learning_plan['estimated_duration']} plan created")
+            print(f"   - {len(learning_plan['levels']['study'])} skills to study")
+            print(f"   - {len(learning_plan['levels']['practice'])} skills to practice")
+            print(f"   - {len(learning_plan['levels']['courses'])} courses recommended")
+    
+            # Step 4: Create strategy
+            print("\n🎯 Creating improvement strategy...")
             strategy = engine.create_improvement_strategy(analysis, learning_plan)
-            tests = engine.generate_skill_tests(analysis['gaps']['missing_required_skills'][:5])
+            print(f"✅ {len(strategy['phases'])} phase strategy")
+            print(f"   Target: {strategy['target_score']}% match score")
+            
+            # Step 5: Generate tests
+            print("\n📝 Generating skill assessment tests...")
+            tests = engine.generate_skill_tests(analysis['gaps']['missing_required_skills'][:3])
+            print(f"✅ 3-level tests for {len(tests['skills_covered'])} skills")
+    
+            # Step 6: Update skillset (simulated)
+            print("\n🔄 Updating master skillset...")
+            new_skills = ["PyTorch", "Docker", "Kubernetes"]
+            update = engine.update_skillset(new_skills)
+            print(f"✅ Added {len(update['updated_skills'])} new skills")
+            print(f"   Total skills: {update['total_skills']}")
+            
+            # Step 7: Generate letters
+            print("\n✉️  Generating recruiter letters...")
             letters = engine.generate_recruiter_letter(analysis, learning_plan)
-            
-            # Generate report
-            report = engine.generate_complete_report(analysis, learning_plan, strategy, tests, letters)
-            print("\n" + report)
-            
-            save = input("\nSave complete package? (y/n): ")
-            if save.lower() == 'y':
-                result = engine.export_all(analysis['job_id'])
-                print(result)
-                print("\n📂 Files saved to: job_search_data/export_" + analysis['job_id'])
-                
-        except Exception as e:
-            print(f"\n❌ Error: {str(e)}")
-            import traceback
-            traceback.print_exc()
-
-    elif choice == "3":
+            print(f"✅ Generated {len(letters['templates'])} templates:")
+            for template_type in letters['templates'].keys():
+                print(f"   - {template_type}")
         
-        print("\n" + report)
+            # Export everything
+            print("\n📦 Exporting complete package...")
+            export_result = engine.export_all(analysis['job_id'])
+            print(export_result)
     
-    elif choice == "4":
-        result = engine.export_all(analysis['job_id'])
-        print("\n" + result)
-        print("\n✅ All files exported successfully!")
-        print("\nGenerated files:")
-        print("  - complete_report.txt")
-        print("  - learning_plan.json")
-        print("  - improvement_strategy.json")
-        print("  - skill_tests.json")
-        print("  - cover_letter.txt")
-        print("  - linkedin_message.txt")
-        print("  - followup_email.txt")
-        print("  - networking_email.txt")
+            # Generate and display complete report
+            print("\n" + "="*100)
+            print("COMPLETE REPORT")
+            print("="*100)
     
-    else:
-        print("\n👋 Thank you for using Advanced Job Engine!")
-        print("Good luck with your job search and skill development! 🚀\n")
+            report = engine.generate_complete_report(analysis, learning_plan, strategy, tests, letters)
+            print(report)
+    
+            print("\n✅ Demo completed successfully!")
+
+            # Demonstrate reverse workflow
+            print("\n" + "="*100)
+            print("REVERSE WORKFLOW DEMONSTRATION")
+            print("="*100)
+            print("""
+            The Reverse Workflow is an alternative approach focused on deep mastery before applying.
+
+            PHILOSOPHY: Master skills FIRST, apply LAST
+
+            Instead of:
+            Analyze → Study 12 weeks → Apply
+            
+            You do:
+            Analyze → Sprint 1 (2 weeks) → Sprint 2 (2 weeks) → ... → Quality Gates → Apply
+
+            BENEFITS:
+            ✓ Deeper skill mastery through iteration
+            ✓ Real projects every 2 weeks
+            ✓ Regular testing and validation
+            ✓ Quality gates ensure readiness
+            ✓ Stronger portfolio before applying
+            """)
+    
+            print("\nStarting demo sprint...")
+            sprint = engine.start_sprint(
+                skills=["PyTorch", "Docker"],
+                project_goal="Build and deploy ML model with Docker container"
+            )
+    
+            print("\nSimulating daily learning logs...")
+            engine.log_daily(3.5, ["PyTorch tensors", "Neural network basics"], "Completed PyTorch tutorial")
+            engine.log_daily(4.0, ["Docker basics", "Containerization"], "Built first Docker image")
+            engine.log_daily(3.0, ["Training models", "Model persistence"], "Trained first PyTorch model")
+    
+            print("\nEnding sprint with assessment...")
+            result = engine.end_sprint(
+                project_url="https://github.com/user/pytorch-docker-ml",
+                test_scores={"PyTorch": 68, "Docker": 72}
+            )
+            
+            print(f"\n✅ Sprint completed! Results:")
+            print(f"   Skills mastered: {len(result.get('skills_mastered', []))}")
+            print(f"   Quality gates: {', '.join(result.get('quality_gates_passed', [])) or 'None yet'}")
+            
+            # Show progress dashboard
+            print("\nCurrent Progress:")
+            engine.display_progress_dashboard()
+            
+            print("\n" + "="*100)
+            print("                              SYSTEM FEATURES SUMMARY")
+            print("="*100)
+            print("""
+            ✅ STEP 1-2: CV vs Job Analysis
+            - Comprehensive skill matching
+            - Experience and education scoring
+            - Weighted scoring system (35% required skills, 20% experience, etc.)
+            - Overall match percentage
+
+            ✅ STEP 3: Three-Level Learning Plan
+            A) TO STUDY: New content to learn from scratch
+            - Detailed learning paths
+            - Prerequisites identification
+            - Resource recommendations
+   
+            B) TO PRACTICE: Existing skills to strengthen
+            - Practice activities
+            - Coding challenges
+            - Real-world applications
+   
+            C) COURSES: Structured learning programs
+            - Top-rated courses (Coursera, Udemy, etc.)
+            - Certification options
+            - Time estimates
+
+            ✅ STEP 4: Strategic Improvement Plan
+            - 12-week structured program
+            - 3 phases: Foundation → Development → Mastery
+            - Weekly schedules and milestones
+            - Expected score improvements
+            - Progress tracking system
+
+            ✅ STEP 5: Multi-Level Skill Tests
+            - Beginner Level: 10 questions, 60% pass
+            - Intermediate Level: 15 questions, 70% pass
+            - Advanced Level: 20 questions, 80% pass
+            - Question templates for each skill
+            - Assessment criteria and scoring
+
+            ✅ STEP 6: Automatic Skillset Updates
+            - Master skillset database
+            - Automatic categorization
+            - Skills tracking over time
+            - Portfolio building
+
+            ✅ STEP 7: Recruiter Letter Templates
+            - Customized cover letters (3 types based on match score)
+            - LinkedIn connection messages
+            - Follow-up email templates
+            - Networking email templates
+            - All tailored to job description
+
+            📁 ALL DATA SAVED:
+            - job_search_data/master_skillset.json
+            - job_search_data/learning_progress.json
+            - job_search_data/analyzed_jobs.json
+            - job_search_data/skill_tests.json
+            - job_search_data/export_[job_id]/ (complete package)
+            """)
+    
+            print("\n" + "="*100)
+            print("                                HOW TO USE")
+            print("="*100)
+            print("""
+            INTERACTIVE MODE:
+
+            from advanced_job_engine import AdvancedJobEngine
+            
+            # Initialize
+            engine = AdvancedJobEngine()
+
+            # METHOD 1: Analyze from files (PDF, DOCX, TXT)
+            analysis = engine.analyze_from_files(
+            cv_file="my_cv.pdf",
+            job_file="job_description.docx",
+            job_title="Senior ML Engineer",
+            company="TechCorp"
+            )
+
+            # METHOD 2: Analyze from text
+            analysis = engine.analyze_job_complete(cv_text, job_text, "Job Title", "Company")
+            
+            # Step 3: Create learning plan
+            learning_plan = engine.create_learning_plan(analysis)
+    
+            # Step 4: Create improvement strategy
+            strategy = engine.create_improvement_strategy(analysis, learning_plan)
+
+            # Step 5: Generate tests
+            tests = engine.generate_skill_tests(missing_skills_list)
+
+            # Step 6: Update skillset after learning
+            engine.update_skillset(["PyTorch", "Docker", "AWS"], category="technical")
+
+            # Step 7: Generate recruiter letters
+            letters = engine.generate_recruiter_letter(analysis, learning_plan)
+
+            # Export everything
+            engine.export_all(analysis['job_id'])
+
+            # Generate complete report
+            report = engine.generate_complete_report(analysis, learning_plan, strategy, tests, letters)
+            print(report)
+            
+            FILE FORMAT SUPPORT:
+            ==================
+            ✅ .txt  - Plain text files
+            ✅ .pdf  - PDF documents (requires: pip install PyPDF2)
+            ✅ .docx - Microsoft Word documents (requires: pip install python-docx)
+
+            INSTALLATION:
+            ============
+            # Install all dependencies
+            pip install PyPDF2 python-docx
+
+            # Or install individually
+            pip install PyPDF2        # For PDF support
+            pip install python-docx   # For DOCX support
+
+            EXAMPLES:
+            ========
+            # Analyze CV and job from PDF files
+            analysis = engine.analyze_from_files("cv.pdf", "job.pdf")
+            
+            # Mix formats
+            analysis = engine.analyze_from_files("cv.docx", "job.txt")
+    
+            # Read single document
+            cv_text = engine.read_document("my_cv.pdf")
+            job_text = engine.read_document("job_desc.docx")
+
+            # Generate complete report
+            report = engine.generate_complete_report(analysis, learning_plan, strategy, tests, letters)
+            print(report)
+            """)
+    
+            print("\n" + "="*100)
+            print("                         CUSTOMIZATION OPTIONS")
+            print("="*100)
+            print("""
+            1. ADJUST SCORING WEIGHTS:
+            engine.WEIGHTS = {
+            "required_skills": 0.40,  # Increase importance
+            "experience": 0.25,
+            # ... adjust as needed
+            }
+
+            2. ADD CUSTOM LEARNING RESOURCES:
+            engine.LEARNING_RESOURCES["your_skill"] = {
+            "study": ["Resource 1", "Resource 2"],
+            "practice": ["Practice 1", "Practice 2"],
+            "courses": ["Course 1", "Course 2"]
+            }
+
+            3. CUSTOMIZE TEST DIFFICULTY:
+            engine.TEST_LEVELS["expert"] = {
+            "questions": 25,
+            "pass_score": 90
+            }
+
+            4. MODIFY TIMELINE:
+            - Edit strategy timeline (default: 12 weeks)
+            - Adjust phase durations
+            - Customize milestone schedule
+            """)
+            
+            print("\n" + "="*100)
+            print("                            WORKFLOW EXAMPLE")
+            print("="*100)
+            print("""
+            SCENARIO: Applying for Senior ML Engineer Role
+
+            Week 0 (Planning):
+            1. Run job analysis → Get 55% match score
+            2. Review gap analysis → Missing: PyTorch, Docker, Kubernetes, AWS
+            3. Get learning plan → 12-week structured program
+            4. Review improvement strategy → 3 phases to reach 80% match
+
+            Weeks 1-4 (Foundation):
+            5. Study PyTorch fundamentals
+            6. Complete Docker tutorials
+            7. Build 3 mini-projects
+            8. Take beginner-level tests → Pass with 70%
+            9. Update skillset → Add "PyTorch (beginner)"
+
+            Weeks 5-8 (Development):
+            10. Advanced PyTorch course
+            11. Kubernetes hands-on practice
+            12. Build 2 portfolio projects
+            13. Take intermediate tests → Pass with 75%
+            14. Update skillset → Upgrade to "intermediate"
+
+            Weeks 9-12 (Mastery):
+            15. Build advanced ML project with full MLOps
+            16. Deploy on AWS with Docker/K8s
+            17. Take advanced tests → Pass with 85%
+            18. Update skillset → Add all new skills
+            19. Run job analysis again → Now 82% match!
+            20. Generate recruiter letters
+            21. Apply to job with confidence
+
+            Week 13+ (Application):
+            22. Submit application with cover letter
+            23. Connect on LinkedIn with hiring manager
+            24. Send networking emails to team members
+            25. Follow up after 1 week
+            26. Interview preparation using test questions
+            27. Land the job! 🎉
+            """)
+
+            print("\n" + "="*100)
+            print("REVERSE WORKFLOW EXAMPLE (DETAILED)")
+            print("="*100)
+            print("""
+            GOAL: Senior ML Engineer role requiring PyTorch, Docker, Kubernetes, AWS
+
+            PHASE 1: FOUNDATION (Weeks 1-4, 2 sprints)
+            ─────────────────────────────────────────
+            Sprint 1 (PyTorch fundamentals):
+            ├─ Day 1-7: Study PyTorch basics, tensors, autograd
+            ├─ Day 8-14: Build image classifier project
+            ├─ Test: PyTorch beginner (65% pass)
+            └─ Result: 1 project, PyTorch skill mastered
+            
+            Sprint 2 (Docker fundamentals):
+            ├─ Day 1-7: Docker basics, containers, images
+            ├─ Day 8-14: Containerize PyTorch project
+            ├─ Test: Docker beginner (70% pass)
+            └─ Result: 2 projects, Docker skill mastered
+  
+            ✅ Quality Gate: FOUNDATION (2 projects, 65% score)
+
+            PHASE 2: SKILL BUILDING (Weeks 5-12, 4 sprints)
+            ─────────────────────────────────────────────
+            Sprint 3 (Advanced PyTorch + Kubernetes intro):
+            ├─ Build complex neural network architecture
+            ├─ Deploy on Kubernetes cluster locally
+            ├─ Tests: PyTorch intermediate (75%), K8s beginner (62%)
+            └─ Result: 3 projects
+  
+            Sprint 4 (AWS basics + MLOps):
+            ├─ Deploy model on AWS with Docker
+            ├─ Set up CI/CD pipeline
+            ├─ Tests: AWS beginner (68%), DevOps concepts (70%)
+            └─ Result: 4 projects
+  
+            Sprint 5 (Integration project):
+            ├─ End-to-end ML pipeline: PyTorch → Docker → K8s → AWS
+            ├─ Monitoring and logging
+            ├─ Tests: PyTorch advanced (82%), Docker intermediate (78%)
+            └─ Result: 5 projects
+    
+            Sprint 6 (Production ML):
+            ├─ Build production-grade ML system
+            ├─ Scalability, reliability, monitoring
+            ├─ Tests: All intermediate+ levels (75-85%)
+            └─ Result: 6 projects
+  
+            ✅ Quality Gate: COMPETENCY (4 projects, 80% score)
+
+            PHASE 3: MASTERY (Weeks 13-16, 2 sprints)
+            ──────────────────────────────────────────
+            Sprint 7 (Advanced architecture):
+            ├─ Complex system design with all technologies
+            ├─ Performance optimization
+            ├─ Tests: Advanced levels (85%+)
+            └─ Result: 7 projects
+  
+            Sprint 8 (Capstone project):
+            ├─ Industry-grade project showcasing all skills
+            ├─ Documentation, testing, deployment
+            ├─ Tests: All advanced levels (85-90%)
+            └─ Result: 8 projects, comprehensive portfolio
+            
+            ✅ Quality Gate: MASTERY (5+ projects, 90% score)
+
+            PHASE 4: POSITIONING (Weeks 17-20)
+            ───────────────────────────────────
+            No sprints - focus on branding:
+            ├─ Polish LinkedIn with all projects
+            ├─ Organize GitHub portfolio professionally
+            ├─ Write 3-5 technical blog posts
+            ├─ Build personal website
+            ├─ Network with 20+ professionals
+            └─ Request informational interviews
+  
+            ✅ Quality Gate: APPLICATION READY (brand + network ready)
+
+            PHASE 5: APPLICATION (Week 21+)
+            ────────────────────────────────
+            ├─ Re-analyze target jobs (now 90%+ match!)
+            ├─ Generate customized application materials
+            ├─ Apply to 10-15 target positions
+            ├─ Follow up professionally
+            ├─ Ace interviews with project portfolio
+            └─ Land the job! 🎉
+
+            TOTAL TIMELINE: 20-24 weeks
+            RESULT: Deep mastery, strong portfolio, confident applications
+            """)
+    
+            print("\n" + "="*100)
+            print("                          KEY BENEFITS")
+            print("="*100)
+            print("""
+            ✨ STRATEGIC:
+            - Data-driven job targeting
+            - Clear skill gap identification
+            - Measurable progress tracking
+            - ROI-focused learning
+
+            📚 COMPREHENSIVE:
+            - End-to-end learning plan
+            - Multiple learning modalities
+            - Real-world practice emphasis
+            - Portfolio building integrated
+            
+            ⚡ EFFICIENT:
+            - Focused on job requirements
+            - Prioritized skill development
+            - Time-boxed learning phases
+            - Quick wins + long-term growth
+
+            🎯 ACTIONABLE:
+            - Specific action items
+            - Weekly schedules
+            - Clear success criteria
+            - Ready-to-use templates
+            
+            📊 MEASURABLE:
+            - Regular skill assessments
+            - Progress tracking
+            - Score improvements
+            - Portfolio growth
+
+            💼 PROFESSIONAL:
+            - Customized application materials
+            - Multiple letter templates
+            - Networking strategies
+            - Interview preparation
+            """)
+    
+            print("\n" + "="*100)
+            print("                        ADVANCED FEATURES")
+            print("="*100)
+            print("""
+            🔄 BATCH PROCESSING:
+            - Analyze multiple jobs simultaneously
+            - Compare opportunities side-by-side
+            - Prioritize based on match scores
+            - Identify common skill requirements
+
+            📈 PROGRESS TRACKING:
+            - Historical skill development
+            - Before/after comparisons
+            - Learning velocity metrics
+            - Portfolio evolution
+            
+            🤝 COLLABORATION:
+            - Export reports for mentors
+            - Share learning plans
+            - Team skill gap analysis
+            - Hiring manager insights
+
+            🔍 ADVANCED ANALYTICS:
+            - Skill demand trends
+            - Learning effectiveness
+            - Time-to-proficiency estimates
+            - Career path recommendations
+
+            🎓 CERTIFICATION PLANNING:
+            - Identify cert requirements
+            - Study plan generation
+            - Exam preparation resources
+            - ROI analysis for certifications
+
+            💡 AI-POWERED (Future):
+            - Personalized learning paths
+            - Adaptive difficulty
+            - Smart resource recommendations
+            - Predictive success scoring
+            """)
+    
+            print("\n" + "="*100)
+            print("                          SUCCESS METRICS")
+            print("="*100)
+            print("""
+            Track your progress:
+
+            📊 Skill Score: 55% → 82% (+27%)
+            📁 Portfolio Projects: 1 → 6 (+5)
+            🎓 Certifications: 0 → 2 (+2)
+            💼 Job Applications: 0% success → Ready to apply
+            ⏱️  Time to Job-Ready: 12 weeks
+            📝 Tests Passed: 0 → 9 (Beginner + Intermediate + Advanced)
+            🔧 Technical Skills: 8 → 18 (+10)
+            📧 Applications Sent: Customized & targeted
+            🤝 Network Connections: +20 relevant professionals
+            🎯 Interview Success: Prepared & confident
+            """)
+    
+            print("\n" + "="*100)
+            print("                      NEXT STEPS FOR YOU")
+            print("="*100)
+            print("""
+            1. 📄 Prepare your CV text
+            2. 🔍 Find job descriptions you're interested in
+            3. 🚀 Run the analysis for each job
+            4. 📊 Review match scores and gaps
+            5. 📚 Get your personalized learning plan
+            6. ⏰ Commit to 12-week development program
+            7. 📝 Take regular skill assessments
+            8. 🏗️  Build portfolio projects
+            9. 🔄 Update your skillset as you learn
+            10. ✉️  Use generated templates to apply
+            11. 🎯 Land your dream job!
+
+            Remember: Consistent daily effort beats sporadic intense study.
+            Aim for 15-20 hours per week of focused learning and practice.
+            """)
+    
+            print("\n" + "="*100)
+            print("Ready to transform your career? Let's go! 🚀")
+            print("="*100 + "\n")
+
+            # Interactive options
+            print("\nWould you like to:")
+            print("1. Analyze from text input")
+            print("2. Analyze from files (.txt, .pdf, .docx)")
+            print("3. View detailed demo report")
+            print("4. Export demo results")
+            print("5. Exit")
+    
+            choice = input("\nEnter choice (1-5): ").strip()
+    
+            if choice == "1":
+                print("\n--- Analyze Your CV and Job (Text Input) ---")     
+                print("\nPaste your CV (press Ctrl+D or Ctrl+Z on new line when done):")
+                cv_lines = []
+                try:
+                    while True:
+                        line = input()
+                        cv_lines.append(line)
+                except EOFError:
+                    pass
+                user_cv = "\n".join(cv_lines)
+        
+                print("\nPaste job description (press Ctrl+D or Ctrl+Z on new line when done):")
+                job_lines = []
+                try:
+                    while True:
+                        line = input()
+                        job_lines.append(line)
+                except EOFError:
+                    pass
+                user_job = "\n".join(job_lines)
+        
+                job_title = input("\nJob title: ")
+                company = input("Company name: ")
+        
+                print("\n⏳ Analyzing... This may take a moment...")
+        
+                # Run complete analysis
+                analysis = engine.analyze_job_complete(user_cv, user_job, job_title, company)
+                learning_plan = engine.create_learning_plan(analysis)
+                strategy = engine.create_improvement_strategy(analysis, learning_plan)
+                tests = engine.generate_skill_tests(analysis['gaps']['missing_required_skills'][:5])
+                letters = engine.generate_recruiter_letter(analysis, learning_plan)
+        
+                report = engine.generate_complete_report(analysis, learning_plan, strategy, tests, letters)
+                print("\n" + report)
+        
+                save = input("\nSave complete package? (y/n): ")
+                if save.lower() == 'y':
+                    result = engine.export_all(analysis['job_id'])
+                    print(result)
+    
+            elif choice == "2":
+        
+                print("\n--- Analyze from Files ---")
+                print("\nSupported formats: .txt, .pdf, .docx")
+        
+                cv_file = input("\nPath to your CV file: ").strip().strip('"\'')
+                job_file = input("Path to job description file: ").strip().strip('"\'')
+                
+                # Validate files exist
+                if not Path(cv_file).exists():
+                    print(f"\n❌ Error: CV file not found: {cv_file}")
+                    return
+                if not Path(job_file).exists():
+                    print(f"\n❌ Error: Job file not found: {job_file}")
+                    return
+        
+                job_title = input("Job title (optional): ").strip()
+                company = input("Company name (optional): ").strip()
+        
+                print("\n⏳ Processing files...")
+        
+                try:
+                    # Run analysis from files
+                    analysis = engine.analyze_from_files(cv_file, job_file, job_title, company)
+                    
+                    print(f"\n✅ Analysis complete!")
+                    print(f"   Match Score: {analysis['score']['total_score']}%")
+                    print(f"   Missing Skills: {len(analysis['gaps']['missing_required_skills'])}")
+                    
+                    # Create learning plan and other materials
+                    print("\n📚 Creating comprehensive plan...")
+                    learning_plan = engine.create_learning_plan(analysis)
+                    strategy = engine.create_improvement_strategy(analysis, learning_plan)
+                    tests = engine.generate_skill_tests(analysis['gaps']['missing_required_skills'][:5])
+                    letters = engine.generate_recruiter_letter(analysis, learning_plan)
+            
+                    # Generate report
+                    report = engine.generate_complete_report(analysis, learning_plan, strategy, tests, letters)
+                    print("\n" + report)
+                    
+                    save = input("\nSave complete package? (y/n): ")
+                    if save.lower() == 'y':
+                        result = engine.export_all(analysis['job_id'])
+                        print(result)
+                        print("\n📂 Files saved to: job_search_data/export_" + analysis['job_id'])
+                
+                except Exception as e:
+                    print(f"\n❌ Error: {str(e)}")
+                    import traceback
+                    traceback.print_exc()
+
+            elif choice == "3":
+        
+                print("\n" + report)
+    
+            elif choice == "4":
+                result = engine.export_all(analysis['job_id'])
+                print("\n" + result)
+                print("\n✅ All files exported successfully!")
+                print("\nGenerated files:")
+                print("  - complete_report.txt")
+                print("  - learning_plan.json")
+                print("  - improvement_strategy.json")
+                print("  - skill_tests.json")
+                print("  - cover_letter.txt")
+                print("  - linkedin_message.txt")
+                print("  - followup_email.txt")
+                print("  - networking_email.txt")
+    
+            else:
+                print("\n👋 Thank you for using Advanced Job Engine!")
+                print("Good luck with your job search and skill development! 🚀\n")
 
 
 if __name__ == "__main__":
