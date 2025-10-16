@@ -1196,7 +1196,7 @@ def is_valid_email(email: str) -> bool:
     Returns:
         True if valid
     """
-    pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}
+    pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}'
     return bool(re.match(pattern, email))
 
 
@@ -1210,7 +1210,7 @@ def is_valid_url(url: str) -> bool:
     Returns:
         True if valid
     """
-    pattern = r'^https?://(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&/=]*)
+    pattern = r'^https?://(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&/=]*)'
     return bool(re.match(pattern, url))
 
 
