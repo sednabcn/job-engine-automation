@@ -226,7 +226,7 @@ jobs:
         cat output/summary.txt >> $GITHUB_STEP_SUMMARY
 
     - name: Send email notification
-      if: ${{ github.event.inputs.send_notification == 'true' && secrets.NOTIFICATION_EMAIL != '' }}
+      if: ${{ github.event.inputs.send_notification == 'true' }}
       uses: dawidd6/action-send-mail@v3
       with:
         server_address: smtp.gmail.com
