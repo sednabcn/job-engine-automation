@@ -148,10 +148,11 @@ jobs:
         # Create complete report
         report = f"""# Job Match Analysis Report
 
-## Match Score: {analysis['score']['total_score']}%
+        ## Match Score:
+        {analysis['score']['total_score']}%
 
-### Score Breakdown
-"""
+        ### Score Breakdown
+        """
         for category, score in analysis['score']['breakdown'].items():
             report += f"- {category.replace('_', ' ').title()}: {score}%\n"
         
@@ -172,24 +173,24 @@ jobs:
         # Create summary
         summary = f"""ANALYSIS SUMMARY
 
-Job ID: {job_id}
-Match Score: {analysis['score']['total_score']}%
-Status: {'✅ STRONG CANDIDATE' if analysis['score']['total_score'] >= 75 else '⚠️ NEEDS IMPROVEMENT'}
+        Job ID: {job_id}
+        Match Score: {analysis['score']['total_score']}%
+        Status: {'✅ STRONG CANDIDATE' if analysis['score']['total_score'] >= 75 else '⚠️ NEEDS IMPROVEMENT'}
 
-Action: {'Apply now!' if analysis['score']['total_score'] >= 75 else f"Improve for {12 if analysis['score']['total_score'] < 60 else 4}-{24 if analysis['score']['total_score'] < 60 else 8} weeks"}
+        Action: {'Apply now!' if analysis['score']['total_score'] >= 75 else f"Improve for {12 if analysis['score']['total_score'] < 60 else 4}-{24 if analysis['score']['total_score'] < 60 else 8} weeks"}
 
-Files generated:
-- complete_report.md
-- match_score.json
-- gap_analysis.json
-- learning_plan.json
-- improvement_strategy.md
-{f"- cover_letter.txt" if generate_materials else ""}
-{f"- linkedin_message.txt" if generate_materials else ""}
-{f"- followup_email.txt" if generate_materials else ""}
-{f"- networking_email.txt" if generate_materials else ""}
-- skill_tests.json
-"""
+        Files generated:
+          - complete_report.md
+          - match_score.json
+          - gap_analysis.json
+          - learning_plan.json
+          - improvement_strategy.md
+          {f"- cover_letter.txt" if generate_materials else ""}
+          {f"- linkedin_message.txt" if generate_materials else ""}
+          {f"- followup_email.txt" if generate_materials else ""}
+          {f"- networking_email.txt" if generate_materials else ""}
+          - skill_tests.json
+        """
         
         with open('output/summary.txt', 'w') as f:
             f.write(summary)
