@@ -72,7 +72,7 @@ class CVParser:
         """Extract email address from CV text."""
         email_pattern = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
         matches = re.findall(email_pattern, text)
-        return matches[0] if matches else None
+        return str(matches[0]) if matches else None
 
     def _extract_phone(self, text: str) -> Optional[str]:
         """Extract phone number from CV text."""
@@ -85,7 +85,7 @@ class CVParser:
         for pattern in phone_patterns:
             matches = re.findall(pattern, text)
             if matches:
-                return matches[0]
+                return str(matches[0])
         
         return None
 
@@ -93,13 +93,13 @@ class CVParser:
         """Extract LinkedIn profile URL from CV text."""
         linkedin_pattern = r'(?:https?://)?(?:www\.)?linkedin\.com/in/[\w-]+'
         matches = re.findall(linkedin_pattern, text, re.IGNORECASE)
-        return matches[0] if matches else None
+        return str(matches[0]) if matches else None
 
     def _extract_github(self, text: str) -> Optional[str]:
         """Extract GitHub profile URL from CV text."""
         github_pattern = r'(?:https?://)?(?:www\.)?github\.com/[\w-]+'
         matches = re.findall(github_pattern, text, re.IGNORECASE)
-        return matches[0] if matches else None
+        return str(matches[0]) if matches else None
 
     def _extract_skills(self, text: str) -> List[str]:
         """Extract technical skills from CV text."""
