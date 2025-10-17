@@ -1,32 +1,32 @@
 """
 conftest.py - Pytest configuration and shared fixtures
 """
-# ===============================================
-# This conftest.py provides:
 
-# 1.Path Fixtures - Access to project directories
-# 2.File Fixtures - Easy access to sample files
-# 3.Temporary Directory Fixtures - Clean test environments
-# 4.Mock Data Fixtures - Pre-configured test data
-# 5.Environment Fixtures - Control environment variables
-# 6.File Creation Helpers - Create test files on the fly
-# 7.Pytest Configuration - Custom markers and auto-marking
-# 8.Session Cleanup - Automatic cleanup after tests
-
-# You can now use these fixtures in any test file by simply adding them as function parameters!RetryClaude does not have the ability to run the code it generates yet.
-# ======================================================
-import os
 import json
-import pytest
-import tempfile
+import os
 import shutil
+import tempfile
 from pathlib import Path
-from typing import Dict, Any
+from typing import Any, Dict
 
+import pytest
+
+# ======================================================
+# Fixtures Overview
+# ======================================================
+# 1. Path Fixtures - Access to project directories
+# 2. File Fixtures - Easy access to sample files
+# 3. Temporary Directory Fixtures - Clean test environments
+# 4. Mock Data Fixtures - Pre-configured test data
+# 5. Environment Fixtures - Control environment variables
+# 6. File Creation Helpers - Create test files on the fly
+# 7. Pytest Configuration - Custom markers and auto-marking
+# 8. Session Cleanup - Automatic cleanup after tests
 
 # ============================================================================
 # PATH FIXTURES
 # ============================================================================
+
 
 @pytest.fixture(scope="session")
 def project_root() -> Path:
@@ -56,6 +56,7 @@ def templates_dir(project_root) -> Path:
 # FILE FIXTURES
 # ============================================================================
 
+
 @pytest.fixture(scope="session")
 def sample_cv_path(fixtures_dir) -> Path:
     """Return path to sample CV file."""
@@ -77,21 +78,21 @@ def sample_data_path(fixtures_dir) -> Path:
 @pytest.fixture
 def sample_cv_text(sample_cv_path) -> str:
     """Load and return sample CV text content."""
-    with open(sample_cv_path, 'r', encoding='utf-8') as f:
+    with open(sample_cv_path, "r", encoding="utf-8") as f:
         return f.read()
 
 
 @pytest.fixture
 def sample_job_text(sample_job_path) -> str:
     """Load and return sample job description text content."""
-    with open(sample_job_path, 'r', encoding='utf-8') as f:
+    with open(sample_job_path, "r", encoding="utf-8") as f:
         return f.read()
 
 
 @pytest.fixture
 def sample_data_json(sample_data_path) -> Dict[str, Any]:
     """Load and return sample data as dictionary."""
-    with open(sample_data_path, 'r', encoding='utf-8') as f:
+    with open(sample_data_path, "r", encoding="utf-8") as f:
         return json.load(f)
 
 
@@ -99,17 +100,17 @@ def sample_data_json(sample_data_path) -> Dict[str, Any]:
 # TEMPORARY DIRECTORY FIXTURES
 # ============================================================================
 
+
 @pytest.fixture
-def temp_dir():
+def temp_dir() -> Path:
     """Create a temporary directory for test files."""
     temp_path = tempfile.mkdtemp()
     yield Path(temp_path)
-    # Cleanup after test
     shutil.rmtree(temp_path)
 
 
 @pytest.fixture
-def temp_data_dir(temp_dir):
+def temp_data_dir(temp_dir) -> Path:
     """Create a temporary data directory structure."""
     data_path = temp_dir / "job_search_data"
     data_path.mkdir(exist_ok=True)
@@ -117,7 +118,7 @@ def temp_data_dir(temp_dir):
 
 
 @pytest.fixture
-def temp_output_dir(temp_dir):
+def temp_output_dir(temp_dir) -> Path:
     """Create a temporary output directory."""
     output_path = temp_dir / "output"
     output_path.mkdir(exist_ok=True)
@@ -127,6 +128,7 @@ def temp_output_dir(temp_dir):
 # ============================================================================
 # MOCK DATA FIXTURES
 # ============================================================================
+
 
 @pytest.fixture
 def mock_cv_data() -> Dict[str, Any]:
@@ -141,7 +143,7 @@ def mock_cv_data() -> Dict[str, Any]:
             "programming_languages": ["Python", "JavaScript", "TypeScript", "Java", "SQL"],
             "frameworks": ["Django", "Flask", "React", "Node.js", "Express"],
             "databases": ["PostgreSQL", "MongoDB", "Redis", "MySQL"],
-            "cloud_devops": ["AWS", "Docker", "Kubernetes", "CI/CD", "GitHub Actions"]
+            "cloud_devops": ["AWS", "Docker", "Kubernetes", "CI/CD", "GitHub Actions"],
         },
         "experience": [
             {
@@ -153,8 +155,8 @@ def mock_cv_data() -> Dict[str, Any]:
                 "responsibilities": [
                     "Led development of microservices architecture",
                     "Designed and implemented RESTful APIs",
-                    "Mentored team of 4 junior developers"
-                ]
+                    "Mentored team of 4 junior developers",
+                ],
             }
         ],
         "education": [
@@ -162,13 +164,13 @@ def mock_cv_data() -> Dict[str, Any]:
                 "degree": "Bachelor of Science in Computer Science",
                 "institution": "University of California, Berkeley",
                 "graduation_year": "2017",
-                "gpa": "3.7/4.0"
+                "gpa": "3.7/4.0",
             }
         ],
         "certifications": [
             "AWS Certified Solutions Architect - Associate",
-            "Professional Scrum Master I (PSM I)"
-        ]
+            "Professional Scrum Master I (PSM I)",
+        ],
     }
 
 
@@ -182,25 +184,45 @@ def mock_job_data() -> Dict[str, Any]:
         "employment_type": "Full-time",
         "salary_range": "$140,000 - $180,000",
         "required_skills": [
-            "Python", "JavaScript", "React", "PostgreSQL", "MongoDB",
-            "Redis", "AWS", "Docker", "Git", "CI/CD", "Microservices",
-            "RESTful API", "Data Structures", "Algorithms"
+            "Python",
+            "JavaScript",
+            "React",
+            "PostgreSQL",
+            "MongoDB",
+            "Redis",
+            "AWS",
+            "Docker",
+            "Git",
+            "CI/CD",
+            "Microservices",
+            "RESTful API",
+            "Data Structures",
+            "Algorithms",
         ],
         "preferred_skills": [
-            "TypeScript", "GraphQL", "Kubernetes", "Event-driven architecture",
-            "RabbitMQ", "Kafka", "Jest", "Pytest", "Selenium", "OWASP",
-            "Fintech experience", "Open source contributions"
+            "TypeScript",
+            "GraphQL",
+            "Kubernetes",
+            "Event-driven architecture",
+            "RabbitMQ",
+            "Kafka",
+            "Jest",
+            "Pytest",
+            "Selenium",
+            "OWASP",
+            "Fintech experience",
+            "Open source contributions",
         ],
         "responsibilities": [
             "Design, develop, and maintain scalable full-stack applications",
             "Write clean, maintainable, and well-tested code",
             "Participate in architectural decisions",
-            "Mentor junior team members"
+            "Mentor junior team members",
         ],
         "requirements": {
             "years_experience": 5,
-            "education": "Bachelor's degree in Computer Science or related field"
-        }
+            "education": "Bachelor's degree in Computer Science or related field",
+        },
     }
 
 
@@ -212,27 +234,22 @@ def mock_skillset() -> Dict[str, Any]:
             "programming_languages": [
                 {"name": "Python", "proficiency": "expert", "years": 5},
                 {"name": "JavaScript", "proficiency": "advanced", "years": 5},
-                {"name": "TypeScript", "proficiency": "intermediate", "years": 2}
+                {"name": "TypeScript", "proficiency": "intermediate", "years": 2},
             ],
             "frameworks": [
                 {"name": "Django", "proficiency": "expert", "years": 4},
-                {"name": "React", "proficiency": "advanced", "years": 4}
+                {"name": "React", "proficiency": "advanced", "years": 4},
             ],
             "databases": [
                 {"name": "PostgreSQL", "proficiency": "advanced", "years": 4},
-                {"name": "MongoDB", "proficiency": "intermediate", "years": 3}
+                {"name": "MongoDB", "proficiency": "intermediate", "years": 3},
             ],
             "cloud_devops": [
                 {"name": "AWS", "proficiency": "advanced", "years": 3},
-                {"name": "Docker", "proficiency": "advanced", "years": 3}
-            ]
+                {"name": "Docker", "proficiency": "advanced", "years": 3},
+            ],
         },
-        "soft_skills": [
-            "Team Leadership",
-            "Technical Documentation",
-            "Code Review",
-            "Mentoring"
-        ]
+        "soft_skills": ["Team Leadership", "Technical Documentation", "Code Review", "Mentoring"],
     }
 
 
@@ -246,22 +263,12 @@ def mock_match_result() -> Dict[str, Any]:
         "required_skills_total": 20,
         "preferred_skills_matched": 6,
         "preferred_skills_total": 12,
-        "skill_gaps": [
-            "GraphQL",
-            "Event-driven architecture",
-            "Kafka"
-        ],
-        "strong_matches": [
-            "Python",
-            "JavaScript",
-            "React",
-            "PostgreSQL",
-            "AWS"
-        ],
+        "skill_gaps": ["GraphQL", "Event-driven architecture", "Kafka"],
+        "strong_matches": ["Python", "JavaScript", "React", "PostgreSQL", "AWS"],
         "recommendations": [
             "Learn GraphQL to improve match score",
-            "Gain experience with message queues"
-        ]
+            "Gain experience with message queues",
+        ],
     }
 
 
@@ -274,10 +281,7 @@ def mock_learning_plan() -> Dict[str, Any]:
                 "skill": "GraphQL",
                 "priority": "high",
                 "estimated_hours": 20,
-                "resources": [
-                    "GraphQL official tutorial",
-                    "How to GraphQL course"
-                ]
+                "resources": ["GraphQL official tutorial", "How to GraphQL course"],
             },
             {
                 "skill": "Kubernetes",
@@ -285,24 +289,24 @@ def mock_learning_plan() -> Dict[str, Any]:
                 "estimated_hours": 30,
                 "resources": [
                     "Kubernetes official documentation",
-                    "Kubernetes for Developers course"
-                ]
-            }
+                    "Kubernetes for Developers course",
+                ],
+            },
         ],
         "sprint_plan": {
             "sprint_1": {
                 "duration_weeks": 2,
                 "goals": ["Learn GraphQL basics", "Build sample project"],
-                "skills": ["GraphQL"]
+                "skills": ["GraphQL"],
             },
             "sprint_2": {
                 "duration_weeks": 2,
                 "goals": ["Complete Kubernetes fundamentals"],
-                "skills": ["Kubernetes"]
-            }
+                "skills": ["Kubernetes"],
+            },
         },
         "total_estimated_hours": 50,
-        "estimated_weeks": 4
+        "estimated_weeks": 4,
     }
 
 
@@ -313,16 +317,10 @@ def mock_sprint_data() -> Dict[str, Any]:
         "sprint_number": 1,
         "start_date": "2024-10-01",
         "end_date": "2024-10-15",
-        "goals": [
-            "Learn GraphQL basics",
-            "Complete Kubernetes fundamentals"
-        ],
+        "goals": ["Learn GraphQL basics", "Complete Kubernetes fundamentals"],
         "skills": ["GraphQL", "Kubernetes"],
-        "progress": {
-            "GraphQL": 35,
-            "Kubernetes": 15
-        },
-        "status": "in_progress"
+        "progress": {"GraphQL": 35, "Kubernetes": 15},
+        "status": "in_progress",
     }
 
 
@@ -330,13 +328,14 @@ def mock_sprint_data() -> Dict[str, Any]:
 # ENVIRONMENT FIXTURES
 # ============================================================================
 
+
 @pytest.fixture
 def mock_env_vars(monkeypatch):
     """Set mock environment variables."""
     test_env = {
         "JOB_ENGINE_DEBUG": "true",
         "JOB_ENGINE_OUTPUT_DIR": "/tmp/test_output",
-        "JOB_ENGINE_DATA_DIR": "/tmp/test_data"
+        "JOB_ENGINE_DATA_DIR": "/tmp/test_data",
     }
     for key, value in test_env.items():
         monkeypatch.setenv(key, value)
@@ -355,20 +354,22 @@ def clean_env(monkeypatch):
 # FILE CREATION HELPERS
 # ============================================================================
 
+
 @pytest.fixture
 def create_test_file():
     """Factory fixture to create test files."""
+
     created_files = []
-    
+
     def _create_file(path: Path, content: str):
         path.parent.mkdir(parents=True, exist_ok=True)
-        with open(path, 'w', encoding='utf-8') as f:
+        with open(path, "w", encoding="utf-8") as f:
             f.write(content)
         created_files.append(path)
         return path
-    
+
     yield _create_file
-    
+
     # Cleanup
     for file_path in created_files:
         if file_path.exists():
@@ -378,17 +379,18 @@ def create_test_file():
 @pytest.fixture
 def create_test_json():
     """Factory fixture to create test JSON files."""
+
     created_files = []
-    
+
     def _create_json(path: Path, data: Dict[str, Any]):
         path.parent.mkdir(parents=True, exist_ok=True)
-        with open(path, 'w', encoding='utf-8') as f:
+        with open(path, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=2)
         created_files.append(path)
         return path
-    
+
     yield _create_json
-    
+
     # Cleanup
     for file_path in created_files:
         if file_path.exists():
@@ -399,20 +401,13 @@ def create_test_json():
 # PYTEST CONFIGURATION
 # ============================================================================
 
+
 def pytest_configure(config):
     """Pytest configuration hook."""
-    config.addinivalue_line(
-        "markers", "unit: mark test as a unit test"
-    )
-    config.addinivalue_line(
-        "markers", "integration: mark test as an integration test"
-    )
-    config.addinivalue_line(
-        "markers", "slow: mark test as slow running"
-    )
-    config.addinivalue_line(
-        "markers", "requires_files: mark test as requiring external files"
-    )
+    config.addinivalue_line("markers", "unit: mark test as a unit test")
+    config.addinivalue_line("markers", "integration: mark test as an integration test")
+    config.addinivalue_line("markers", "slow: mark test as slow running")
+    config.addinivalue_line("markers", "requires_files: mark test as requiring external files")
 
 
 def pytest_collection_modifyitems(config, items):
@@ -429,16 +424,12 @@ def pytest_collection_modifyitems(config, items):
 # SESSION CLEANUP
 # ============================================================================
 
+
 @pytest.fixture(scope="session", autouse=True)
 def cleanup_test_artifacts():
     """Clean up any test artifacts after test session."""
     yield
-    # Cleanup code here if needed
-    # For example, remove temporary test directories
-    test_dirs = [
-        Path("/tmp/test_output"),
-        Path("/tmp/test_data")
-    ]
+    test_dirs = [Path("/tmp/test_output"), Path("/tmp/test_data")]
     for test_dir in test_dirs:
         if test_dir.exists():
             shutil.rmtree(test_dir, ignore_errors=True)

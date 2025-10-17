@@ -21,11 +21,15 @@ jobs:
       
       - name: Install dependencies
         run: |
-          pip install black flake8 mypy
+          pip install black isort autoflake flake8 mypy
       
       - name: Check formatting with black
         run: |
           black --check src/ tests/ examples/
+
+      - name: Check formatting with isort
+        run: |
+          isort --check src/ tests/ examples/
       
       - name: Lint with flake8
         run: |

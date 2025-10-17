@@ -6,10 +6,10 @@ This setup.py is maintained for backwards compatibility.
 Modern installations should use pyproject.toml.
 """
 
-import os
 import sys
 from pathlib import Path
-from setuptools import setup, find_packages
+
+from setuptools import find_packages, setup
 
 # Ensure minimum Python version
 if sys.version_info < (3, 8):
@@ -18,6 +18,7 @@ if sys.version_info < (3, 8):
 # Read the long description from README
 here = Path(__file__).parent.resolve()
 long_description = (here / "README.md").read_text(encoding="utf-8")
+
 
 # Read version from a version file or module
 def get_version():
@@ -29,6 +30,7 @@ def get_version():
                 if line.startswith("__version__"):
                     return line.split("=")[1].strip().strip('"').strip("'")
     return "1.0.0"
+
 
 # Core dependencies
 INSTALL_REQUIRES = [
@@ -90,11 +92,9 @@ setup(
     description="Advanced Job Engine for CV analysis, skill gap identification, and career development planning",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    
     # Author information
     author="Your Name",
     author_email="your.email@example.com",
-    
     # URLs
     url="https://github.com/yourusername/advanced-job-engine",
     project_urls={
@@ -103,22 +103,18 @@ setup(
         "Source Code": "https://github.com/yourusername/advanced-job-engine",
         "Changelog": "https://github.com/yourusername/advanced-job-engine/blob/main/CHANGELOG.md",
     },
-    
     # Package discovery
     packages=find_packages(exclude=["tests", "tests.*", "docs", "examples"]),
     package_dir={"": "."},
-    
     # Include additional files
     package_data={
         "": ["*.txt", "*.md", "*.json", "*.yaml", "*.yml"],
     },
     include_package_data=True,
-    
     # Dependencies
     python_requires=">=3.8",
     install_requires=INSTALL_REQUIRES,
     extras_require=EXTRAS_REQUIRE,
-    
     # Entry points for command-line scripts
     entry_points={
         "console_scripts": [
@@ -127,7 +123,6 @@ setup(
             "job-export=src.python_advanced_job_engine:export_results",
         ],
     },
-    
     # Package classification
     classifiers=[
         "Development Status :: 4 - Beta",
@@ -145,7 +140,6 @@ setup(
         "Operating System :: OS Independent",
         "Natural Language :: English",
     ],
-    
     # Keywords for PyPI
     keywords=[
         "job-search",
@@ -158,10 +152,8 @@ setup(
         "resume",
         "recruitment",
     ],
-    
     # License
     license="MIT",
-    
     # Zip safe
     zip_safe=False,
 )
