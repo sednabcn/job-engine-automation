@@ -4,16 +4,15 @@ Computes match percentages and highlights aligned or missing terms.
 """
 
 import logging
-from typing import Dict, List
+from typing import Dict, List, Union
 
 logger = logging.getLogger(__name__)
-
 
 class Matcher:
     """Matches CV and job description content based on keyword overlap."""
 
     @staticmethod
-    def compute_match(cv_content: str, job_content: str) -> Dict[str, float | List[str]]:
+    def compute_match(cv_content: str, job_content: str) -> Dict[str, Union[float, List[str]]]:
         """Compute similarity score and matched keywords between CV and job description.
 
         Args:
