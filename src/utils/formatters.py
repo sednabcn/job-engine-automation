@@ -187,7 +187,7 @@ class SkillFormatter:
             return output + "No skills found.\n"
 
         # Group by level
-        by_level = {}
+        by_level: Dict[str, List[Dict[str, Any]]] = {}
         for skill_name, skill_data in skills.items():
             level = skill_data.get("level", "unknown")
             if level not in by_level:
@@ -336,8 +336,8 @@ class LearningPlanFormatter:
 
         # Group items by priority
         items = plan.get("items", [])
-        by_priority = {"high": [], "medium": [], "low": []}
-
+        by_priority: Dict[str, List[Dict[str, Any]]] = {"high": [], "medium": [], "low": []}
+       
         for item in items:
             priority = item.get("priority", "medium")
             by_priority[priority].append(item)

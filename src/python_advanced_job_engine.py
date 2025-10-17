@@ -2277,11 +2277,12 @@ Skills:
         report = engine.generate_complete_report(analysis, learning_plan, strategy, tests, letters)
         print("\n" + report)
 
+
         save = input("\nSave complete package? (y/n): ")
         if save.lower() == "y":
-            result = engine.export_all(analysis["job_id"])
-            print(result)
-
+            export_result = engine.export_all(analysis["job_id"])
+            print(export_result)
+    
     elif choice == "2":
         print("\n--- Analyze from Files ---")
         print("\nSupported formats: .txt, .pdf, .docx")
@@ -2321,8 +2322,8 @@ Skills:
 
             save = input("\nSave complete package? (y/n): ")
             if save.lower() == "y":
-                result = engine.export_all(analysis["job_id"])
-                print(result)
+                export_result = engine.export_all(analysis["job_id"])
+                print(export_result)
                 print("\n📂 Files saved to: job_search_data/export_" + analysis["job_id"])
 
         except Exception as e:
@@ -2333,8 +2334,8 @@ Skills:
         print("\n" + report)
 
     elif choice == "4":
-        result = engine.export_all(analysis["job_id"])
-        print("\n" + result)
+        export_result = engine.export_all(analysis["job_id"])
+        print("\n" + export_result)
 
     else:
         print("\n👋 Thank you for using Advanced Job Engine!")
