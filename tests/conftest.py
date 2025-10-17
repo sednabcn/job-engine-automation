@@ -114,24 +114,24 @@ def sample_match_analysis():
                 "skill": "React",
                 "importance": "High",
                 "current_level": None,
-                "required_level": "Intermediate"
+                "required_level": "Intermediate",
             },
             {
                 "skill": "TypeScript",
                 "importance": "Medium",
                 "current_level": None,
-                "required_level": "Basic"
-            }
+                "required_level": "Basic",
+            },
         ],
         "experience_match": True,
         "education_match": True,
         "summary": "Good match with some skill gaps",
         "recommendations": [
             "Learn React for frontend development",
-            "Study TypeScript for type-safe JavaScript"
+            "Study TypeScript for type-safe JavaScript",
         ],
         "strengths": ["Strong backend skills", "Relevant experience"],
-        "weaknesses": ["Limited frontend experience"]
+        "weaknesses": ["Limited frontend experience"],
     }
 
 
@@ -377,6 +377,7 @@ def cv_parser():
     """Create CV Parser instance."""
     try:
         from src.analyzers.cv_parser import CVParser
+
         return CVParser()
     except ImportError:
         pytest.skip("CVParser not available")
@@ -387,6 +388,7 @@ def job_parser():
     """Create Job Parser instance."""
     try:
         from src.analyzers.job_parser import JobParser
+
         return JobParser()
     except ImportError:
         pytest.skip("JobParser not available")
@@ -397,6 +399,7 @@ def matcher():
     """Create Matcher instance."""
     try:
         from src.analyzers.matcher import Matcher
+
         return Matcher()
     except ImportError:
         pytest.skip("Matcher not available")
@@ -407,6 +410,7 @@ def plan_generator():
     """Create Learning Plan Generator instance."""
     try:
         from src.learning.plan_generator import LearningPlanGenerator
+
         return LearningPlanGenerator()
     except ImportError:
         pytest.skip("LearningPlanGenerator not available")
@@ -417,6 +421,7 @@ def sprint_manager():
     """Create Sprint Manager instance."""
     try:
         from src.tracking.sprint_manager import SprintManager
+
         return SprintManager()
     except ImportError:
         pytest.skip("SprintManager not available")
@@ -427,6 +432,7 @@ def report_generator():
     """Create Report Generator instance."""
     try:
         from src.generators.report_generator import ReportGenerator
+
         return ReportGenerator()
     except ImportError:
         pytest.skip("ReportGenerator not available")
@@ -513,13 +519,13 @@ def create_test_json() -> Callable[[Path, Dict[str, Any]], Path]:
 def cleanup_test_artifacts():
     """Register artifacts for cleanup after test."""
     artifacts = []
-    
+
     def register(path: Path):
         """Register a file or directory for cleanup."""
         artifacts.append(path)
-    
+
     yield register
-    
+
     # Cleanup all registered artifacts
     for artifact in artifacts:
         if artifact.exists():
@@ -554,7 +560,7 @@ def pytest_configure(config):
         "workflow: tests for end-to-end workflows",
         "smoke: critical functionality smoke tests",
     ]
-    
+
     for marker in markers:
         config.addinivalue_line("markers", marker)
 
@@ -567,7 +573,7 @@ def pytest_collection_modifyitems(config, items):
             item.add_marker(pytest.mark.unit)
         elif "integration" in str(item.fspath):
             item.add_marker(pytest.mark.integration)
-        
+
         # Auto-mark based on file name
         if "cv_parser" in item.nodeid:
             item.add_marker(pytest.mark.cv_parser)
@@ -592,7 +598,7 @@ def pytest_collection_modifyitems(config, items):
 def session_cleanup():
     """Clean up any test artifacts after test session."""
     yield
-    
+
     # Cleanup test directories
     test_dirs = [
         Path("/tmp/test_output"),
@@ -600,7 +606,7 @@ def session_cleanup():
         Path("test_output"),
         Path("test_data"),
     ]
-    
+
     for test_dir in test_dirs:
         if test_dir.exists():
             try:

@@ -1,4 +1,5 @@
 import pytest
+
 """
 Unit tests for learning plan generation
 Tests learning plan creation and resource recommendation

@@ -1,4 +1,5 @@
 import pytest
+
 """
 Unit tests for job description parser
 Tests job requirement extraction and parsing
@@ -69,7 +70,7 @@ class TestJobParser:
     def test_parse_has_expected_keys(self, parser, sample_job_description):
         """Test that parse returns expected keys"""
         parsed = parser.parse(sample_job_description)
-        
+
         # Check for keys that exist in actual output
         assert "title" in parsed
         assert "company" in parsed
@@ -81,7 +82,7 @@ class TestJobParser:
         """Test extraction of responsibilities"""
         parsed = parser.parse(sample_job_description)
         responsibilities = parsed.get("responsibilities", [])
-        
+
         assert isinstance(responsibilities, list)
         # The actual parser may or may not extract responsibilities
         # Just verify it's a list
@@ -90,13 +91,13 @@ class TestJobParser:
         """Test extraction of qualifications"""
         parsed = parser.parse(sample_job_description)
         qualifications = parsed.get("qualifications", [])
-        
+
         assert isinstance(qualifications, list)
 
     def test_empty_job_description(self, parser):
         """Test handling of empty job description"""
         parsed = parser.parse("")
-        
+
         assert isinstance(parsed, dict)
         assert "responsibilities" in parsed
         assert "qualifications" in parsed
@@ -107,7 +108,7 @@ class TestJobParser:
         """Test handling of minimal job description"""
         minimal_job = "Python Developer needed. Must know Django."
         parsed = parser.parse(minimal_job)
-        
+
         assert isinstance(parsed, dict)
         assert "title" in parsed
         assert "responsibilities" in parsed
@@ -123,7 +124,7 @@ class TestJobParser:
         - Write code
         - Review PRs
         """
-        
+
         parsed = parser.parse(job_text)
         assert isinstance(parsed, dict)
         # Title might be None or extracted
@@ -151,13 +152,13 @@ class TestJobParser:
         - Health insurance
         - 401k matching
         """
-        
+
         parsed = parser.parse(job_text)
         assert isinstance(parsed, dict)
-        
+
         responsibilities = parsed.get("responsibilities", [])
         qualifications = parsed.get("qualifications", [])
-        
+
         assert isinstance(responsibilities, list)
         assert isinstance(qualifications, list)
 
@@ -173,7 +174,7 @@ class TestJobParser:
         """Test handling of malformed text"""
         malformed = "$$$ RANDOM TEXT %%% NO STRUCTURE"
         parsed = parser.parse(malformed)
-        
+
         assert isinstance(parsed, dict)
         assert "responsibilities" in parsed
         assert "qualifications" in parsed
@@ -198,7 +199,7 @@ class TestJobParserKeywordDetection:
         - Deploy to cloud
         """
         parsed = parser.parse(job_text)
-        
+
         assert isinstance(parsed, dict)
         assert "responsibilities" in parsed
 
@@ -213,7 +214,7 @@ class TestJobParserKeywordDetection:
         - Participate in code reviews
         """
         parsed = parser.parse(job_text)
-        
+
         responsibilities = parsed.get("responsibilities", [])
         assert isinstance(responsibilities, list)
 
@@ -228,7 +229,7 @@ class TestJobParserKeywordDetection:
         - Python expertise
         """
         parsed = parser.parse(job_text)
-        
+
         qualifications = parsed.get("qualifications", [])
         assert isinstance(qualifications, list)
 
@@ -245,9 +246,9 @@ class TestJobParserNormalization:
         formats = [
             "Senior Developer\nRESPONSIBILITIES:\n- Code\n- Test",
             "Developer Role | Requirements: Python, Django",
-            "Job Title: Engineer\n\nDuties:\n1. Design\n2. Implement"
+            "Job Title: Engineer\n\nDuties:\n1. Design\n2. Implement",
         ]
-        
+
         for job_format in formats:
             parsed = parser.parse(job_format)
             assert isinstance(parsed, dict)
@@ -264,7 +265,7 @@ class TestJobParserNormalization:
         - Review PRs
         * Mentor juniors
         """
-        
+
         parsed = parser.parse(job_text)
         assert isinstance(parsed, dict)
         # Parser should handle various bullet styles without crashing
@@ -278,7 +279,7 @@ class TestJobParserNormalization:
         3. Conduct code reviews
         4. Mentor junior developers
         """
-        
+
         parsed = parser.parse(job_text)
         assert isinstance(parsed, dict)
         assert isinstance(parsed.get("responsibilities", []), list)
@@ -300,7 +301,7 @@ class TestJobParserNormalization:
         * Team player
         """
         parsed = parser.parse(job_text)
-        
+
         assert isinstance(parsed, dict)
         # Just verify it doesn't crash and returns expected structure
 

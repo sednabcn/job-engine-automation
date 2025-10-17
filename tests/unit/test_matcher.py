@@ -1,4 +1,5 @@
 import pytest
+
 """
 Unit tests for CV-Job matching algorithm
 Tests scoring and matching logic

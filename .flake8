@@ -1,44 +1,23 @@
 [flake8]
-# Maximum line length
 max-line-length = 100
-
-# Ignore specific error codes
-ignore = 
-    E203,  # Whitespace before ':' (conflicts with black)
-    E501,  # Line too long (handled by black)
-    W503,  # Line break before binary operator (conflicts with black)
-    E402,  # Module level import not at top of file
-    
-# Exclude directories
-exclude =
+extend-ignore = E203, E266, E501, W503, F401
+exclude = 
     .git,
     __pycache__,
-    .pytest_cache,
-    .mypy_cache,
-    .tox,
-    venv,
-    env,
-    .venv,
+    docs,
     build,
     dist,
-    *.egg-info,
     .eggs,
-    htmlcov,
-    docs/_build,
-
-# Per-file ignores
+    *.egg,
+    .venv,
+    venv,
+    .pytest_cache,
+    .mypy_cache,
+    .tox
+max-complexity = 25
 per-file-ignores =
-    __init__.py:F401,F403
+    __init__.py:F401
     tests/*:F401,F811
-
-# Show source code for each error
-show-source = True
-
-# Show the specific error code
-show-pep8 = True
-
-# Count errors
-count = True
-
-# Display statistics
-statistics = True
+     src/python_advanced_job_engine.py:C901
+    .github/scripts/validate_campaign.py:C901
+    src/utils/fix_indentation.py:C901

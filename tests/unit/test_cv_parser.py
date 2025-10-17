@@ -1,4 +1,5 @@
 import pytest
+
 """
 Unit tests for CV parser module
 Tests CV text extraction and parsing functionality
@@ -63,7 +64,7 @@ class TestCVParser:
     def test_parse_has_required_keys(self, parser, sample_cv_text):
         """Test that parse returns all expected keys"""
         parsed = parser.parse(sample_cv_text)
-        
+
         # Check for keys that exist in actual output
         assert "name" in parsed
         assert "email" in parsed
@@ -75,7 +76,7 @@ class TestCVParser:
     def test_contact_info_extraction(self, parser, sample_cv_text):
         """Test contact information extraction"""
         parsed = parser.parse(sample_cv_text)
-        
+
         assert parsed["name"] == "John Doe"
         assert parsed["email"] == "john.doe@email.com"
         assert parsed["phone"] == "+1-234-567-8900"
@@ -99,7 +100,7 @@ class TestCVParser:
 
         assert isinstance(experience, list)
         assert len(experience) >= 2
-        
+
         # Check that experience entries have expected structure
         for exp in experience:
             assert isinstance(exp, dict)
@@ -108,7 +109,7 @@ class TestCVParser:
     def test_certifications_extraction(self, parser, sample_cv_text):
         """Test certifications extraction"""
         parsed = parser.parse(sample_cv_text)
-        
+
         assert "certifications" in parsed
         certifications = parsed["certifications"]
         assert isinstance(certifications, list)
@@ -137,7 +138,7 @@ class TestCVParser:
         """Test that skills are extracted"""
         parsed = parser.parse(sample_cv_text)
         skills = parsed["skills"]
-        
+
         assert len(skills) > 0
         assert all(isinstance(skill, str) for skill in skills)
 
@@ -145,7 +146,7 @@ class TestCVParser:
         """Test that experience entries have date periods"""
         parsed = parser.parse(sample_cv_text)
         experience = parsed["experience"]
-        
+
         if len(experience) > 0:
             # Check that at least one experience has a period
             assert any("period" in exp for exp in experience)
@@ -194,7 +195,7 @@ class TestCVParserEdgeCases:
         Python Developer
         """
         parsed = parser.parse(minimal_cv)
-        
+
         assert isinstance(parsed, dict)
         assert "email" in parsed
         assert "skills" in parsed
@@ -210,7 +211,7 @@ class TestCVParserEdgeCases:
         Python Developer
         """
         parsed = parser.parse(cv_text)
-        
+
         assert "linkedin" in parsed
         assert "github" in parsed
 
@@ -235,7 +236,7 @@ class TestCVParserFileFormats:
         Developer at Company (2020-2023)
         - Built applications
         """
-        
+
         parsed = parser.parse(cv_text)
         assert isinstance(parsed, dict)
         assert "skills" in parsed
@@ -254,7 +255,7 @@ class TestCVParserFileFormats:
         Python, Django
         """
         parsed = parser.parse(cv_text)
-        
+
         assert "summary" in parsed
         # Summary might be None or a string
         assert parsed["summary"] is None or isinstance(parsed["summary"], str)
@@ -262,13 +263,13 @@ class TestCVParserFileFormats:
     def test_structured_sections(self, parser, sample_cv_text):
         """Test that parser handles structured sections"""
         parsed = parser.parse(sample_cv_text)
-        
+
         # Verify all major sections are present
         assert "skills" in parsed
         assert "experience" in parsed
         assert "education" in parsed
         assert "certifications" in parsed
-        
+
         # Verify data types
         assert isinstance(parsed["skills"], list)
         assert isinstance(parsed["experience"], list)

@@ -1,4 +1,5 @@
 import pytest
+
 """
 Unit tests for sprint management
 Tests sprint tracking, logging, and completion

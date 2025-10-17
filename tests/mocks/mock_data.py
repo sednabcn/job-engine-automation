@@ -751,6 +751,7 @@ MOCK_LEARNING_RESOURCES = {
 # UTILITY FUNCTIONS
 # ============================================================================
 
+
 def get_mock_cv(parsed=True):
     """
     Get mock CV data
