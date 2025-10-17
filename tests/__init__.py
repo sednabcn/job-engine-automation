@@ -1,4 +1,3 @@
-from .fixtures import sample_cv, sample_data, sample_job  # explicitly list what you need
 from .integration import test_data_persistence, test_full_workflow, test_reverse_workflow
 from .mocks import mock_data
 from .unit import (
