@@ -5,8 +5,9 @@ Shows how to generate reports, letters, and templates
 based on analyzed CV and job data.
 """
 
-from src.generators import report_generator, letter_generator, template_engine
+from src.generators import letter_generator, report_generator, template_engine
 from src.utils import file_readers
+
 
 def main():
     # Load sample analysis JSON (mock results)
@@ -20,7 +21,7 @@ def main():
     # Generate cover letter
     letter = letter_generator.LetterGenerator(
         candidate_name=analysis_data.get("name", "Candidate"),
-        job_title=analysis_data.get("job_title", "Position")
+        job_title=analysis_data.get("job_title", "Position"),
     )
     cover_letter = letter.generate_letter()
     print("\n--- Cover Letter ---\n", cover_letter)
@@ -29,6 +30,7 @@ def main():
     template = "Hello {{ name }}, your score is {{ score }}%"
     rendered = template_engine.render_template(template, analysis_data)
     print("\n--- Rendered Template ---\n", rendered)
+
 
 if __name__ == "__main__":
     main()

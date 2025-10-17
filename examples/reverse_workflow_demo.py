@@ -5,10 +5,11 @@ Demonstrates the reverse mode: starting from a target job description,
 analyzing skill gaps, generating a learning plan, and preparing actionable outputs.
 """
 
-from src.analyzers import cv_parser, gap_analyzer, matcher
+from src.analyzers import cv_parser, gap_analyzer
 from src.learning import plan_generator, strategy_builder, test_generator
-from src.tracking import sprint_manager, progress_tracker, state_manager
+from src.tracking import progress_tracker, sprint_manager, state_manager
 from src.utils import file_readers
+
 
 def main():
     # Load candidate CV and target job description
@@ -48,10 +49,11 @@ def main():
 
     # Optionally track progress
     sprint = sprint_manager.SprintManager("Reverse Workflow Sprint", duration_days=14)
-    tracker = progress_tracker.ProgressTracker(sprint)
+    progress_tracker.ProgressTracker(sprint)
     state = state_manager.StateManager()
     state.save_progress({"learning_plan": learning_plan, "strategy": strategy_actions})
     print("\nProgress state saved.")
+
 
 if __name__ == "__main__":
     main()

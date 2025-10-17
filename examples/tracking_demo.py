@@ -5,7 +5,8 @@ Demonstrates sprint management, progress tracking,
 and state persistence for a candidate’s learning plan.
 """
 
-from src.tracking import sprint_manager, progress_tracker, state_manager
+from src.tracking import progress_tracker, sprint_manager, state_manager
+
 
 def main():
     # Initialize Sprint Manager
@@ -29,6 +30,7 @@ def main():
     print("Tasks Completed:", tracker.completed_tasks)
     print("Tasks Pending:", tracker.pending_tasks)
     print("Saved State:", state.load_progress())
+
 
 if __name__ == "__main__":
     main()

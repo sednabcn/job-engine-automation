@@ -5,13 +5,13 @@ This package exposes all example/demo scripts for the advanced-job-engine projec
 You can import individual workflows or automation demos as needed.
 """
 
-from .quick_start import main as quick_start
-from .full_workflow import main as full_workflow
-from .reverse_workflow import main as reverse_workflow
+from .automation_example import main as automation_example
 from .batch_analysis import main as batch_analysis
 from .custom_resources import main as custom_resources
-from .automation_example import main as automation_example
 from .full_roadmap import main as full_roadmap
+from .full_workflow import main as full_workflow
+from .quick_start import main as quick_start
+from .reverse_workflow import main as reverse_workflow
 
 __all__ = [
     "quick_start",

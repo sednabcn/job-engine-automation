@@ -5,9 +5,10 @@ Generates a personalized learning plan based on missing skills
 from CV vs. Job Description.
 """
 
-from src.learning import plan_generator, strategy_builder
 from src.analyzers import cv_parser, gap_analyzer
+from src.learning import plan_generator, strategy_builder
 from src.utils import file_readers
+
 
 def main():
     # Load sample CV and job description
@@ -41,6 +42,7 @@ def main():
     print("\nSuggested Improvement Strategy:")
     for s in strategy:
         print("-", s)
+
 
 if __name__ == "__main__":
     main()
