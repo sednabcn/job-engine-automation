@@ -17,14 +17,13 @@ logger = logging.getLogger(__name__)
 class FileReader:
     """Base class for file reading operations."""
 
-
     SUPPORTED_EXTENSIONS = {".pdf", ".docx", ".doc", ".txt"}
 
     @staticmethod
     def read_file(file_path: str) -> str:
         """
         Read file content based on file extension.
-        
+
         Args:
         file_path: Path to the file
 
@@ -62,7 +61,7 @@ class FileReader:
         except Exception as e:
             logger.error(f"Error reading file {file_path}: {str(e)}")
             raise
-    
+
     @staticmethod
     def get_file_info(file_path: str) -> Dict[str, Any]:
         """

@@ -50,8 +50,28 @@ class GapAnalyzer:
         words = re.findall(r"[a-zA-Z]{3,}", text.lower())
 
         stopwords = {
-            "and", "the", "for", "with", "that", "this", "from", "are", "was", "you", "your",
-            "have", "will", "not", "but", "can", "all", "our", "job", "work", "team", "who",
+            "and",
+            "the",
+            "for",
+            "with",
+            "that",
+            "this",
+            "from",
+            "are",
+            "was",
+            "you",
+            "your",
+            "have",
+            "will",
+            "not",
+            "but",
+            "can",
+            "all",
+            "our",
+            "job",
+            "work",
+            "team",
+            "who",
         }
 
         keywords = {word for word in words if word not in stopwords}

@@ -1,24 +1,29 @@
 import pytest
+
 from src.analyzers import gap_analyzer
 from src.learning import plan_generator
 from src.tracking import sprint_manager
-from src.utils import mock_data
+from tests.mocks import mock_data
 
 # ============================================================================
 # FIXTURES
 # ============================================================================
 
+
 @pytest.fixture
 def sample_cv():
     return mock_data.get_mock_cv(parsed=True)
+
 
 @pytest.fixture
 def sample_job():
     return mock_data.get_mock_job(parsed=True)
 
+
 @pytest.fixture
 def completed_sprint():
     return mock_data.MOCK_COMPLETED_SPRINT.copy()
+
 
 @pytest.fixture
 def skill_tests():
@@ -28,6 +33,7 @@ def skill_tests():
 # ============================================================================
 # END-TO-END REVERSE WORKFLOW TESTS
 # ============================================================================
+
 
 def test_full_workflow_with_completed_sprint(sample_cv, sample_job, completed_sprint, skill_tests):
     """
@@ -53,7 +59,11 @@ def test_full_workflow_with_completed_sprint(sample_cv, sample_job, completed_sp
     # Step 4: Simulate skill tests results
     for skill_name, skill_test in skill_tests.items():
         # Simple simulation: pass all multiple-choice tests
-        passed = all(q.get("correct_answer") is not None for q in skill_test["questions"] if q["type"] == "multiple_choice")
+        passed = all(
+            q.get("correct_answer") is not None
+            for q in skill_test["questions"]
+            if q["type"] == "multiple_choice"
+        )
         assert passed is True  # All MC questions have correct_answer
 
     # Step 5: Update learning plan score after sprint and tests

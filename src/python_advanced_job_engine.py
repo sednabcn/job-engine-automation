@@ -2277,12 +2277,11 @@ Skills:
         report = engine.generate_complete_report(analysis, learning_plan, strategy, tests, letters)
         print("\n" + report)
 
-
         save = input("\nSave complete package? (y/n): ")
         if save.lower() == "y":
             export_result = engine.export_all(analysis["job_id"])
             print(export_result)
-    
+
     elif choice == "2":
         print("\n--- Analyze from Files ---")
         print("\nSupported formats: .txt, .pdf, .docx")

@@ -8,6 +8,7 @@ from typing import Dict, List, Union
 
 logger = logging.getLogger(__name__)
 
+
 class Matcher:
     """Matches CV and job description content based on keyword overlap."""
 
@@ -32,9 +33,7 @@ class Matcher:
         matched_keywords = sorted(list(job_keywords & cv_keywords))
         missing_keywords = sorted(list(job_keywords - cv_keywords))
 
-        score = (
-            len(matched_keywords) / len(job_keywords) * 100 if job_keywords else 0.0
-        )
+        score = len(matched_keywords) / len(job_keywords) * 100 if job_keywords else 0.0
 
         return {
             "score": round(score, 2),
@@ -48,8 +47,28 @@ class Matcher:
 
         words = re.findall(r"[a-zA-Z]{3,}", text.lower())
         stopwords = {
-            "and", "the", "for", "with", "that", "this", "from", "are", "was", "you", "your",
-            "have", "will", "not", "but", "can", "all", "our", "job", "work", "team", "who",
+            "and",
+            "the",
+            "for",
+            "with",
+            "that",
+            "this",
+            "from",
+            "are",
+            "was",
+            "you",
+            "your",
+            "have",
+            "will",
+            "not",
+            "but",
+            "can",
+            "all",
+            "our",
+            "job",
+            "work",
+            "team",
+            "who",
         }
 
         return {word for word in words if word not in stopwords}

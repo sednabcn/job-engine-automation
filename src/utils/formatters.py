@@ -337,7 +337,7 @@ class LearningPlanFormatter:
         # Group items by priority
         items = plan.get("items", [])
         by_priority: Dict[str, List[Dict[str, Any]]] = {"high": [], "medium": [], "low": []}
-       
+
         for item in items:
             priority = item.get("priority", "medium")
             by_priority[priority].append(item)
