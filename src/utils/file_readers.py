@@ -17,22 +17,23 @@ logger = logging.getLogger(__name__)
 class FileReader:
     """Base class for file reading operations."""
 
+
     SUPPORTED_EXTENSIONS = {".pdf", ".docx", ".doc", ".txt"}
 
     @staticmethod
     def read_file(file_path: str) -> str:
         """
         Read file content based on file extension.
-
+        
         Args:
-            file_path: Path to the file
+        file_path: Path to the file
 
         Returns:
-            Extracted text content
+        Extracted text content
 
         Raises:
-            FileNotFoundError: If file doesn't exist
-            ValueError: If file format is not supported
+        FileNotFoundError: If file doesn't exist
+        ValueError: If file format is not supported
         """
         path = Path(file_path)
 
@@ -54,10 +55,14 @@ class FileReader:
                 return DOCXReader.read(file_path)
             elif extension == ".txt":
                 return TXTReader.read(file_path)
+            else:
+                # This should never happen due to earlier validation,
+                # but ensures all paths return or raise
+                raise ValueError(f"Unhandled file extension: {extension}")
         except Exception as e:
             logger.error(f"Error reading file {file_path}: {str(e)}")
             raise
-
+    
     @staticmethod
     def get_file_info(file_path: str) -> Dict[str, Any]:
         """
