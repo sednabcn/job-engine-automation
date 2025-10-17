@@ -9,7 +9,7 @@ from pathlib import Path
 
 import pytest
 
-from tracking.sprint_manager import SprintManager
+from src.tracking.sprint_manager import SprintManager
 
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / "src"))
 

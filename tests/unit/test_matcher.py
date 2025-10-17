@@ -8,7 +8,7 @@ from pathlib import Path
 
 import pytest
 
-from analyzers.matcher import Matcher
+from src.analyzers.matcher import Matcher
 
 # Ensure analyzers package import
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / "src"))

@@ -8,7 +8,7 @@ from pathlib import Path
 
 import pytest
 
-from analyzers.cv_parser import CVParser
+from src.analyzers.cv_parser import CVParser
 
 # Add src to path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / "src"))

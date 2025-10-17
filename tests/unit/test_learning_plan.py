@@ -8,7 +8,7 @@ from pathlib import Path
 
 import pytest
 
-from learning.plan_generator import LearningPlanGenerator
+from src.learning.plan_generator import LearningPlanGenerator
 
 # Ensure source path is available
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / "src"))

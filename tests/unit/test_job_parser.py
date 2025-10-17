@@ -8,7 +8,7 @@ from pathlib import Path
 
 import pytest
 
-from analyzers.job_parser import JobParser
+from src.analyzers.job_parser import JobParser
 
 # Ensure proper module resolution
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / "src"))

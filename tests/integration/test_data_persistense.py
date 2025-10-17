@@ -33,7 +33,7 @@ from typing import Any, Tuple
 
 import pytest
 
-from python_advanced_job_engine import AdvancedJobEngine  # type: ignore
+from src.python_advanced_job_engine import AdvancedJobEngine  # type: ignore
 
 # Ensure src is importable
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / "src"))

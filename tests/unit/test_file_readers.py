@@ -8,7 +8,7 @@ from pathlib import Path
 
 import pytest
 
-from utils.file_readers import FileReader
+from src.utils.file_readers import FileReader
 
 # Ensure module import
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / "src"))

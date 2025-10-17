@@ -27,7 +27,7 @@ from typing import Dict, Tuple
 import pytest
 
 # Import engine and mocks
-from python_advanced_job_engine import AdvancedJobEngine
+from src.python_advanced_job_engine import AdvancedJobEngine
 from tests.mocks.mock_data import MOCK_CV_TEXT, MOCK_JOB_DESCRIPTION
 
 # Ensure repo src is importable (insert after standard imports)

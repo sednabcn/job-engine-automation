@@ -1,6 +1,4 @@
-"""
-conftest.py - Pytest configuration and shared fixtures
-"""
+"""conftest.py - Pytest configuration and shared fixtures"""
 
 import json
 import os
@@ -413,7 +411,6 @@ def pytest_configure(config):
 def pytest_collection_modifyitems(config, items):
     """Modify test collection to add markers automatically."""
     for item in items:
-        # Auto-mark tests based on their location
         if "unit" in str(item.fspath):
             item.add_marker(pytest.mark.unit)
         elif "integration" in str(item.fspath):
