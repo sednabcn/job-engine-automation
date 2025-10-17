@@ -245,13 +245,13 @@ class TemplateEngine:
                     elif op == "!=":
                         return bool(left_val != right_val)
                     elif op == ">":
-                        return bool(left_val > right_val)  # type: ignore[operator]
+                        return bool(left_val > right_val)  
                     elif op == "<":
-                        return bool(left_val < right_val)  # type: ignore[operator]
+                        return bool(left_val < right_val)  
                     elif op == ">=":
-                        return bool(left_val >= right_val)  # type: ignore[operator]
+                        return bool(left_val >= right_val)  
                     elif op == "<=":
-                        return bool(left_val <= right_val)  # type: ignore[operator]
+                        return bool(left_val <= right_val)  
                 except TypeError:
                     return False
 
