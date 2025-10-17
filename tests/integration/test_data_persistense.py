@@ -159,7 +159,7 @@ class TestDataPersistence:
         cv_path, job_path = create_temp_cv_job(tmp_path, cv_text, job_text)
 
         analysis = engine.analyze_from_files(
-            str(cv_path), str(job_path), _job_title="Backend Dev", _company="TechCorp"
+            str(cv_path), str(job_path), job_title="Backend Dev", _company="TechCorp"
         )
         print(
             f"[TestDataPersistence] analysis returned keys: {list(analysis.keys()) if isinstance(analysis, dict) else type(analysis)}"

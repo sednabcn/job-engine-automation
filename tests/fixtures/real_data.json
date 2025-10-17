@@ -1,0 +1,200 @@
+{
+  "master_skillset": {
+    "technical_skills": {
+      "programming_languages": [
+        {"name": "Python", "proficiency": "expert", "years": 5},
+        {"name": "JavaScript", "proficiency": "advanced", "years": 5},
+        {"name": "TypeScript", "proficiency": "intermediate", "years": 2},
+        {"name": "Java", "proficiency": "intermediate", "years": 3},
+        {"name": "SQL", "proficiency": "advanced", "years": 5}
+      ],
+      "frameworks": [
+        {"name": "Django", "proficiency": "expert", "years": 4},
+        {"name": "Flask", "proficiency": "advanced", "years": 3},
+        {"name": "React", "proficiency": "advanced", "years": 4},
+        {"name": "Node.js", "proficiency": "advanced", "years": 3},
+        {"name": "Express", "proficiency": "intermediate", "years": 2}
+      ],
+      "databases": [
+        {"name": "PostgreSQL", "proficiency": "advanced", "years": 4},
+        {"name": "MongoDB", "proficiency": "intermediate", "years": 3},
+        {"name": "Redis", "proficiency": "intermediate", "years": 2},
+        {"name": "MySQL", "proficiency": "advanced", "years": 4}
+      ],
+      "cloud_devops": [
+        {"name": "AWS", "proficiency": "advanced", "years": 3},
+        {"name": "Docker", "proficiency": "advanced", "years": 3},
+        {"name": "Kubernetes", "proficiency": "beginner", "years": 1},
+        {"name": "CI/CD", "proficiency": "advanced", "years": 4},
+        {"name": "GitHub Actions", "proficiency": "advanced", "years": 2}
+      ]
+    },
+    "soft_skills": [
+      "Team Leadership",
+      "Technical Documentation",
+      "Code Review",
+      "Mentoring",
+      "Agile/Scrum",
+      "Cross-functional Collaboration"
+    ],
+    "certifications": [
+      {
+        "name": "AWS Certified Solutions Architect - Associate",
+        "year": 2022,
+        "status": "active"
+      },
+      {
+        "name": "Professional Scrum Master I",
+        "year": 2021,
+        "status": "active"
+      }
+    ]
+  },
+  "analyzed_jobs": [
+    {
+      "job_id": "job_001",
+      "title": "Senior Full Stack Engineer",
+      "company": "InnovateTech Solutions",
+      "match_score": 82,
+      "analysis_date": "2024-10-15",
+      "required_skills_matched": 18,
+      "required_skills_total": 20,
+      "preferred_skills_matched": 6,
+      "preferred_skills_total": 12,
+      "skill_gaps": [
+        "GraphQL",
+        "Event-driven architecture",
+        "Message queues (RabbitMQ, Kafka)",
+        "FastAPI",
+        "Terraform",
+        "DataDog"
+      ],
+      "strong_matches": [
+        "Python",
+        "JavaScript",
+        "React",
+        "Django",
+        "PostgreSQL",
+        "AWS",
+        "Docker",
+        "CI/CD",
+        "Microservices"
+      ]
+    }
+  ],
+  "learning_progress": {
+    "current_sprint": 1,
+    "sprint_duration_weeks": 2,
+    "skills_in_progress": [
+      {
+        "skill": "GraphQL",
+        "priority": "high",
+        "status": "in_progress",
+        "progress_percentage": 35,
+        "resources": [
+          "GraphQL official tutorial",
+          "How to GraphQL course",
+          "Building APIs with GraphQL"
+        ],
+        "estimated_hours": 20,
+        "completed_hours": 7
+      },
+      {
+        "skill": "Kubernetes",
+        "priority": "medium",
+        "status": "in_progress",
+        "progress_percentage": 15,
+        "resources": [
+          "Kubernetes official documentation",
+          "Kubernetes for Developers course"
+        ],
+        "estimated_hours": 30,
+        "completed_hours": 4.5
+      }
+    ],
+    "completed_skills": [
+      {
+        "skill": "TypeScript",
+        "completion_date": "2024-09-15",
+        "test_score": 85
+      }
+    ],
+    "planned_skills": [
+      {
+        "skill": "Event-driven architecture",
+        "priority": "high",
+        "planned_start": "Sprint 2"
+      },
+      {
+        "skill": "Kafka",
+        "priority": "medium",
+        "planned_start": "Sprint 3"
+      }
+    ]
+  },
+  "sprint_history": [
+    {
+      "sprint_number": 1,
+      "start_date": "2024-10-01",
+      "end_date": "2024-10-15",
+      "goals": [
+        "Learn GraphQL basics",
+        "Complete Kubernetes fundamentals",
+        "Build sample project with new skills"
+      ],
+      "achievements": [
+        "Completed 3 GraphQL tutorials",
+        "Set up local Kubernetes cluster",
+        "Built GraphQL API for personal project"
+      ],
+      "challenges": [
+        "Limited time due to work commitments",
+        "Kubernetes concepts more complex than expected"
+      ],
+      "quality_gate_status": "passed",
+      "next_sprint_adjustments": [
+        "Allocate more time for hands-on practice",
+        "Focus on one primary skill per sprint"
+      ]
+    }
+  ],
+  "skill_tests": {
+    "completed_tests": [
+      {
+        "skill": "TypeScript",
+        "date": "2024-09-15",
+        "score": 85,
+        "total_questions": 20,
+        "correct_answers": 17,
+        "areas_of_strength": [
+          "Type definitions",
+          "Interfaces",
+          "Generics"
+        ],
+        "areas_for_improvement": [
+          "Advanced types",
+          "Decorators"
+        ]
+      }
+    ],
+    "scheduled_tests": [
+      {
+        "skill": "GraphQL",
+        "scheduled_date": "2024-10-20",
+        "preparation_status": "ready"
+      }
+    ]
+  },
+  "workflow_state": {
+    "current_mode": "reverse",
+    "target_job_id": "job_001",
+    "workflow_phase": "learning",
+    "last_updated": "2024-10-15T14:30:00Z",
+    "automation_enabled": true,
+    "notification_preferences": {
+      "email": true,
+      "sprint_reminders": true,
+      "quality_gate_alerts": true
+    }
+  }
+}

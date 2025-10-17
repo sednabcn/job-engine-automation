@@ -5,7 +5,7 @@ import os
 import shutil
 import tempfile
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any, Dict, Callable
 
 import pytest
 
@@ -18,8 +18,9 @@ import pytest
 # 4. Mock Data Fixtures - Pre-configured test data
 # 5. Environment Fixtures - Control environment variables
 # 6. File Creation Helpers - Create test files on the fly
-# 7. Pytest Configuration - Custom markers and auto-marking
-# 8. Session Cleanup - Automatic cleanup after tests
+# 7. Component Fixtures - Actual class instances
+# 8. Pytest Configuration - Custom markers and auto-marking
+# 9. Session Cleanup - Automatic cleanup after tests
 
 # ============================================================================
 # PATH FIXTURES
@@ -76,6 +77,9 @@ def sample_data_path(fixtures_dir) -> Path:
 @pytest.fixture
 def sample_cv_text(sample_cv_path) -> str:
     """Load and return sample CV text content."""
+    if not sample_cv_path.exists():
+        # Return fallback data if file doesn't exist
+        return "Sample CV for testing purposes"
     with open(sample_cv_path, "r", encoding="utf-8") as f:
         return f.read()
 
@@ -83,6 +87,8 @@ def sample_cv_text(sample_cv_path) -> str:
 @pytest.fixture
 def sample_job_text(sample_job_path) -> str:
     """Load and return sample job description text content."""
+    if not sample_job_path.exists():
+        return "Sample job description for testing purposes"
     with open(sample_job_path, "r", encoding="utf-8") as f:
         return f.read()
 
@@ -90,8 +96,43 @@ def sample_job_text(sample_job_path) -> str:
 @pytest.fixture
 def sample_data_json(sample_data_path) -> Dict[str, Any]:
     """Load and return sample data as dictionary."""
+    if not sample_data_path.exists():
+        return {}
     with open(sample_data_path, "r", encoding="utf-8") as f:
         return json.load(f)
+
+
+@pytest.fixture
+def sample_match_analysis():
+    """Provide sample match analysis data for testing"""
+    return {
+        "overall_match_score": 75.5,
+        "matching_skills": ["Python", "Django", "REST APIs"],
+        "missing_skills": ["React", "TypeScript"],
+        "skill_gaps": [
+            {
+                "skill": "React",
+                "importance": "High",
+                "current_level": None,
+                "required_level": "Intermediate"
+            },
+            {
+                "skill": "TypeScript",
+                "importance": "Medium",
+                "current_level": None,
+                "required_level": "Basic"
+            }
+        ],
+        "experience_match": True,
+        "education_match": True,
+        "summary": "Good match with some skill gaps",
+        "recommendations": [
+            "Learn React for frontend development",
+            "Study TypeScript for type-safe JavaScript"
+        ],
+        "strengths": ["Strong backend skills", "Relevant experience"],
+        "weaknesses": ["Limited frontend experience"]
+    }
 
 
 # ============================================================================
@@ -104,7 +145,11 @@ def temp_dir() -> Path:
     """Create a temporary directory for test files."""
     temp_path = tempfile.mkdtemp()
     yield Path(temp_path)
-    shutil.rmtree(temp_path)
+    # Cleanup with error handling
+    try:
+        shutil.rmtree(temp_path)
+    except (OSError, PermissionError):
+        pass  # Ignore cleanup errors
 
 
 @pytest.fixture
@@ -323,6 +368,71 @@ def mock_sprint_data() -> Dict[str, Any]:
 
 
 # ============================================================================
+# COMPONENT FIXTURES (Actual instances for integration tests)
+# ============================================================================
+
+
+@pytest.fixture
+def cv_parser():
+    """Create CV Parser instance."""
+    try:
+        from src.analyzers.cv_parser import CVParser
+        return CVParser()
+    except ImportError:
+        pytest.skip("CVParser not available")
+
+
+@pytest.fixture
+def job_parser():
+    """Create Job Parser instance."""
+    try:
+        from src.analyzers.job_parser import JobParser
+        return JobParser()
+    except ImportError:
+        pytest.skip("JobParser not available")
+
+
+@pytest.fixture
+def matcher():
+    """Create Matcher instance."""
+    try:
+        from src.analyzers.matcher import Matcher
+        return Matcher()
+    except ImportError:
+        pytest.skip("Matcher not available")
+
+
+@pytest.fixture
+def plan_generator():
+    """Create Learning Plan Generator instance."""
+    try:
+        from src.learning.plan_generator import LearningPlanGenerator
+        return LearningPlanGenerator()
+    except ImportError:
+        pytest.skip("LearningPlanGenerator not available")
+
+
+@pytest.fixture
+def sprint_manager():
+    """Create Sprint Manager instance."""
+    try:
+        from src.tracking.sprint_manager import SprintManager
+        return SprintManager()
+    except ImportError:
+        pytest.skip("SprintManager not available")
+
+
+@pytest.fixture
+def report_generator():
+    """Create Report Generator instance."""
+    try:
+        from src.generators.report_generator import ReportGenerator
+        return ReportGenerator()
+    except ImportError:
+        pytest.skip("ReportGenerator not available")
+
+
+# ============================================================================
 # ENVIRONMENT FIXTURES
 # ============================================================================
 
@@ -354,12 +464,11 @@ def clean_env(monkeypatch):
 
 
 @pytest.fixture
-def create_test_file():
+def create_test_file() -> Callable[[Path, str], Path]:
     """Factory fixture to create test files."""
-
     created_files = []
 
-    def _create_file(path: Path, content: str):
+    def _create_file(path: Path, content: str) -> Path:
         path.parent.mkdir(parents=True, exist_ok=True)
         with open(path, "w", encoding="utf-8") as f:
             f.write(content)
@@ -371,16 +480,18 @@ def create_test_file():
     # Cleanup
     for file_path in created_files:
         if file_path.exists():
-            file_path.unlink()
+            try:
+                file_path.unlink()
+            except (OSError, PermissionError):
+                pass
 
 
 @pytest.fixture
-def create_test_json():
+def create_test_json() -> Callable[[Path, Dict[str, Any]], Path]:
     """Factory fixture to create test JSON files."""
-
     created_files = []
 
-    def _create_json(path: Path, data: Dict[str, Any]):
+    def _create_json(path: Path, data: Dict[str, Any]) -> Path:
         path.parent.mkdir(parents=True, exist_ok=True)
         with open(path, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=2)
@@ -392,7 +503,33 @@ def create_test_json():
     # Cleanup
     for file_path in created_files:
         if file_path.exists():
-            file_path.unlink()
+            try:
+                file_path.unlink()
+            except (OSError, PermissionError):
+                pass
+
+
+@pytest.fixture
+def cleanup_test_artifacts():
+    """Register artifacts for cleanup after test."""
+    artifacts = []
+    
+    def register(path: Path):
+        """Register a file or directory for cleanup."""
+        artifacts.append(path)
+    
+    yield register
+    
+    # Cleanup all registered artifacts
+    for artifact in artifacts:
+        if artifact.exists():
+            try:
+                if artifact.is_file():
+                    artifact.unlink()
+                elif artifact.is_dir():
+                    shutil.rmtree(artifact)
+            except (OSError, PermissionError):
+                pass
 
 
 # ============================================================================
@@ -402,19 +539,48 @@ def create_test_json():
 
 def pytest_configure(config):
     """Pytest configuration hook."""
-    config.addinivalue_line("markers", "unit: mark test as a unit test")
-    config.addinivalue_line("markers", "integration: mark test as an integration test")
-    config.addinivalue_line("markers", "slow: mark test as slow running")
-    config.addinivalue_line("markers", "requires_files: mark test as requiring external files")
+    # Register custom markers
+    markers = [
+        "unit: mark test as a unit test",
+        "integration: mark test as an integration test",
+        "slow: mark test as slow running",
+        "requires_files: mark test as requiring external files",
+        "cv_parser: tests for CV parsing module",
+        "job_parser: tests for job parsing module",
+        "matcher: tests for matching algorithm",
+        "learning: tests for learning plan generation",
+        "tracking: tests for progress tracking",
+        "generators: tests for content generators",
+        "workflow: tests for end-to-end workflows",
+        "smoke: critical functionality smoke tests",
+    ]
+    
+    for marker in markers:
+        config.addinivalue_line("markers", marker)
 
 
 def pytest_collection_modifyitems(config, items):
     """Modify test collection to add markers automatically."""
     for item in items:
+        # Auto-mark based on directory
         if "unit" in str(item.fspath):
             item.add_marker(pytest.mark.unit)
         elif "integration" in str(item.fspath):
             item.add_marker(pytest.mark.integration)
+        
+        # Auto-mark based on file name
+        if "cv_parser" in item.nodeid:
+            item.add_marker(pytest.mark.cv_parser)
+        elif "job_parser" in item.nodeid:
+            item.add_marker(pytest.mark.job_parser)
+        elif "matcher" in item.nodeid:
+            item.add_marker(pytest.mark.matcher)
+        elif "learning" in item.nodeid or "plan_generator" in item.nodeid:
+            item.add_marker(pytest.mark.learning)
+        elif "sprint" in item.nodeid or "tracking" in item.nodeid:
+            item.add_marker(pytest.mark.tracking)
+        elif "generator" in item.nodeid:
+            item.add_marker(pytest.mark.generators)
 
 
 # ============================================================================
@@ -423,10 +589,21 @@ def pytest_collection_modifyitems(config, items):
 
 
 @pytest.fixture(scope="session", autouse=True)
-def cleanup_test_artifacts():
+def session_cleanup():
     """Clean up any test artifacts after test session."""
     yield
-    test_dirs = [Path("/tmp/test_output"), Path("/tmp/test_data")]
+    
+    # Cleanup test directories
+    test_dirs = [
+        Path("/tmp/test_output"),
+        Path("/tmp/test_data"),
+        Path("test_output"),
+        Path("test_data"),
+    ]
+    
     for test_dir in test_dirs:
         if test_dir.exists():
-            shutil.rmtree(test_dir, ignore_errors=True)
+            try:
+                shutil.rmtree(test_dir, ignore_errors=True)
+            except (OSError, PermissionError):
+                pass

@@ -751,33 +751,30 @@ MOCK_LEARNING_RESOURCES = {
 # UTILITY FUNCTIONS
 # ============================================================================
 
-
-def get_mock_cv(format="parsed"):
+def get_mock_cv(parsed=True):
     """
     Get mock CV data
-
     Args:
-        format: 'text' or 'parsed'
-
+        parsed: If True, return parsed CV data. If False, return text CV data.
     Returns:
         Mock CV data in requested format
     """
-    if format == "text":
-        return MOCK_CV_TEXT
-    return MOCK_CV_PARSED
+    if parsed:
+        return MOCK_CV_PARSED
+    return MOCK_CV_TEXT
 
 
-def get_mock_job(format="parsed"):
+def get_mock_job(parsed=True):
     """
     Get mock job description
 
     Args:
-        format: 'text' or 'parsed'
+        parsed: If True, return parsed JOB data. If False, return text JOB data.
 
     Returns:
         Mock job data in requested format
     """
-    if format == "text":
+    if parsed:
         return MOCK_JOB_DESCRIPTION
     return MOCK_JOB_PARSED
 
