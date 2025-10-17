@@ -2,6 +2,15 @@
 # FIXES FOR helpers.py
 # ============================================================================
 
+import re
+import logging
+import time
+from typing import Any, Callable, Dict, List, Optional, Tuple
+from functools import wraps
+
+_logger = logging.getLogger(__name__)
+
+
 # Fix 1: extract_keywords function (line 162)
 # Add type annotation for word_freq dictionary
 
@@ -168,22 +177,23 @@ def memoize(max_size: int = 128):
 def format_skill_summary(skills: List[Dict[str, Any]]) -> str:
     """
     Format skills grouped by level.
-    
+
     Args:
         skills: List of skill dictionaries
-        
+
     Returns:
         Formatted string
     """
     by_level: Dict[str, List[Dict[str, Any]]] = {}  # FIX: Added type annotation
-    
+
     for skill in skills:
         level = skill.get('level', 'intermediate')
         if level not in by_level:
             by_level[level] = []
         by_level[level].append(skill)
-    
+
     # ... rest of the function
+    return ""  # Placeholder return
 
 
 # Fix for format_learning_plan (line 339 in formatters.py)
@@ -192,20 +202,21 @@ def format_skill_summary(skills: List[Dict[str, Any]]) -> str:
 def format_learning_plan(plan: Dict[str, Any]) -> str:
     """
     Format learning plan.
-    
+
     Args:
         plan: Learning plan dictionary
-        
+
     Returns:
         Formatted string
     """
     by_priority: Dict[str, List[Dict[str, Any]]] = {
-        "high": [], 
-        "medium": [], 
+        "high": [],
+        "medium": [],
         "low": []
     }  # FIX: Added type annotation
-    
+
     # ... rest of the function
+    return ""  # Placeholder return
 
 
 # ============================================================================
@@ -217,26 +228,26 @@ def format_learning_plan(plan: Dict[str, Any]) -> str:
 
 class MasterSkillsetLoader:
     """Loader for master skillset data."""
-    
+
     def load_json(self, file_path: str) -> Dict[str, Any]:
         """Load JSON file."""
         # ... implementation
-        pass
-    
+        return {}  # Placeholder
+
     def load(self, file_path: str) -> Dict[str, Any]:
         """
         Load master skillset from JSON file.
-        
+
         Args:
             file_path: Path to JSON file
-            
+
         Returns:
             Dictionary containing skillset data
         """
         # FIX: Cast the return value or ensure load_json has proper return type
         data: Dict[str, Any] = self.load_json(file_path)
         return data
-        
+
         # Alternative if you need validation:
         # result = self.load_json(file_path)
         # if not isinstance(result, dict):
@@ -249,14 +260,6 @@ class MasterSkillsetLoader:
 # ============================================================================
 
 # Here's a complete working version with all fixes applied:
-
-import re
-import logging
-from typing import Any, Callable, Dict, List, Optional, Tuple
-from functools import wraps
-import time
-
-_logger = logging.getLogger(__name__)
 
 
 def extract_keywords_fixed(text: str, min_length: int = 3, top_n: Optional[int] = None) -> List[str]:
