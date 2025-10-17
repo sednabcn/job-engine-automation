@@ -5,7 +5,7 @@ Module managing the learning resources database.
 from typing import Dict, List
 
 
-class LearningResourceDB:
+class ResourceDB:
     """Database of learning resources."""
 
     def __init__(self):
