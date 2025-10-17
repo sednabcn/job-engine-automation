@@ -50,7 +50,7 @@ def insert_placeholder_definition(lines, error_line, var_name):
             break
 
     insertion_point = max(0, error_line - 1)
-    lines.insert(insertion_point, placeholder)
+    lines.insert(insertion_point, var_name)
     return lines
 
 

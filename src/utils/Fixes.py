@@ -1,0 +1,364 @@
+# ============================================================================
+# FIXES FOR helpers.py
+# ============================================================================
+
+# Fix 1: extract_keywords function (line 162)
+# Add type annotation for word_freq dictionary
+
+def extract_keywords(text: str, min_length: int = 3, top_n: Optional[int] = None) -> List[str]:
+    """
+    Extract keywords from text.
+
+    Args:
+        text: Input text
+        min_length: Minimum keyword length
+        top_n: Return top N keywords by frequency
+
+    Returns:
+        List of keywords
+    """
+    if not text:
+        return []
+
+    # Convert to lowercase and split
+    words = re.findall(r"\b[a-z]{" + str(min_length) + r",}\b", text.lower())
+
+    # Common stop words to filter out
+    stop_words = {
+        "the", "and", "for", "are", "but", "not", "you", "all", "can", "her",
+        "was", "one", "our", "out", "day", "get", "has", "him", "his", "how",
+        "man", "new", "now", "old", "see", "two", "way", "who", "boy", "did",
+        "its", "let", "put", "say", "she", "too", "use", "with", "will", "this",
+        "that", "from", "have", "they", "been", "were", "what", "when", "your",
+    }
+
+    # Filter stop words and count frequency
+    word_freq: Dict[str, int] = {}  # FIX: Added type annotation
+    for word in words:
+        if word not in stop_words:
+            word_freq[word] = word_freq.get(word, 0) + 1
+
+    # Sort by frequency
+    sorted_words = sorted(word_freq.items(), key=lambda x: x[1], reverse=True)
+
+    # Return top N or all
+    keywords = [word for word, _ in sorted_words]
+    return keywords[:top_n] if top_n else keywords
+
+
+# Fix 2: retry_on_error function (line 1393)
+# Fix the exception handling to avoid raising None
+
+def retry_on_error(
+    max_attempts: int = 3,
+    delay: float = 1.0,
+    backoff: float = 2.0,
+    exceptions: Tuple[type[Exception], ...] = (Exception,),
+):
+    """
+    Decorator to retry function on error with exponential backoff.
+
+    Args:
+        max_attempts: Maximum retry attempts
+        delay: Initial delay between attempts
+        backoff: Backoff multiplier
+        exceptions: Tuple of exceptions to catch
+
+    Returns:
+        Decorated function
+    """
+
+    def decorator(func: Callable) -> Callable:
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            current_delay = delay
+            last_exception: Optional[Exception] = None  # FIX: Added type annotation
+
+            for attempt in range(max_attempts):
+                try:
+                    return func(*args, **kwargs)
+                except exceptions as e:
+                    last_exception = e
+                    if attempt == max_attempts - 1:
+                        _logger.error(
+                            f"All {max_attempts} attempts failed for {func.__name__}: {e}"
+                        )
+                        raise  # FIX: Raise directly instead of raising last_exception
+
+                    _logger.warning(
+                        f"Attempt {attempt + 1}/{max_attempts} failed for {func.__name__}: {e}. "
+                        f"Retrying in {current_delay}s..."
+                    )
+                    time.sleep(current_delay)
+                    current_delay *= backoff
+
+            # FIX: This should never be reached, but add safety
+            if last_exception is not None:
+                raise last_exception
+            raise RuntimeError(f"Function {func.__name__} failed without exception")
+
+        return wrapper
+
+    return decorator
+
+
+# Fix 3: memoize function (lines 1437, 1461-1462)
+# Fix cache annotations and cache_clear/cache_info attributes
+
+def memoize(max_size: int = 128):
+    """
+    Simple memoization decorator with size limit.
+
+    Args:
+        max_size: Maximum cache size
+
+    Returns:
+        Decorated function
+    """
+
+    def decorator(func: Callable) -> Callable:
+        cache: Dict[str, Any] = {}  # FIX: Added type annotation
+        cache_order: List[str] = []
+
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            # Create cache key from args and kwargs
+            key = str(args) + str(sorted(kwargs.items()))
+
+            if key in cache:
+                return cache[key]
+
+            result = func(*args, **kwargs)
+
+            # Add to cache
+            cache[key] = result
+            cache_order.append(key)
+
+            # Remove oldest if exceeds max_size
+            if len(cache) > max_size:
+                oldest_key = cache_order.pop(0)
+                del cache[oldest_key]
+
+            return result
+
+        # FIX: Define cache_clear and cache_info properly
+        def cache_clear() -> None:
+            cache.clear()
+            cache_order.clear()
+
+        def cache_info() -> Dict[str, int]:
+            return {"size": len(cache), "max_size": max_size}
+
+        # FIX: Assign to wrapper using setattr to avoid type errors
+        setattr(wrapper, 'cache_clear', cache_clear)
+        setattr(wrapper, 'cache_info', cache_info)
+
+        return wrapper
+
+    return decorator
+
+
+# ============================================================================
+# FIXES FOR formatters.py
+# ============================================================================
+
+# Fix for format_skill_summary (line 190 in formatters.py)
+# Add type annotation for by_level dictionary
+
+def format_skill_summary(skills: List[Dict[str, Any]]) -> str:
+    """
+    Format skills grouped by level.
+    
+    Args:
+        skills: List of skill dictionaries
+        
+    Returns:
+        Formatted string
+    """
+    by_level: Dict[str, List[Dict[str, Any]]] = {}  # FIX: Added type annotation
+    
+    for skill in skills:
+        level = skill.get('level', 'intermediate')
+        if level not in by_level:
+            by_level[level] = []
+        by_level[level].append(skill)
+    
+    # ... rest of the function
+
+
+# Fix for format_learning_plan (line 339 in formatters.py)
+# Add type annotation for by_priority dictionary
+
+def format_learning_plan(plan: Dict[str, Any]) -> str:
+    """
+    Format learning plan.
+    
+    Args:
+        plan: Learning plan dictionary
+        
+    Returns:
+        Formatted string
+    """
+    by_priority: Dict[str, List[Dict[str, Any]]] = {
+        "high": [], 
+        "medium": [], 
+        "low": []
+    }  # FIX: Added type annotation
+    
+    # ... rest of the function
+
+
+# ============================================================================
+# FIXES FOR data_loader.py
+# ============================================================================
+
+# Fix for MasterSkillsetLoader.load (line 127 in data_loader.py)
+# Properly type the return value
+
+class MasterSkillsetLoader:
+    """Loader for master skillset data."""
+    
+    def load_json(self, file_path: str) -> Dict[str, Any]:
+        """Load JSON file."""
+        # ... implementation
+        pass
+    
+    def load(self, file_path: str) -> Dict[str, Any]:
+        """
+        Load master skillset from JSON file.
+        
+        Args:
+            file_path: Path to JSON file
+            
+        Returns:
+            Dictionary containing skillset data
+        """
+        # FIX: Cast the return value or ensure load_json has proper return type
+        data: Dict[str, Any] = self.load_json(file_path)
+        return data
+        
+        # Alternative if you need validation:
+        # result = self.load_json(file_path)
+        # if not isinstance(result, dict):
+        #     raise TypeError(f"Expected dict, got {type(result)}")
+        # return result
+
+
+# ============================================================================
+# COMPLETE FIXED VERSION OF KEY FUNCTIONS
+# ============================================================================
+
+# Here's a complete working version with all fixes applied:
+
+import re
+import logging
+from typing import Any, Callable, Dict, List, Optional, Tuple
+from functools import wraps
+import time
+
+_logger = logging.getLogger(__name__)
+
+
+def extract_keywords_fixed(text: str, min_length: int = 3, top_n: Optional[int] = None) -> List[str]:
+    """Extract keywords from text with proper type annotations."""
+    if not text:
+        return []
+
+    words = re.findall(r"\b[a-z]{" + str(min_length) + r",}\b", text.lower())
+
+    stop_words = {
+        "the", "and", "for", "are", "but", "not", "you", "all", "can", "her",
+        "was", "one", "our", "out", "day", "get", "has", "him", "his", "how",
+        "man", "new", "now", "old", "see", "two", "way", "who", "boy", "did",
+        "its", "let", "put", "say", "she", "too", "use", "with", "will", "this",
+        "that", "from", "have", "they", "been", "were", "what", "when", "your",
+    }
+
+    word_freq: Dict[str, int] = {}
+    for word in words:
+        if word not in stop_words:
+            word_freq[word] = word_freq.get(word, 0) + 1
+
+    sorted_words = sorted(word_freq.items(), key=lambda x: x[1], reverse=True)
+    keywords = [word for word, _ in sorted_words]
+    return keywords[:top_n] if top_n else keywords
+
+
+def retry_on_error_fixed(
+    max_attempts: int = 3,
+    delay: float = 1.0,
+    backoff: float = 2.0,
+    exceptions: Tuple[type[Exception], ...] = (Exception,),
+):
+    """Decorator to retry function on error with exponential backoff."""
+
+    def decorator(func: Callable) -> Callable:
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            current_delay = delay
+            last_exception: Optional[Exception] = None
+
+            for attempt in range(max_attempts):
+                try:
+                    return func(*args, **kwargs)
+                except exceptions as e:
+                    last_exception = e
+                    if attempt == max_attempts - 1:
+                        _logger.error(
+                            f"All {max_attempts} attempts failed for {func.__name__}: {e}"
+                        )
+                        raise
+
+                    _logger.warning(
+                        f"Attempt {attempt + 1}/{max_attempts} failed for {func.__name__}: {e}. "
+                        f"Retrying in {current_delay}s..."
+                    )
+                    time.sleep(current_delay)
+                    current_delay *= backoff
+
+            if last_exception is not None:
+                raise last_exception
+            raise RuntimeError(f"Function {func.__name__} failed without exception")
+
+        return wrapper
+
+    return decorator
+
+
+def memoize_fixed(max_size: int = 128):
+    """Simple memoization decorator with size limit."""
+
+    def decorator(func: Callable) -> Callable:
+        cache: Dict[str, Any] = {}
+        cache_order: List[str] = []
+
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            key = str(args) + str(sorted(kwargs.items()))
+
+            if key in cache:
+                return cache[key]
+
+            result = func(*args, **kwargs)
+            cache[key] = result
+            cache_order.append(key)
+
+            if len(cache) > max_size:
+                oldest_key = cache_order.pop(0)
+                del cache[oldest_key]
+
+            return result
+
+        def cache_clear() -> None:
+            cache.clear()
+            cache_order.clear()
+
+        def cache_info() -> Dict[str, int]:
+            return {"size": len(cache), "max_size": max_size}
+
+        setattr(wrapper, 'cache_clear', cache_clear)
+        setattr(wrapper, 'cache_info', cache_info)
+
+        return wrapper
+
+    return decorator

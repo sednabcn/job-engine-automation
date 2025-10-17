@@ -225,6 +225,7 @@ class TXTReader:
             except Exception as e:
                 logger.error(f"Error reading text file {file_path}: {str(e)}")
                 raise
+        return ""
 
 
 class CVReader(FileReader):

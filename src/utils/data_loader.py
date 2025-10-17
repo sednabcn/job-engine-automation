@@ -7,7 +7,7 @@ import json
 import logging
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, cast
 
 logger = logging.getLogger(__name__)
 
@@ -124,9 +124,11 @@ class MasterSkillsetLoader(DataLoader):
 
     def load(self) -> Dict[str, Any]:
         """Load master skillset."""
-        return self.load_json(
+        # FIXED: Cast the return value to the expected type
+        result = self.load_json(
             self.FILENAME, default={"skills": {}, "last_updated": None, "version": "1.0"}
         )
+        return cast(Dict[str, Any], result)
 
     def save(self, skillset: Dict[str, Any]) -> None:
         """Save master skillset."""
@@ -146,7 +148,9 @@ class MasterSkillsetLoader(DataLoader):
     def get_skill(self, skill_name: str) -> Optional[Dict[str, Any]]:
         """Get a specific skill from the skillset."""
         skillset = self.load()
-        return skillset["skills"].get(skill_name)
+        # FIXED: Cast the return value to the expected type
+        result = skillset["skills"].get(skill_name)
+        return cast(Optional[Dict[str, Any]], result)
 
 
 class JobAnalysisLoader(DataLoader):
@@ -156,7 +160,9 @@ class JobAnalysisLoader(DataLoader):
 
     def load(self) -> List[Dict[str, Any]]:
         """Load analyzed jobs."""
-        return self.load_json(self.FILENAME, default=[])
+        # FIXED: Cast the return value to the expected type
+        result = self.load_json(self.FILENAME, default=[])
+        return cast(List[Dict[str, Any]], result)
 
     def save(self, jobs: List[Dict[str, Any]]) -> None:
         """Save analyzed jobs."""
@@ -191,9 +197,11 @@ class LearningProgressLoader(DataLoader):
 
     def load(self) -> Dict[str, Any]:
         """Load learning progress."""
-        return self.load_json(
+        # FIXED: Cast the return value to the expected type
+        result = self.load_json(
             self.FILENAME, default={"plans": [], "completed_items": [], "current_plan": None}
         )
+        return cast(Dict[str, Any], result)
 
     def save(self, progress: Dict[str, Any]) -> None:
         """Save learning progress."""
@@ -224,7 +232,9 @@ class SprintHistoryLoader(DataLoader):
 
     def load(self) -> List[Dict[str, Any]]:
         """Load sprint history."""
-        return self.load_json(self.FILENAME, default=[])
+        # FIXED: Cast the return value to the expected type
+        result = self.load_json(self.FILENAME, default=[])
+        return cast(List[Dict[str, Any]], result)
 
     def save(self, sprints: List[Dict[str, Any]]) -> None:
         """Save sprint history."""
@@ -265,7 +275,8 @@ class WorkflowStateLoader(DataLoader):
 
     def load(self) -> Dict[str, Any]:
         """Load workflow state."""
-        return self.load_json(
+        # FIXED: Cast the return value to the expected type
+        result = self.load_json(
             self.FILENAME,
             default={
                 "current_stage": "initial",
@@ -274,6 +285,7 @@ class WorkflowStateLoader(DataLoader):
                 "last_updated": None,
             },
         )
+        return cast(Dict[str, Any], result)
 
     def save(self, state: Dict[str, Any]) -> None:
         """Save workflow state."""
@@ -308,7 +320,9 @@ class SkillTestsLoader(DataLoader):
 
     def load(self) -> Dict[str, Any]:
         """Load skill tests."""
-        return self.load_json(self.FILENAME, default={"tests": [], "results": []})
+        # FIXED: Cast the return value to the expected type
+        result = self.load_json(self.FILENAME, default={"tests": [], "results": []})
+        return cast(Dict[str, Any], result)
 
     def save(self, tests_data: Dict[str, Any]) -> None:
         """Save skill tests."""

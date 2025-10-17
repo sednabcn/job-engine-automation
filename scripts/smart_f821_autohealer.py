@@ -60,8 +60,8 @@ def insert_placeholder_definition(lines, error_line, var_name):
     # Ensure valid line index
     if error_line < 1 or error_line > len(lines) + 1:
         print(
-            f"⚠️  Warning: reported line {error_line} exceeds file length ({
-                len(lines)}) for '{var_name}'."
+            f"⚠️  Warning: reported line {error_line} exceeds file length "
+            f"({len(lines)}) for '{var_name}'."
         )
         error_line = len(lines) + 1
 
@@ -70,12 +70,14 @@ def insert_placeholder_definition(lines, error_line, var_name):
         return lines
 
     # Detect indentation scope safely
+    indent = 0
     for i in range(min(error_line - 2, len(lines) - 1), -1, -1):
-        line = lines[i]
-        if re.match(r"^\s*def |^\s*class ", line):
-            len(line) - len(line.lstrip()) + 4
+        current_line = lines[i]
+        if re.match(r"^\s*def |^\s*class ", current_line):
+            indent = len(current_line) - len(current_line.lstrip()) + 4
             break
 
+    placeholder = " " * indent + f"{var_name} = None  # FIX: Define {var_name}\n"
     insertion_point = max(0, min(error_line - 1, len(lines)))
     lines.insert(insertion_point, placeholder)
     return lines
@@ -87,8 +89,8 @@ def ensure_import(lines, var_name):
         return lines, False
 
     import_stmt = COMMON_MODULES[var_name]
-    import_lines = [l for l in lines if l.strip().startswith("import") or "from " in l]
-    already_imported = any(var_name in l for l in import_lines)
+    import_lines = [line for line in lines if line.strip().startswith("import") or "from " in line]
+    already_imported = any(var_name in line for line in import_lines)
     if already_imported:
         return lines, False
 
@@ -120,7 +122,7 @@ def fix_file(filepath, undefined_vars):
     for err in undefined_vars:
         var_name = err["var"]
         underscore_var = f"_{var_name}"
-        if any(re.search(rf"\b{underscore_var}\s*=", l) for l in lines):
+        if any(re.search(rf"\b{underscore_var}\s*=", line) for line in lines):
             vars_to_fix.add((underscore_var, var_name))
 
     new_lines = []
@@ -133,6 +135,7 @@ def fix_file(filepath, undefined_vars):
 
     if vars_to_fix:
         modified = True
+        lines = new_lines
 
     # Step 2: Insert placeholders & imports
     all_text = "".join(lines)
@@ -142,19 +145,20 @@ def fix_file(filepath, undefined_vars):
         if keyword.iskeyword(var_name) or var_name in dir(__builtins__):
             continue
 
-        new_lines, added_import = ensure_import(new_lines, var_name)
+        new_lines, added_import = ensure_import(lines, var_name)
         if added_import:
             modified = True
+            lines = new_lines
             continue
 
         if not re.search(rf"\b{re.escape(var_name)}\s*=", all_text):
-            new_lines = insert_placeholder_definition(new_lines, err["line"], var_name)
+            lines = insert_placeholder_definition(lines, err["line"], var_name)
             modified = True
 
     # Step 3: Save changes
     if modified:
         backup_file(Path(filepath))
-        Path(filepath).write_text("".join(new_lines), encoding="utf-8")
+        Path(filepath).write_text("".join(lines), encoding="utf-8")
         return True
 
     return False
@@ -201,13 +205,13 @@ def main():
             print(f"✅ Healed: {filepath} ({len(file_errors)} errors)")
             fixed += 1
         else:
-            print(f"⏭️  Skipped: {filepath}")
+            print(f"⭐️ Skipped: {filepath}")
             skipped += 1
 
     print("\n📈 Summary")
     print("=" * 80)
     print(f"✅ Fixed/Healed: {fixed} file(s)")
-    print(f"⏭️  Skipped: {skipped} file(s)")
+    print(f"⭐️ Skipped: {skipped} file(s)")
 
     if fixed:
         print("\n✨ Re-run to verify:")

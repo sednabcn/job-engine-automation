@@ -159,7 +159,7 @@ def extract_keywords(text: str, min_length: int = 3, top_n: Optional[int] = None
     }
 
     # Filter stop words and count frequency
-    word_freq = {}
+    word_freq: Dict[str, int] = {}  # FIXED: Added type annotation
     for word in words:
         if word not in stop_words:
             word_freq[word] = word_freq.get(word, 0) + 1
@@ -630,8 +630,6 @@ def time_ago(dt: datetime, detailed: bool = False) -> str:
             return f"{years} year{'s' if years != 1 else ''}, {remaining_months} month{'s' if remaining_months != 1 else ''} ago"
         return f"{years} year{'s' if years != 1 else ''} ago"
 
-
-# Continuation of helpers.py - Part 2/2
 
 # ============================================================================
 # DATA UTILITIES
@@ -1352,7 +1350,7 @@ def retry_on_error(
     max_attempts: int = 3,
     delay: float = 1.0,
     backoff: float = 2.0,
-    exceptions: Tuple = (Exception,),
+    exceptions: Tuple[type[Exception], ...] = (Exception,),
 ):
     """
     Decorator to retry function on error with exponential backoff.
@@ -1371,7 +1369,7 @@ def retry_on_error(
         @wraps(func)
         def wrapper(*args, **kwargs):
             current_delay = delay
-            last_exception = None
+            last_exception: Optional[Exception] = None  # FIXED: Added type annotation
 
             for attempt in range(max_attempts):
                 try:
@@ -1382,15 +1380,19 @@ def retry_on_error(
                         _logger.error(
                             f"All {max_attempts} attempts failed for {func.__name__}: {e}"
                         )
-                        raise
+                        raise  # FIXED: Raise directly instead of raising last_exception
 
                     _logger.warning(
-                        f"Attempt {attempt + 1}/{max_attempts} failed for {func.__name__}: {e}. Retrying in {current_delay}s..."
+                        f"Attempt {attempt + 1}/{max_attempts} failed for {func.__name__}: {e}. "
+                        f"Retrying in {current_delay}s..."
                     )
                     time.sleep(current_delay)
                     current_delay *= backoff
 
-            raise last_exception
+            # FIXED: This should never be reached, but add safety
+            if last_exception is not None:
+                raise last_exception
+            raise RuntimeError(f"Function {func.__name__} failed without exception")
 
         return wrapper
 
@@ -1434,8 +1436,8 @@ def memoize(max_size: int = 128):
     """
 
     def decorator(func: Callable) -> Callable:
-        cache = {}
-        cache_order = []
+        cache: Dict[str, Any] = {}  # FIXED: Added type annotation
+        cache_order: List[str] = []
 
         @wraps(func)
         def wrapper(*args, **kwargs):
@@ -1458,8 +1460,17 @@ def memoize(max_size: int = 128):
 
             return result
 
-        wrapper.cache_clear = lambda: (cache.clear(), cache_order.clear())
-        wrapper.cache_info = lambda: {"size": len(cache), "max_size": max_size}
+        # FIXED: Define cache_clear and cache_info properly
+        def cache_clear() -> None:
+            cache.clear()
+            cache_order.clear()
+
+        def cache_info() -> Dict[str, int]:
+            return {"size": len(cache), "max_size": max_size}
+
+        # FIXED: Assign to wrapper using setattr to avoid type errors
+        setattr(wrapper, "cache_clear", cache_clear)
+        setattr(wrapper, "cache_info", cache_info)
 
         return wrapper
 

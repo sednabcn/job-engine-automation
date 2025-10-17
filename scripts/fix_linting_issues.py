@@ -24,25 +24,19 @@ def fix_f541_line(line):
         f"Hello {name}" -> f"Hello {name}" (unchanged)
     """
     # Match "string" without any { or }
-    _line = re.sub(
+    line = re.sub(
         r'"([^"{}\n]*)"',
         lambda m: (
-            f'"{
-            m.group(1)}"'
-            if "{" not in m.group(1) and "}" not in m.group(1)
-            else m.group(0)
+            f'"{m.group(1)}"' if "{" not in m.group(1) and "}" not in m.group(1) else m.group(0)
         ),
         line,
     )
 
     # Match 'string' without any { or }
-    _line = re.sub(
+    line = re.sub(
         r"'([^'{}\n]*)'",
         lambda m: (
-            f"'{
-            m.group(1)}'"
-            if "{" not in m.group(1) and "}" not in m.group(1)
-            else m.group(0)
+            f"'{m.group(1)}'" if "{" not in m.group(1) and "}" not in m.group(1) else m.group(0)
         ),
         line,
     )
@@ -59,7 +53,7 @@ def fix_f841_line(line):
     """
     # Pattern to match variable assignments
     # This matches: variable_name = value
-    _match = re.match(r"^(\s*)([a-zA-Z_][a-zA-Z0-9_]*)\s*=\s*(.+)$", line)
+    match = re.match(r"^(\s*)([a-zA-Z_][a-zA-Z0-9_]*)\s*=\s*(.+)$", line)
 
     if match:
         indent, var_name, value = match.groups()
@@ -100,13 +94,19 @@ def fix_e402_imports(lines):
     but before any other code.
     """
     # Identify sections
-    _header_lines = []  # Shebang, encoding, docstring, initial comments
-    _import_lines = []  # All import statements
-    _code_lines = []  # Everything else
+    header_lines = []  # Shebang, encoding, docstring, initial comments
+    import_lines = []  # All import statements
+    code_lines = []  # Everything else
+
+    i = 0
+    in_docstring = False
+    docstring_started = False
+    docstring_char = None
+    found_first_code = False
 
     while i < len(lines):
-        lines[i]
-        line.strip()
+        line = lines[i]
+        stripped = line.strip()
 
         # Handle shebang
         if i == 0 and stripped.startswith("#!"):
@@ -124,19 +124,21 @@ def fix_e402_imports(lines):
 
         # Handle docstrings
         if not docstring_started and (stripped.startswith('"""') or stripped.startswith("'''")):
-            '"""' if stripped.startswith('"""') else "'''"
+            docstring_char = '"""' if stripped.startswith('"""') else "'''"
             header_lines.append(line)
+            in_docstring = True
+            docstring_started = True
 
             # Check if docstring ends on same line
             if stripped.count(docstring_char) >= 2:
-                pass
+                in_docstring = False
             i += 1
             continue
 
         if in_docstring:
             header_lines.append(line)
             if docstring_char in stripped:
-                pass
+                in_docstring = False
             i += 1
             continue
 
@@ -153,10 +155,12 @@ def fix_e402_imports(lines):
             continue
 
         # Everything else is code
+        found_first_code = True
         code_lines.append(line)
         i += 1
 
     # Reconstruct file
+    result = []
     result.extend(header_lines)
 
     # Add blank line after header if needed
@@ -181,30 +185,33 @@ def fix_file(filepath, fix_unused_vars=False, fix_imports=False):
     """Fix flake8 issues in a Python file"""
     try:
         with open(filepath, "r", encoding="utf-8") as f:
-            f.readlines()
+            lines = f.readlines()
 
         # Fix E402 first (import order) - operates on full file
         if fix_imports:
-            fix_e402_imports(lines)
+            lines = fix_e402_imports(lines)
+
+        new_lines = []
+        modified = False
 
         for i, line in enumerate(lines, 1):
-            pass
+            original = line
 
             # Fix W291 first (trailing whitespace on all lines)
-            fix_w291_line(line)
+            line = fix_w291_line(line)
 
             # Fix W293 (blank lines with whitespace)
-            fix_w293_line(line)
+            line = fix_w293_line(line)
 
             # Fix F541 (f-strings without placeholders)
-            fix_f541_line(line)
+            line = fix_f541_line(line)
 
             # Fix F841 (unused variables) - only if flag is set
             if fix_unused_vars:
-                fix_f841_line(line)
+                line = fix_f841_line(line)
 
             if line != original:
-                pass
+                modified = True
 
             new_lines.append(line)
 
@@ -222,13 +229,13 @@ def fix_file(filepath, fix_unused_vars=False, fix_imports=False):
 
 def process_directory(directory=".", pattern="**/*.py", fix_unused_vars=False, fix_imports=False):
     """Process all Python files in directory"""
-    Path(directory)
+    root = Path(directory)
 
     if not root.exists():
         print(f"❌ Directory not found: {directory}")
         return
 
-    list(root.glob(pattern))
+    files = list(root.glob(pattern))
 
     if not files:
         print(f"No Python files found in {directory}")
@@ -236,6 +243,9 @@ def process_directory(directory=".", pattern="**/*.py", fix_unused_vars=False, f
 
     print(f"Found {len(files)} Python files")
     print("=" * 60)
+
+    fixed_count = 0
+    skip_dirs = ["venv", ".venv", "env", "build", "dist", "__pycache__", ".git"]
 
     for filepath in sorted(files):
         # Skip virtual environments and build directories
@@ -246,7 +256,7 @@ def process_directory(directory=".", pattern="**/*.py", fix_unused_vars=False, f
             print(f"✅ Fixed: {filepath}")
             fixed_count += 1
         else:
-            print(f"⏭️  No changes: {filepath}")
+            print(f"⭐️ No changes: {filepath}")
 
     print("=" * 60)
     print(f"✅ Complete! Fixed {fixed_count} files")
@@ -255,10 +265,10 @@ def process_directory(directory=".", pattern="**/*.py", fix_unused_vars=False, f
 def main():
     """Main entry point"""
 
-    _parser = argparse.ArgumentParser(
-        _description="Fix common flake8 errors (F541, F841, E402, W291, W293)",
-        _formatter_class=argparse.RawDescriptionHelpFormatter,
-        _epilog="""
+    parser = argparse.ArgumentParser(
+        description="Fix common flake8 errors (F541, F841, E402, W291, W293)",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
 Examples:
   # Fix whitespace and f-strings only (safe)
   python fix_linting_issues.py
@@ -281,28 +291,29 @@ Examples:
     )
 
     parser.add_argument(
-        "--dir", _default=".", _help="Directory to process (default: current directory)"
+        "--dir", default=".", help="Directory to process (default: current directory)"
     )
 
-    parser.add_argument("--file", _help="Process a single file instead of directory")
+    parser.add_argument("--file", help="Process a single file instead of directory")
 
     parser.add_argument(
-        "--pattern", _default="**/*.py", _help="File pattern to match (default: **/*.py)"
+        "--pattern", default="**/*.py", help="File pattern to match (default: **/*.py)"
     )
 
     parser.add_argument(
         "--fix-unused-vars",
-        _action="store_true",
-        _help="Fix F841 by prefixing unused variables with underscore",
+        action="store_true",
+        help="Fix F841 by prefixing unused variables with underscore",
     )
 
     parser.add_argument(
-        "--fix-imports", _action="store_true", _help="Fix E402 by moving imports to top of file"
+        "--fix-imports", action="store_true", help="Fix E402 by moving imports to top of file"
     )
 
-    parser.parse_args()
+    args = parser.parse_args()
 
     print("🔧 Python Linting Auto-Fixer")
+    fixes = ["W291 (trailing whitespace)", "W293 (blank line whitespace)", "F541 (f-strings)"]
     if args.fix_unused_vars:
         fixes.append("F841 (unused vars)")
     if args.fix_imports:
@@ -311,7 +322,7 @@ Examples:
     print("=" * 60)
 
     if args.file:
-        Path(args.file)
+        filepath = Path(args.file)
         if not filepath.exists():
             print(f"❌ File not found: {args.file}")
             sys.exit(1)
@@ -319,7 +330,7 @@ Examples:
         if fix_file(filepath, args.fix_unused_vars, args.fix_imports):
             print(f"✅ Fixed: {filepath}")
         else:
-            print(f"⏭️  No changes needed: {filepath}")
+            print(f"⭐️ No changes needed: {filepath}")
     else:
         process_directory(args.dir, args.pattern, args.fix_unused_vars, args.fix_imports)
 

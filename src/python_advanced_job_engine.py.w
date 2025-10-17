@@ -51,7 +51,7 @@ class AdvancedJobEngine:
         self.state = self._load_json(self.state_file, self._init_state())
 
         # Scoring weights
-        self.WEIGHTS: Dict[str, float] = {
+        self.WEIGHTS = {
             "required_skills": 0.35,
             "preferred_skills": 0.15,
             "experience": 0.20,
@@ -64,27 +64,27 @@ class AdvancedJobEngine:
         self.LEARNING_RESOURCES = self._init_learning_resources()
 
         # Test difficulty levels
-        self.TEST_LEVELS: Dict[str, Dict[str, int]] = {
+        self.TEST_LEVELS = {
             "beginner": {"questions": 10, "pass_score": 60},
             "intermediate": {"questions": 15, "pass_score": 70},
             "advanced": {"questions": 20, "pass_score": 80},
         }
 
         # Quality gates (for reverse workflow)
-        self.QUALITY_GATES: Dict[str, Dict[str, Any]] = {
+        self.QUALITY_GATES = {
             "foundation": {"score": 65, "projects": 2, "tests_passed": "beginner"},
             "competency": {"score": 80, "projects": 4, "tests_passed": "intermediate"},
             "mastery": {"score": 90, "projects": 5, "tests_passed": "advanced"},
             "application_ready": {"score": 90, "brand": True, "network": True},
         }
 
-    def _load_json(self, filepath: Path, default: Any) -> Any:
+    def _load_json(self, filepath: Path, default):
         if filepath.exists():
             with open(filepath, "r", encoding="utf-8") as f:
                 return json.load(f)
         return default
 
-    def _save_json(self, filepath: Path, data: Any) -> None:
+    def _save_json(self, filepath: Path, data):
         with open(filepath, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=2, ensure_ascii=False)
 
@@ -98,13 +98,13 @@ class AdvancedJobEngine:
         Returns:
             Extracted text content
         """
-        path = Path(file_path)
+        path = Path(file_path)  # FIX: Define path
 
         if not path.exists():
             raise FileNotFoundError(f"File not found: {file_path}")
 
         # Determine file type and extract text
-        ext = path.suffix.lower()
+        ext = path.suffix.lower()  # FIX: Define ext
 
         if ext == ".txt":
             return self._read_txt(path)
@@ -129,8 +129,8 @@ class AdvancedJobEngine:
 
         try:
             with open(path, "rb") as f:
-                pdf_reader = PyPDF2.PdfReader(f)
-                text: List[str] = []
+                pdf_reader = PyPDF2.PdfReader(f)  # FIX: Define pdf_reader
+                text = []  # FIX: Define text
                 for page in pdf_reader.pages:
                     text.append(page.extract_text())
             return "\n".join(text)
@@ -146,8 +146,8 @@ class AdvancedJobEngine:
             )
 
         try:
-            doc = Document(str(path))
-            text: List[str] = []
+            doc = Document(str(path))  # FIX: Define doc
+            text = []  # FIX: Define text
 
             # Extract text from paragraphs
             for paragraph in doc.paragraphs:
@@ -163,7 +163,7 @@ class AdvancedJobEngine:
         except Exception as e:
             raise Exception(f"Error reading DOCX: {str(e)}")
 
-    def _init_skillset(self) -> Dict[str, Any]:
+    def _init_skillset(self) -> Dict:
         """Initialize master skillset structure"""
         return {
             "technical_skills": {
@@ -180,7 +180,7 @@ class AdvancedJobEngine:
             "last_updated": datetime.now().isoformat(),
         }
 
-    def _init_learning_resources(self) -> Dict[str, Dict[str, List[str]]]:
+    def _init_learning_resources(self) -> Dict:
         """Initialize comprehensive learning resources database"""
         return {
             "python": {
@@ -270,7 +270,7 @@ class AdvancedJobEngine:
             },
         }
 
-    def _init_state(self) -> Dict[str, Any]:
+    def _init_state(self) -> Dict:
         """Initialize workflow state"""
         return {
             "mode": None,  # "standard" or "reverse"
@@ -290,7 +290,7 @@ class AdvancedJobEngine:
             "estimated_completion": None,
         }
 
-    def parse_cv(self, cv_text: str) -> Dict[str, Any]:
+    def parse_cv(self, cv_text: str) -> Dict:
         """Extract structured information from CV"""
         return {
             "raw_text": cv_text,
@@ -302,7 +302,7 @@ class AdvancedJobEngine:
             "soft_skills": self._extract_soft_skills(cv_text),
         }
 
-    def parse_job(self, job_text: str, title: str = "", company: str = "") -> Dict[str, Any]:
+    def parse_job(self, job_text: str, title: str = "", company: str = "") -> Dict:
         """Extract structured requirements from job description"""
         return {
             "id": hashlib.md5((title + company + job_text).encode()).hexdigest()[:12],
@@ -321,7 +321,7 @@ class AdvancedJobEngine:
 
     def analyze_from_files(
         self, cv_file: str, job_file: str, job_title: str = "", company: str = ""
-    ) -> Dict[str, Any]:
+    ) -> Dict:
         """
         Analyze job match from document files
 
@@ -335,11 +335,11 @@ class AdvancedJobEngine:
             Complete analysis dictionary
         """
         print(f"📄 Reading CV from: {cv_file}")
-        cv_text: str = self.read_document(cv_file)
+        cv_text = self.read_document(cv_file)  # FIX: Define cv_text
         print(f"   ✅ Extracted {len(cv_text)} characters")
 
         print(f"📄 Reading job description from: {job_file}")
-        job_text: str = self.read_document(job_file)
+        job_text = self.read_document(job_file)  # FIX: Define job_text
         print(f"   ✅ Extracted {len(job_text)} characters")
 
         print("\n📊 Analyzing job match...")
@@ -347,23 +347,25 @@ class AdvancedJobEngine:
 
     def analyze_job_complete(
         self, cv_text: str, job_text: str, job_title: str = "", company: str = ""
-    ) -> Dict[str, Any]:
+    ) -> Dict:
         """
         STEP 1 & 2: Complete job analysis with scoring
         """
-        cv_data: Dict[str, Any] = self.parse_cv(cv_text)
-        job_data: Dict[str, Any] = self.parse_job(job_text, job_title, company)
+        cv_data = self.parse_cv(cv_text)  # FIX: Define cv_data
+        job_data = self.parse_job(job_text, job_title, company)  # FIX: Define job_data
 
         # Calculate match score
-        score_result: Dict[str, Any] = self._calculate_score(cv_data, job_data)
+        score_result = self._calculate_score(cv_data, job_data)  # FIX: Define score_result
 
         # Identify gaps
-        gaps: Dict[str, Any] = self._identify_gaps(cv_data, job_data)
+        gaps = self._identify_gaps(cv_data, job_data)  # FIX: Define gaps
 
         # Generate recommendations
-        recommendations: List[Dict[str, Any]] = self._generate_recommendations(gaps, score_result)
+        recommendations = self._generate_recommendations(
+            gaps, score_result
+        )  # FIX: Define recommendations
 
-        analysis: Dict[str, Any] = {
+        analysis = {
             "job_id": job_data["id"],
             "job_info": {"title": job_data["title"], "company": job_data["company"]},
             "score": score_result,
@@ -380,9 +382,7 @@ class AdvancedJobEngine:
 
         return analysis
 
-    def create_learning_plan(
-        self, analysis: Dict[str, Any], mode: str = "standard"
-    ) -> Dict[str, Any]:
+    def create_learning_plan(self, analysis: Dict, mode: str = "standard") -> Dict:
         """
         STEP 3: Create detailed learning plan with three levels
 
@@ -393,10 +393,10 @@ class AdvancedJobEngine:
         Returns:
             Comprehensive learning plan
         """
-        gaps: Dict[str, Any] = analysis["gaps"]
+        gaps = analysis["gaps"]  # FIX: Define gaps
 
         # Set duration based on mode
-        duration: str = "12 weeks" if mode == "standard" else "16-24 weeks"
+        duration = "12 weeks" if mode == "standard" else "16-24 weeks"
 
         plan: Dict[str, Any] = {
             "plan_id": f"LP_{analysis['job_id']}_{datetime.now().strftime('%Y%m%d')}",
@@ -413,12 +413,12 @@ class AdvancedJobEngine:
         }
 
         # Categorize missing skills
-        missing_required: List[str] = gaps["missing_required_skills"]
-        missing_preferred: List[str] = gaps["missing_preferred_skills"]
+        missing_required = gaps["missing_required_skills"]  # FIX: Define missing_required
+        missing_preferred = gaps["missing_preferred_skills"]  # FIX: Define missing_preferred
 
         # Level A: TO STUDY (completely new skills)
         for skill in missing_required[:5]:  # Top 5 critical skills
-            resources: Dict[str, List[str]] = self._get_resources(skill)
+            resources = self._get_resources(skill)  # FIX: Define resources
             plan["levels"]["study"].append(
                 {
                     "skill": skill,
@@ -433,7 +433,7 @@ class AdvancedJobEngine:
 
         # Level B: TO PRACTICE (have some knowledge, need more practice)
         for skill in missing_preferred[:3]:
-            resources = self._get_resources(skill)
+            resources = self._get_resources(skill)  # FIX: Define resources
             plan["levels"]["practice"].append(
                 {
                     "skill": skill,
@@ -446,9 +446,9 @@ class AdvancedJobEngine:
             )
 
         # Level C: COURSES (structured learning)
-        all_missing: List[str] = list(set(missing_required + missing_preferred))
+        all_missing = list(set(missing_required + missing_preferred))  # FIX: Define all_missing
         for skill in all_missing[:7]:  # Top 7 skills
-            resources = self._get_resources(skill)
+            resources = self._get_resources(skill)  # FIX: Define resources
             plan["levels"]["courses"].append(
                 {
                     "skill": skill,
@@ -471,7 +471,7 @@ class AdvancedJobEngine:
 
         return plan
 
-    def start_sprint(self, skills: List[str], project_goal: str) -> Dict[str, Any]:
+    def start_sprint(self, skills: List[str], project_goal: str) -> Dict:
         """
         REVERSE WORKFLOW: Start a 2-week sprint for skill building
 
@@ -482,9 +482,9 @@ class AdvancedJobEngine:
         Returns:
             Sprint configuration dictionary
         """
-        sprint_num: int = self.state["current_sprint"] + 1
+        sprint_num = self.state["current_sprint"] + 1  # FIX: Define sprint_num
 
-        sprint: Dict[str, Any] = {
+        sprint = {
             "sprint_number": sprint_num,
             "start_date": datetime.now().isoformat(),
             "end_date": (datetime.now() + timedelta(days=14)).isoformat(),
@@ -511,7 +511,7 @@ class AdvancedJobEngine:
 
         return sprint
 
-    def log_daily(self, hours: float, concepts: List[str], notes: str = "") -> None:
+    def log_daily(self, hours: float, concepts: List[str], notes: str = ""):
         """
         Log daily learning activity for current sprint
 
@@ -524,13 +524,13 @@ class AdvancedJobEngine:
             print("⚠️ No active sprint. Start a sprint first with start_sprint()")
             return
 
-        current_sprint: Dict[str, Any] = self.sprint_history[-1]
+        current_sprint = self.sprint_history[-1]  # FIX: Define current_sprint
 
         if current_sprint.get("completed", False):
             print("⚠️ Current sprint is completed. Start a new sprint.")
             return
 
-        log_entry: Dict[str, Any] = {
+        log_entry = {
             "date": datetime.now().isoformat(),
             "day_number": len(current_sprint["daily_logs"]) + 1,
             "hours": hours,
@@ -541,13 +541,15 @@ class AdvancedJobEngine:
         current_sprint["daily_logs"].append(log_entry)
         self._save_json(self.sprints_file, self.sprint_history)
 
-        total_hours: float = sum(log["hours"] for log in current_sprint["daily_logs"])
+        total_hours = sum(
+            log["hours"] for log in current_sprint["daily_logs"]
+        )  # FIX: Define total_hours
 
         print(f"✅ Day {log_entry['day_number']} logged ({hours}h)")
         print(f"   Total Sprint Hours: {total_hours}h")
         print(f"   Concepts: {', '.join(concepts)}")
 
-    def end_sprint(self, project_url: str, test_scores: Dict[str, float]) -> Dict[str, Any]:
+    def end_sprint(self, project_url: str, test_scores: Dict[str, float]) -> Dict:
         """
         Complete current sprint and assess progress
 
@@ -562,13 +564,13 @@ class AdvancedJobEngine:
             print("⚠️ No active sprint")
             return {}
 
-        current_sprint: Dict[str, Any] = self.sprint_history[-1]
+        current_sprint = self.sprint_history[-1]  # FIX: Define current_sprint
 
         if current_sprint.get("completed", False):
             print("⚠️ Sprint already completed")
             return {}
 
-        sprint_num: int = current_sprint["sprint_number"]
+        sprint_num = current_sprint["sprint_number"]  # FIX: Define sprint_num
 
         print(f"\n🏁 Sprint {sprint_num} Assessment")
         print("=" * 60)
@@ -579,11 +581,13 @@ class AdvancedJobEngine:
         current_sprint["project_url"] = project_url
         current_sprint["test_scores"] = test_scores
 
-        total_hours: float = sum(log["hours"] for log in current_sprint["daily_logs"])
+        total_hours = sum(
+            log["hours"] for log in current_sprint["daily_logs"]
+        )  # FIX: Define total_hours
         current_sprint["total_hours"] = total_hours
 
         # Update mastered skills
-        newly_mastered: List[str] = []
+        newly_mastered = []  # FIX: Define newly_mastered
         for skill, score in test_scores.items():
             if score >= 60 and skill not in self.state["skills_mastered"]:
                 self.state["skills_mastered"].append(skill)
@@ -594,19 +598,20 @@ class AdvancedJobEngine:
             if skill not in self.state["tests_passed"]:
                 self.state["tests_passed"][skill] = []
 
-            level: Optional[str] = None
             if score >= 80:
-                level = "advanced"
+                level = "advanced"  # FIX: Define level
             elif score >= 70:
                 level = "intermediate"
             elif score >= 60:
                 level = "beginner"
+            else:
+                level = None
 
             if level and level not in self.state["tests_passed"][skill]:
                 self.state["tests_passed"][skill].append(level)
 
         # Add project
-        project_entry: Dict[str, Any] = {
+        project_entry = {
             "sprint": sprint_num,
             "goal": current_sprint["project_goal"],
             "url": project_url,
@@ -619,10 +624,10 @@ class AdvancedJobEngine:
         self._save_json(self.state_file, self.state)
 
         # Check quality gates
-        gates_passed: Dict[str, bool] = self.check_quality_gates()
+        gates_passed = self.check_quality_gates()  # FIX: Define gates_passed
 
         # Summary
-        summary: Dict[str, Any] = {
+        summary = {
             "sprint": sprint_num,
             "total_hours": total_hours,
             "skills_mastered": newly_mastered,
@@ -646,31 +651,29 @@ class AdvancedJobEngine:
         Returns:
             Dictionary of {gate_name: passed_status}
         """
-        gates_status: Dict[str, bool] = {}
-        newly_passed: List[str] = []
-        score: int = self.state["current_score"]
-        projects: int = len(self.state["projects_completed"])
+        gates_status = {}  # FIX: Define gates_status
+        newly_passed = []  # FIX: Define newly_passed
+        score = self.state["current_score"]  # FIX: Define score
+        projects = len(self.state["projects_completed"])  # FIX: Define projects
 
         for gate_name, requirements in self.QUALITY_GATES.items():
-            # FIXED: Explicitly cast requirements to proper type
-            req_dict: Dict[str, Any] = dict(requirements)
-
             # Check score and projects
-            score_met: bool = score >= req_dict["score"]
-            projects_met: bool = projects >= req_dict["projects"]
+            score_met = score >= requirements["score"]
+            projects_met = projects >= requirements["projects"]
 
             # Check additional requirements
-            additional_met: bool = True
-            if "brand" in req_dict:
+            if "brand" in requirements:
                 additional_met = self.state.get("brand_ready", False)
-            elif "tests_passed" in req_dict:
-                level: str = req_dict["tests_passed"]
+            elif "tests_passed" in requirements:
+                level = requirements["tests_passed"]  # FIX: Define level
                 # Check if at least one skill has passed this level
                 additional_met = any(
                     level in levels for levels in self.state["tests_passed"].values()
                 )
+            else:
+                additional_met = True
 
-            passed: bool = score_met and projects_met and additional_met
+            passed = score_met and projects_met and additional_met  # FIX: Define passed
             gates_status[gate_name] = passed
 
             # Track newly passed gates
@@ -694,7 +697,7 @@ class AdvancedJobEngine:
 
         return gates_status
 
-    def stage_positioning(self) -> Dict[str, Any]:
+    def stage_positioning(self) -> Dict:
         """
         STAGE 5: Build professional brand and visibility (before applying)
 
@@ -711,7 +714,7 @@ class AdvancedJobEngine:
             print("   Continue skill building and project work")
             return {}
 
-        checklist: Dict[str, Any] = {
+        checklist = {
             "linkedin_profile": {
                 "priority": "CRITICAL",
                 "tasks": [
@@ -814,7 +817,7 @@ engine.check_quality_gates()
 
         return checklist
 
-    def display_progress_dashboard(self) -> None:
+    def display_progress_dashboard(self):
         """Display comprehensive progress dashboard"""
         print("\n" + "=" * 80)
         print("PROGRESS DASHBOARD")
@@ -830,7 +833,7 @@ engine.check_quality_gates()
         print(f"   Target Score: {state['target_score']}%")
 
         if state["baseline_score"] > 0:
-            improvement: int = state["current_score"] - state["baseline_score"]
+            improvement = state["current_score"] - state["baseline_score"]
             print(f"   Improvement: +{improvement}%")
 
         print("\n🏃 SPRINT PROGRESS:")
@@ -854,7 +857,7 @@ engine.check_quality_gates()
 
         print("\n🏆 QUALITY GATES:")
         for gate in self.QUALITY_GATES.keys():
-            status: str = "✅" if gate in state["quality_gates_passed"] else "⏳"
+            status = "✅" if gate in state["quality_gates_passed"] else "⏳"
             print(f"   {status} {gate.replace('_', ' ').title()}")
 
         print("\n🎯 READINESS FLAGS:")
@@ -863,14 +866,14 @@ engine.check_quality_gates()
         print(f"   Application Ready: {'✅' if state.get('application_ready') else '⏳'}")
 
         if state["started_date"]:
-            start: datetime = datetime.fromisoformat(state["started_date"])
-            days_elapsed: int = (datetime.now() - start).days
+            start = datetime.fromisoformat(state["started_date"])
+            days_elapsed = (datetime.now() - start).days
             print("\n⏱️ TIME TRACKING:")
             print(f"   Started: {start.strftime('%Y-%m-%d')}")
             print(f"   Days Elapsed: {days_elapsed}")
 
             if self.sprint_history:
-                total_hours: float = sum(
+                total_hours = sum(
                     sprint.get("total_hours", 0)
                     for sprint in self.sprint_history
                     if sprint.get("completed")
@@ -879,13 +882,11 @@ engine.check_quality_gates()
 
         print("\n" + "=" * 80)
 
-    def create_improvement_strategy(
-        self, analysis: Dict[str, Any], learning_plan: Dict[str, Any]
-    ) -> Dict[str, Any]:
+    def create_improvement_strategy(self, analysis: Dict, learning_plan: Dict) -> Dict:
         """
         STEP 4: Create detailed plan to overcome gaps
         """
-        strategy: Dict[str, Any] = {
+        strategy = {
             "strategy_id": f"STR_{analysis['job_id']}",
             "created_date": datetime.now().isoformat(),
             "target_job": analysis["job_info"],
@@ -985,7 +986,7 @@ engine.check_quality_gates()
 
         return strategy
 
-    def generate_skill_tests(self, skills: List[str]) -> Dict[str, Any]:
+    def generate_skill_tests(self, skills: List[str]) -> Dict:
         """
         STEP 5: Generate three-level tests to measure progress
         """
@@ -1008,11 +1009,11 @@ engine.check_quality_gates()
 
         return tests
 
-    def _generate_test(self, skill: str, level: str) -> Dict[str, Any]:
+    def _generate_test(self, skill: str, level: str) -> Dict:
         """Generate test for specific skill and level"""
-        config: Dict[str, int] = self.TEST_LEVELS[level]
+        config = self.TEST_LEVELS[level]
 
-        test: Dict[str, Any] = {
+        test = {
             "skill": skill,
             "level": level,
             "questions": config["questions"],
@@ -1060,9 +1061,9 @@ engine.check_quality_gates()
 
         return test
 
-    def _generate_beginner_questions(self, skill: str) -> List[Dict[str, str]]:
+    def _generate_beginner_questions(self, skill: str) -> List[Dict]:
         """Generate beginner level questions"""
-        templates: Dict[str, List[Dict[str, str]]] = {
+        templates = {
             "python": [
                 {
                     "q": "What is the difference between a list and tuple in Python?",
@@ -1090,7 +1091,7 @@ engine.check_quality_gates()
         }
         return templates.get(skill.lower(), templates["default"])[:5]
 
-    def _generate_intermediate_questions(self, skill: str) -> List[Dict[str, str]]:
+    def _generate_intermediate_questions(self, skill: str) -> List[Dict]:
         """Generate intermediate level questions"""
         return [
             {"q": f"Design a solution for [problem] using {skill}", "type": "design"},
@@ -1103,7 +1104,7 @@ engine.check_quality_gates()
             {"q": f"Compare {skill} with alternative solutions", "type": "analysis"},
         ]
 
-    def _generate_advanced_questions(self, skill: str) -> List[Dict[str, str]]:
+    def _generate_advanced_questions(self, skill: str) -> List[Dict]:
         """Generate advanced level questions"""
         return [
             {"q": f"Design a scalable system using {skill}", "type": "system_design"},
@@ -1113,47 +1114,23 @@ engine.check_quality_gates()
             {"q": f"What are the trade-offs when choosing {skill}?", "type": "analysis"},
         ]
 
-    def update_skillset(self, new_skills: List[str], category: str = "technical") -> Dict[str, Any]:
+    def update_skillset(self, new_skills: List[str], category: str = "technical") -> Dict:
         """
         STEP 6: Update master skillset with newly acquired skills
         """
-        updated: List[str] = []
+        updated = []
 
         for skill in new_skills:
-            skill_lower: str = skill.lower().strip()
+            skill_lower = skill.lower().strip()
 
             if category == "technical":
-                if skill_lower in [
-                    "python",
-                    "java",
-                    "javascript",
-                    "c++",
-                    "go",
-                    "rust",
-                    "scala",
-                    "r",
-                ]:
-                    subcategory: str = "programming"
-                elif skill_lower in [
-                    "pytorch",
-                    "tensorflow",
-                    "react",
-                    "django",
-                    "flask",
-                    "spring",
-                    "angular",
-                ]:
+                if skill_lower in ["python", "java", "javascript", "c++", "go", "rust"]:
+                    subcategory = "programming"
+                elif skill_lower in ["pytorch", "tensorflow", "react", "django", "flask"]:
                     subcategory = "frameworks"
-                elif skill_lower in [
-                    "docker",
-                    "kubernetes",
-                    "git",
-                    "jenkins",
-                    "terraform",
-                    "ansible",
-                ]:
+                elif skill_lower in ["docker", "kubernetes", "git", "jenkins"]:
                     subcategory = "tools"
-                elif skill_lower in ["postgresql", "mongodb", "mysql", "redis", "cassandra"]:
+                elif skill_lower in ["postgresql", "mongodb", "redis", "mysql"]:
                     subcategory = "databases"
                 elif skill_lower in ["aws", "azure", "gcp"]:
                     subcategory = "cloud"
@@ -1184,15 +1161,15 @@ engine.check_quality_gates()
         }
 
     def generate_recruiter_letter(
-        self, analysis: Dict[str, Any], learning_plan: Optional[Dict[str, Any]] = None
-    ) -> Dict[str, Any]:
+        self, analysis: Dict, learning_plan: Optional[Dict] = None
+    ) -> Dict:
         """
         STEP 7: Generate customized recruiter letters based on analysis
         """
-        job_info: Dict[str, str] = analysis["job_info"]
-        score: float = analysis["score"]["total_score"]
+        job_info = analysis["job_info"]
+        score = analysis["score"]["total_score"]
 
-        letters: Dict[str, Any] = {
+        letters = {
             "generated_date": datetime.now().isoformat(),
             "job_reference": job_info,
             "templates": {},
@@ -1211,21 +1188,21 @@ engine.check_quality_gates()
         letters["templates"]["followup_email"] = self._generate_followup_email(analysis)
         letters["templates"]["networking_email"] = self._generate_networking_email(analysis)
 
-        filename: str = f"recruiter_letters_{analysis['job_id']}.json"
+        filename = f"recruiter_letters_{analysis['job_id']}.json"
         self._save_json(self.data_dir / filename, letters)
 
         return letters
 
-    def _generate_strong_match_letter(self, analysis: Dict[str, Any]) -> str:
+    def _generate_strong_match_letter(self, analysis: Dict) -> str:
         """Generate cover letter for strong matches"""
-        job: Dict[str, str] = analysis["job_info"]
-        cv: Dict[str, Any] = analysis["cv_snapshot"]
+        job = analysis["job_info"]
+        cv = analysis["cv_snapshot"]
 
-        matching_skills: List[str] = []
+        matching_skills = []
         for category in cv["skills"].values():
             matching_skills.extend(category[:3])
 
-        letter: str = f"""
+        letter = f"""
 Dear Hiring Manager,
 
 I am writing to express my strong interest in the {job['title']} position at {job['company']}. With {cv['experience_years']} years of relevant experience and a proven track record in the key areas you're seeking, I am confident I would be a valuable addition to your team.
@@ -1264,13 +1241,13 @@ ATTACHMENTS:
 
         return letter
 
-    def _generate_growth_letter(self, analysis: Dict[str, Any]) -> str:
+    def _generate_growth_letter(self, analysis: Dict) -> str:
         """Generate cover letter emphasizing growth potential"""
-        job: Dict[str, str] = analysis["job_info"]
-        cv: Dict[str, Any] = analysis["cv_snapshot"]
-        gaps: Dict[str, Any] = analysis["gaps"]
+        job = analysis["job_info"]
+        cv = analysis["cv_snapshot"]
+        gaps = analysis["gaps"]
 
-        letter: str = f"""Dear Hiring Manager,
+        letter = f"""Dear Hiring Manager,
 
 I am excited to apply for the {job['title']} position at {job['company']}. While I am actively developing expertise in some of the technologies you require, I bring strong foundational skills and a demonstrated ability to quickly learn and adapt.
 
@@ -1301,12 +1278,12 @@ Best regards,
         return letter
 
     def _generate_future_interest_letter(
-        self, analysis: Dict[str, Any], learning_plan: Optional[Dict[str, Any]] = None
+        self, analysis: Dict, learning_plan: Optional[Dict] = None
     ) -> str:
         """Generate letter expressing future interest"""
-        job: Dict[str, str] = analysis["job_info"]
+        job = analysis["job_info"]
 
-        letter: str = f"""Dear Hiring Manager,
+        letter = f"""Dear Hiring Manager,
 
 I am writing to express my interest in future opportunities at {job['company']}, specifically in roles similar to the {job['title']} position.
 
@@ -1339,11 +1316,11 @@ Best regards,
 """
         return letter
 
-    def _generate_linkedin_message(self, analysis: Dict[str, Any]) -> str:
+    def _generate_linkedin_message(self, analysis: Dict) -> str:
         """Generate LinkedIn connection request message"""
-        job: Dict[str, str] = analysis["job_info"]
+        job = analysis["job_info"]
 
-        message: str = f"""Hi [Recruiter Name],
+        message = f"""Hi [Recruiter Name],
 
 I recently came across the {job['title']} opportunity at {job['company']} and am very interested in this role.
 
@@ -1356,11 +1333,11 @@ Best regards,
 
         return message
 
-    def _generate_followup_email(self, analysis: Dict[str, Any]) -> str:
+    def _generate_followup_email(self, analysis: Dict) -> str:
         """Generate follow-up email template"""
-        job: Dict[str, str] = analysis["job_info"]
+        job = analysis["job_info"]
 
-        email: str = f"""Subject: Following Up - {job['title']} Application
+        email = f"""Subject: Following Up - {job['title']} Application
 
 Dear Hiring Manager,
 
@@ -1381,11 +1358,11 @@ Best regards,
 
         return email
 
-    def _generate_networking_email(self, analysis: Dict[str, Any]) -> str:
+    def _generate_networking_email(self, analysis: Dict) -> str:
         """Generate networking email to employees"""
-        job: Dict[str, str] = analysis["job_info"]
+        job = analysis["job_info"]
 
-        email: str = f"""Subject: Seeking Insights About {job['company']}
+        email = f"""Subject: Seeking Insights About {job['company']}
 
 Hi [Employee Name],
 
@@ -1407,12 +1384,12 @@ Best regards,
 
     # ========== HELPER METHODS ==========
 
-    def _extract_all_skills(self, text: str) -> Dict[str, List[str]]:
+    def _extract_all_skills(self, text: str) -> Dict:
         """Extract all skills from text"""
-        skills: Dict[str, List[str]] = defaultdict(list)
-        text_lower: str = text.lower()
+        skills = defaultdict(list)
+        text_lower = text.lower()
 
-        skill_patterns: Dict[str, List[str]] = {
+        skill_patterns = {
             "programming": ["python", "java", "javascript", "c++", "go", "rust", "scala", "r"],
             "frameworks": [
                 "pytorch",
@@ -1437,8 +1414,8 @@ Best regards,
 
     def _extract_experience(self, text: str) -> int:
         """Extract years of experience"""
-        years: List[int] = []
-        patterns: List[str] = [
+        years = []
+        patterns = [
             r"(\d+)\+?\s*years?\s+(?:of\s+)?experience",
             r"experience:\s*(\d+)",
             r"(\d+)\s*years?\s+in",
@@ -1450,7 +1427,7 @@ Best regards,
 
     def _extract_education(self, text: str) -> List[str]:
         """Extract education"""
-        degrees: List[str] = []
+        degrees = []
         if re.search(r"\b(phd|ph\.d|doctorate)\b", text.lower()):
             degrees.append("PhD")
         if re.search(r"\b(master|msc|m\.s|ma|mba)\b", text.lower()):
@@ -1461,16 +1438,8 @@ Best regards,
 
     def _extract_certifications(self, text: str) -> List[str]:
         """Extract certifications"""
-        certs: List[str] = []
-        cert_keywords: List[str] = [
-            "aws",
-            "azure",
-            "gcp",
-            "certified",
-            "certification",
-            "cka",
-            "ckad",
-        ]
+        certs = []
+        cert_keywords = ["aws", "azure", "gcp", "certified", "certification", "cka", "ckad"]
         for cert in cert_keywords:
             if cert in text.lower():
                 certs.append(cert)
@@ -1487,9 +1456,9 @@ Best regards,
 
     def _extract_soft_skills(self, text: str) -> List[str]:
         """Extract soft skills"""
-        found: List[str] = []
-        text_lower: str = text.lower()
-        soft_skills: List[str] = ["leadership", "communication", "teamwork", "problem solving"]
+        found = []
+        text_lower = text.lower()
+        soft_skills = ["leadership", "communication", "teamwork", "problem solving"]
         for skill in soft_skills:
             if skill in text_lower:
                 found.append(skill)
@@ -1497,7 +1466,7 @@ Best regards,
 
     def _extract_title(self, text: str) -> str:
         """Extract job title"""
-        first_line: str = text.split("\n")[0].strip()
+        first_line = text.split("\n")[0].strip()
         return first_line[:100]
 
     def _extract_company(self, text: str) -> str:
@@ -1507,14 +1476,14 @@ Best regards,
 
     def _extract_required_skills(self, text: str) -> List[str]:
         """Extract required skills from job"""
-        skills: List[str] = []
-        text_lower: str = text.lower()
+        skills = []
+        text_lower = text.lower()
         required_section = re.search(
             r"(?:required|must have).*?:(.*?)(?:preferred|nice to have|\Z)", text_lower, re.DOTALL
         )
-        search_text: str = required_section.group(1) if required_section else text_lower
+        search_text = required_section.group(1) if required_section else text_lower
 
-        all_skills: List[str] = [
+        all_skills = [
             "python",
             "java",
             "sql",
@@ -1924,9 +1893,9 @@ Test Suite ID: {tests['test_suite_id']}
 Skills Covered: {len(tests['skills_covered'])} skills
 
 Test Structure:
-- Beginner Level: 10 questions, 60% pass score, 50 min
-- Intermediate Level: 15 questions, 70% pass score, 75 min
-- Advanced Level: 20 questions, 80% pass score, 100 min
+• Beginner Level: 10 questions, 60% pass score, 50 min
+• Intermediate Level: 15 questions, 70% pass score, 75 min
+• Advanced Level: 20 questions, 80% pass score, 100 min
 
 Recommended Testing Schedule:
 Week 4: Beginner tests
@@ -2170,13 +2139,13 @@ Skills:
     tests = engine.generate_skill_tests(analysis["gaps"]["missing_required_skills"][:3])
     print(f"✅ 3-level tests for {len(tests['skills_covered'])} skills")
 
-    print("\n📄 Updating master skillset...")
+    print("\n🔄 Updating master skillset...")
     new_skills = ["PyTorch", "Docker", "Kubernetes"]
     update = engine.update_skillset(new_skills)
     print(f"✅ Added {len(update['updated_skills'])} new skills")
     print(f"   Total skills: {update['total_skills']}")
 
-    print("\n✉️ Generating recruiter letters...")
+    print("\n✉️  Generating recruiter letters...")
     letters = engine.generate_recruiter_letter(analysis, learning_plan)
     print(f"✅ Generated {len(letters['templates'])} templates:")
     for template_type in letters["templates"].keys():

@@ -7,7 +7,7 @@ import logging
 import re
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Set, Tuple, Union
 
 _logger = logging.getLogger(__name__)
 
@@ -35,23 +35,31 @@ class Validator:
             raise ValidationError(f"{field_name} cannot be empty")
 
     @staticmethod
-    def validate_type(value: Any, expected_type: type, field_name: str = "Field") -> None:
+    def validate_type(
+        value: Any, expected_type: Union[type, Tuple[type, ...]], field_name: str = "Field"
+    ) -> None:
         """
         Validate value type.
 
         Args:
             value: Value to validate
-            expected_type: Expected type
+            expected_type: Expected type or tuple of types
             field_name: Name of the field for error messages
 
         Raises:
             ValidationError: If type doesn't match
         """
         if not isinstance(value, expected_type):
-            raise ValidationError(
-                f"{field_name} must be of type {expected_type.__name__}, "
-                f"got {type(value).__name__}"
-            )
+            if isinstance(expected_type, tuple):
+                type_names = " or ".join(t.__name__ for t in expected_type)
+                raise ValidationError(
+                    f"{field_name} must be of type {type_names}, " f"got {type(value).__name__}"
+                )
+            else:
+                raise ValidationError(
+                    f"{field_name} must be of type {expected_type.__name__}, "
+                    f"got {type(value).__name__}"
+                )
 
     @staticmethod
     def validate_range(
@@ -131,15 +139,16 @@ class FileValidator(Validator):
         path = Path(file_path)
         extension = path.suffix.lower()
 
+        allowed_set: Set[str]
         if allowed_extensions is None:
-            allowed_extensions = FileValidator._SUPPORTED_EXTENSIONS
+            allowed_set = FileValidator._SUPPORTED_EXTENSIONS
         else:
-            allowed_extensions = {ext.lower() for ext in allowed_extensions}
+            allowed_set = {ext.lower() for ext in allowed_extensions}
 
-        if extension not in allowed_extensions:
+        if extension not in allowed_set:
             raise ValidationError(
                 f"Unsupported file extension: {extension}. "
-                f"Allowed: {', '.join(allowed_extensions)}"
+                f"Allowed: {', '.join(sorted(allowed_set))}"
             )
 
     @staticmethod
@@ -323,7 +332,7 @@ class ConfigValidator(Validator):
         """
         Validator.validate_not_empty(email, "Email")
 
-        pattern = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}"
+        pattern = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
         if not re.match(pattern, email):
             raise ValidationError(f"Invalid email address: {email}")
 
@@ -341,7 +350,7 @@ class ConfigValidator(Validator):
         """
         Validator.validate_not_empty(url, field_name)
 
-        pattern = r"^https?://[^\s/$.?#].[^\s]*"
+        pattern = r"^https?://[^\s/$.?#].[^\s]*$"
         if not re.match(pattern, url, re.IGNORECASE):
             raise ValidationError(f"Invalid {field_name}: {url}")
 
