@@ -87,38 +87,15 @@ jobs:
     - name: Verify files exist
       run: |
         echo "Checking files..."
-        echo "  CV_FILE=$CV_FILE"
-        echo "  JOB_FILE=$JOB_FILE"
+        ls -lh data/
         
-        ls -lh data/ || echo "No data directory"
-        
-        if [ -z "$CV_FILE" ]; then
-          echo "Error: CV_FILE environment variable is empty"
+        if [ ! -f "$CV_FILE" ] || [ ! -s "$CV_FILE" ]; then
+          echo "Error: CV file missing or empty: $CV_FILE"
           exit 1
         fi
         
-        if [ -z "$JOB_FILE" ]; then
-          echo "Error: JOB_FILE environment variable is empty"
-          exit 1
-        fi
-        
-        if [ ! -f "$CV_FILE" ]; then
-          echo "Error: CV file does not exist: $CV_FILE"
-          exit 1
-        fi
-        
-        if [ ! -s "$CV_FILE" ]; then
-          echo "Error: CV file is empty: $CV_FILE"
-          exit 1
-        fi
-        
-        if [ ! -f "$JOB_FILE" ]; then
-          echo "Error: Job file does not exist: $JOB_FILE"
-          exit 1
-        fi
-        
-        if [ ! -s "$JOB_FILE" ]; then
-          echo "Error: Job file is empty: $JOB_FILE"
+        if [ ! -f "$JOB_FILE" ] || [ ! -s "$JOB_FILE" ]; then
+          echo "Error: Job file missing or empty: $JOB_FILE"
           exit 1
         fi
         
@@ -126,49 +103,52 @@ jobs:
         echo "  CV: $(wc -w < "$CV_FILE") words"
         echo "  Job: $(wc -w < "$JOB_FILE") words"
 
+    - name: Debug analysis (if needed)
+      if: ${{ failure() }}
+      run: |
+        python3 << 'DEBUG'
+        import sys
+        sys.path.insert(0, "src")
+        from python_advanced_job_engine import AdvancedJobEngine
+        import os
+        
+        engine = AdvancedJobEngine()
+        cv = os.environ["CV_FILE"]
+        job = os.environ["JOB_FILE"]
+        
+        print("Debugging:")
+        try:
+            cv_text = engine.read_document(cv)
+            print(f"CV readable: {len(cv_text.split())} words")
+        except Exception as e:
+            print(f"CV error: {e}")
+        
+        try:
+            job_text = engine.read_document(job)
+            print(f"Job readable: {len(job_text.split())} words")
+        except Exception as e:
+            print(f"Job error: {e}")
+        DEBUG
+
     - name: Run analysis
       id: analysis
-      env:
-        PYTHONPATH: ${{ github.workspace }}/src
-      run: |
-        # Debug: Show environment
-        echo "Environment variables:"
-        echo "  CV_FILE=$CV_FILE"
-        echo "  JOB_FILE=$JOB_FILE"
-        echo "  PYTHONPATH=$PYTHONPATH"
-        
-        # Run analysis script
-        if [ -f ".github/scripts/run_analysis.py" ]; then
-          python3 .github/scripts/run_analysis.py
-        elif [ -f "scripts/run_analysis.py" ]; then
-          python3 scripts/run_analysis.py
-        else
-          echo "Error: run_analysis.py not found"
-          echo "Available scripts:"
-          find . -name "run_analysis.py" -type f
-          exit 1
-        fi
+      run: python3 .github/scripts/run_analysis.py
 
     - name: Upload results
       uses: actions/upload-artifact@v4
-      if: always()
       with:
-        name: job-analysis-results
+        name: job-analysis-${{ steps.analysis.outputs.job_id }}
         path: output/
         retention-days: 90
 
     - name: Create summary
-      if: always()
       run: |
         echo "## 🎯 Job Analysis Complete!" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "**Match Score:** ${{ steps.analysis.outputs.score }}%" >> $GITHUB_STEP_SUMMARY
+        echo "**Status:** ${{ steps.analysis.outputs.status }}" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
         
         if [ -f output/summary.txt ]; then
           cat output/summary.txt >> $GITHUB_STEP_SUMMARY
-        else
-          echo "⚠️ Analysis may have failed - check logs" >> $GITHUB_STEP_SUMMARY
         fi
-        
-        echo "" >> $GITHUB_STEP_SUMMARY
-        echo "### 📦 Artifacts" >> $GITHUB_STEP_SUMMARY
-        echo "Download the complete analysis from the artifacts section above." >> $GITHUB_STEP_SUMMARY
