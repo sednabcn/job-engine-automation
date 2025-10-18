@@ -476,7 +476,7 @@ class AdvancedJobEngine:
         }
 
         # Save analysis
-        self.analyzed_jobs.update(analysis)
+        self.analyzed_jobs.append(analysis)
         self._save_json(self.jobs_file, self.analyzed_jobs)
 
         return analysis
