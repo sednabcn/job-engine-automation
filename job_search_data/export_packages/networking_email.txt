@@ -1,0 +1,99 @@
+Subject: Introduction - Fellow ML Enthusiast
+
+Hi [Employee Name],
+
+I hope this message finds you well. My name is [Your Name], and I'm a software engineer transitioning into ML engineering. I came across your profile while researching Data Solutions Inc and was impressed by your work on [specific project/article/contribution they've made].
+
+I recently applied for the ML Engineer position at Data Solutions Inc and am genuinely excited about the company's work in [specific area]. Your background in [their expertise] is particularly interesting to me as I've been working on similar challenges in my recent projects.
+
+I would love to learn more about your experience at Data Solutions Inc, particularly:
+- The team's approach to [specific technical topic]
+- The culture around learning and professional development
+- Any advice you might have for someone looking to join the team
+
+Would you be open to a brief 15-minute virtual coffee chat? I'd be happy to work around your schedule.
+
+Thank you for considering my request. Regardless, I look forward to following your continued work in [their area of expertise]!
+
+Best regards,
+
+[Your Name]
+[Your LinkedIn]
+[Your Email]
+
+P.S. I recently published an article on [relevant topic] that might interest you: [link]
+
+---
+
+NETWORKING STRATEGY NOTES:
+
+When to Send:
+- After applying but before hearing back
+- Space out messages (don't contact multiple people same day)
+- Mornings (Tuesday-Thursday) have better response rates
+
+Who to Contact:
+1. People in similar roles (ML Engineers)
+2. Engineering managers
+3. Recent hires (they remember the process)
+4. People from similar backgrounds (career changers)
+
+Follow-up Protocol:
+- If no response in 1 week: gentle follow-up
+- If no response after follow-up: move on gracefully
+- If they respond positively: schedule within 48 hours
+
+Conversation Tips:
+- Ask questions, listen more than you talk
+- Show genuine interest in their work
+- Don't directly ask them to refer you (let it happen naturally)
+- End with "Is there anyone else you'd recommend I talk to?"
+- Always send thank you note within 24 hours
+
+What NOT to Do:
+- Don't be pushy or salesy
+- Don't make it all about you
+- Don't ask for a referral in first message
+- Don't send generic copy-paste messages
+- Don't contact too many people from same company at once
+
+---
+
+Alternative Message (More Casual):
+
+Hey [Name],
+
+Quick intro - I'm [Your Name], Python dev getting into ML. Saw you're at Data Solutions Inc doing [their role].
+
+Just applied for ML Engineer role there. Your posts on [topic] are really insightful - especially [specific point].
+
+Would love to hear about your experience at DSI, particularly around [specific question]. 15 min chat sometime?
+
+Either way, keep up the great content!
+
+Cheers,
+[Your Name]
+[Contact Info]
+
+---
+
+Thank You Follow-up Template (After Networking Call):
+
+Subject: Thank You - Great Conversation!
+
+Hi [Name],
+
+Thank you so much for taking the time to chat with me today. I really appreciated your insights on [specific topics discussed], particularly your perspective on [specific point that resonated].
+
+Your advice about [specific advice they gave] is something I'll definitely keep in mind as I continue my journey into ML engineering.
+
+I'm even more excited about the possibility of joining Data Solutions Inc after learning about [something positive they shared about the company].
+
+If there's ever anything I can do to help you, please don't hesitate to reach out. I'll keep you posted on my application progress!
+
+Thanks again for your generosity with your time and knowledge.
+
+Best,
+[Your Name]
+
+P.S. I checked out [resource they mentioned] - great recommendation!

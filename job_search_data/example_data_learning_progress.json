@@ -1,0 +1,209 @@
+{
+  "version": "1.0.0",
+  "last_updated": "2024-10-15T16:00:00Z",
+  "active_learning_plans": 2,
+  "completed_plans": 1,
+  "plans": [
+    {
+      "plan_id": "plan_001",
+      "created_date": "2024-10-01T10:00:00Z",
+      "target_job_id": "job_002",
+      "target_role": "Machine Learning Engineer",
+      "status": "in_progress",
+      "priority": "high",
+      "estimated_duration_weeks": 12,
+      "start_date": "2024-10-01",
+      "target_completion_date": "2024-12-24",
+      "progress_percentage": 35,
+      "skills_to_learn": [
+        {
+          "skill": "TensorFlow",
+          "priority": "critical",
+          "current_level": "beginner",
+          "target_level": "intermediate",
+          "estimated_hours": 40,
+          "hours_completed": 15,
+          "status": "in_progress",
+          "resources": [
+            {
+              "type": "course",
+              "name": "TensorFlow Developer Certificate",
+              "url": "https://www.coursera.org/professional-certificates/tensorflow-in-practice",
+              "duration_hours": 30,
+              "cost": "free",
+              "completed": false,
+              "progress": 50
+            },
+            {
+              "type": "documentation",
+              "name": "TensorFlow Official Docs",
+              "url": "https://www.tensorflow.org/tutorials",
+              "completed": false
+            }
+          ],
+          "practice_projects": [
+            {
+              "name": "Image Classification with CNN",
+              "description": "Build CNN for CIFAR-10 dataset",
+              "status": "completed",
+              "github_url": "",
+              "completion_date": "2024-10-10"
+            },
+            {
+              "name": "NLP Sentiment Analysis",
+              "description": "Text classification with LSTM",
+              "status": "in_progress",
+              "estimated_completion": "2024-10-20"
+            }
+          ],
+          "milestones": [
+            {
+              "milestone": "Complete basic tutorials",
+              "status": "completed",
+              "date": "2024-10-05"
+            },
+            {
+              "milestone": "Build first model",
+              "status": "completed",
+              "date": "2024-10-10"
+            },
+            {
+              "milestone": "Deploy model to production",
+              "status": "pending",
+              "target_date": "2024-10-25"
+            }
+          ]
+        },
+        {
+          "skill": "PyTorch",
+          "priority": "critical",
+          "current_level": "beginner",
+          "target_level": "intermediate",
+          "estimated_hours": 40,
+          "hours_completed": 8,
+          "status": "in_progress",
+          "resources": [
+            {
+              "type": "course",
+              "name": "PyTorch for Deep Learning",
+              "url": "https://pytorch.org/tutorials/",
+              "duration_hours": 25,
+              "cost": "free",
+              "completed": false,
+              "progress": 20
+            }
+          ],
+          "practice_projects": [
+            {
+              "name": "PyTorch Image Classifier",
+              "description": "Transfer learning with ResNet",
+              "status": "not_started"
+            }
+          ]
+        },
+        {
+          "skill": "MLOps",
+          "priority": "important",
+          "current_level": "beginner",
+          "target_level": "intermediate",
+          "estimated_hours": 30,
+          "hours_completed": 0,
+          "status": "not_started",
+          "resources": [
+            {
+              "type": "course",
+              "name": "MLOps Fundamentals",
+              "url": "https://mlops.org",
+              "duration_hours": 20,
+              "cost": "free"
+            }
+          ]
+        }
+      ],
+      "weekly_schedule": {
+        "target_hours_per_week": 10,
+        "actual_hours_last_week": 8,
+        "schedule": {
+          "monday": 2,
+          "wednesday": 2,
+          "friday": 2,
+          "saturday": 3,
+          "sunday": 1
+        }
+      },
+      "notes": "Focus on TensorFlow first, then PyTorch. MLOps can wait until both frameworks are solid.",
+      "blockers": [],
+      "achievements": [
+        "Completed first TensorFlow project",
+        "Passed TensorFlow basics quiz"
+      ]
+    },
+    {
+      "plan_id": "plan_002",
+      "created_date": "2024-10-10T09:00:00Z",
+      "target_job_id": "job_001",
+      "target_role": "Senior Python Developer",
+      "status": "in_progress",
+      "priority": "medium",
+      "estimated_duration_weeks": 4,
+      "start_date": "2024-10-10",
+      "target_completion_date": "2024-11-07",
+      "progress_percentage": 60,
+      "skills_to_learn": [
+        {
+          "skill": "Kubernetes",
+          "priority": "nice_to_have",
+          "current_level": "beginner",
+          "target_level": "beginner-intermediate",
+          "estimated_hours": 20,
+          "hours_completed": 12,
+          "status": "in_progress",
+          "resources": [
+            {
+              "type": "course",
+              "name": "Kubernetes Basics",
+              "url": "https://kubernetes.io/docs/tutorials/",
+              "duration_hours": 15,
+              "cost": "free",
+              "completed": false,
+              "progress": 70
+            }
+          ],
+          "practice_projects": [
+            {
+              "name": "Deploy Python App to K8s",
+              "description": "Containerize and deploy Django app",
+              "status": "in_progress"
+            }
+          ]
+        },
+        {
+          "skill": "GraphQL",
+          "priority": "nice_to_have",
+          "current_level": "beginner",
+          "target_level": "beginner-intermediate",
+          "estimated_hours": 15,
+          "hours_completed": 0,
+          "status": "not_started",
+          "resources": [
+            {
+              "type": "tutorial",
+              "name": "GraphQL Tutorial",
+              "url": "https://graphql.org/learn/",
+              "duration_hours": 10,
+              "cost": "free"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "global_statistics": {
+    "total_hours_invested": 35,
+    "skills_in_progress": 3,
+    "skills_completed": 0,
+    "average_weekly_hours": 9,
+    "projects_completed": 1,
+    "projects_in_progress": 2
+  }
+}

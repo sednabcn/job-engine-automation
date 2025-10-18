@@ -1,0 +1,165 @@
+{
+  "version": "1.0.0",
+  "last_updated": "2024-10-15T14:30:00Z",
+  "total_jobs_analyzed": 2,
+  "jobs": [
+    {
+      "job_id": "job_001",
+      "analysis_date": "2024-10-15T14:30:00Z",
+      "company": "Tech Corp",
+      "position": "Senior Python Developer",
+      "location": "Remote",
+      "source_file": "tech_corp_senior_python.pdf",
+      "match_score": 85,
+      "match_category": "strong",
+      "required_skills": [
+        {
+          "skill": "Python",
+          "importance": "critical",
+          "matched": true,
+          "your_level": "advanced",
+          "required_level": "advanced"
+        },
+        {
+          "skill": "Django",
+          "importance": "critical",
+          "matched": true,
+          "your_level": "intermediate",
+          "required_level": "intermediate"
+        },
+        {
+          "skill": "AWS",
+          "importance": "important",
+          "matched": true,
+          "your_level": "intermediate",
+          "required_level": "intermediate"
+        }
+      ],
+      "preferred_skills": [
+        {
+          "skill": "Kubernetes",
+          "importance": "nice_to_have",
+          "matched": false,
+          "gap": true
+        },
+        {
+          "skill": "GraphQL",
+          "importance": "nice_to_have",
+          "matched": false,
+          "gap": true
+        }
+      ],
+      "gaps": {
+        "critical": [],
+        "important": [],
+        "nice_to_have": ["Kubernetes", "GraphQL"]
+      },
+      "strengths": [
+        "Strong Python expertise matches requirement",
+        "Django framework experience aligns well",
+        "AWS certification is a plus"
+      ],
+      "salary_range": {
+        "min": 120000,
+        "max": 150000,
+        "currency": "USD"
+      },
+      "job_type": "full-time",
+      "remote_policy": "fully_remote",
+      "application_status": "not_applied",
+      "notes": "Great match, should apply soon",
+      "action_items": [
+        "Learn Kubernetes basics",
+        "Complete GraphQL tutorial",
+        "Prepare portfolio showcasing Django projects"
+      ]
+    },
+    {
+      "job_id": "job_002",
+      "analysis_date": "2024-10-15T15:00:00Z",
+      "company": "Data Solutions Inc",
+      "position": "Machine Learning Engineer",
+      "location": "San Francisco, CA",
+      "source_file": "data_solutions_ml_engineer.pdf",
+      "match_score": 65,
+      "match_category": "moderate",
+      "required_skills": [
+        {
+          "skill": "Python",
+          "importance": "critical",
+          "matched": true,
+          "your_level": "advanced",
+          "required_level": "advanced"
+        },
+        {
+          "skill": "TensorFlow",
+          "importance": "critical",
+          "matched": false,
+          "gap": true,
+          "required_level": "intermediate"
+        },
+        {
+          "skill": "PyTorch",
+          "importance": "critical",
+          "matched": false,
+          "gap": true,
+          "required_level": "intermediate"
+        },
+        {
+          "skill": "Machine Learning",
+          "importance": "critical",
+          "matched": true,
+          "your_level": "intermediate",
+          "required_level": "advanced"
+        }
+      ],
+      "preferred_skills": [
+        {
+          "skill": "MLOps",
+          "importance": "important",
+          "matched": false,
+          "gap": true
+        }
+      ],
+      "gaps": {
+        "critical": ["TensorFlow", "PyTorch"],
+        "important": ["MLOps"],
+        "nice_to_have": []
+      },
+      "strengths": [
+        "Strong Python foundation",
+        "Basic ML knowledge present"
+      ],
+      "weaknesses": [
+        "Missing deep learning framework experience",
+        "Limited production ML experience"
+      ],
+      "salary_range": {
+        "min": 140000,
+        "max": 180000,
+        "currency": "USD"
+      },
+      "job_type": "full-time",
+      "remote_policy": "hybrid",
+      "relocation_assistance": true,
+      "application_status": "considering",
+      "priority": "medium",
+      "notes": "Good opportunity but need to upskill first",
+      "action_items": [
+        "Complete TensorFlow certification",
+        "Build PyTorch project portfolio",
+        "Learn MLOps fundamentals",
+        "Create end-to-end ML pipeline project"
+      ],
+      "estimated_preparation_time": "8-12 weeks"
+    }
+  ],
+  "statistics": {
+    "average_match_score": 75,
+    "strong_matches": 1,
+    "moderate_matches": 1,
+    "weak_matches": 0,
+    "most_common_gaps": ["Kubernetes", "TensorFlow", "PyTorch", "GraphQL", "MLOps"],
+    "most_matched_skills": ["Python", "AWS", "Git", "Docker"]
+  }
+}

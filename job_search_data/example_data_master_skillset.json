@@ -1,0 +1,116 @@
+{
+  "version": "1.0.0",
+  "last_updated": "2024-10-15T12:30:00Z",
+  "candidate_id": "user_001",
+  "skills": {
+    "technical": [
+      {
+        "name": "Python",
+        "level": "advanced",
+        "years_experience": 5,
+        "last_used": "2024-10",
+        "proficiency_score": 85,
+        "verified": true,
+        "source": "cv"
+      },
+      {
+        "name": "JavaScript",
+        "level": "intermediate",
+        "years_experience": 3,
+        "last_used": "2024-09",
+        "proficiency_score": 70,
+        "verified": true,
+        "source": "cv"
+      }
+    ],
+    "soft": [
+      {
+        "name": "Leadership",
+        "level": "advanced",
+        "evidence": ["Led team of 5 developers", "Mentored junior developers"],
+        "source": "cv"
+      },
+      {
+        "name": "Communication",
+        "level": "advanced",
+        "evidence": ["Client presentations", "Technical documentation"],
+        "source": "cv"
+      }
+    ],
+    "domain": [
+      {
+        "name": "Machine Learning",
+        "level": "intermediate",
+        "years_experience": 2,
+        "subdomains": ["NLP", "Computer Vision"],
+        "source": "cv"
+      }
+    ],
+    "tools": [
+      {
+        "name": "Docker",
+        "level": "intermediate",
+        "years_experience": 2,
+        "last_used": "2024-10",
+        "source": "cv"
+      },
+      {
+        "name": "Git",
+        "level": "advanced",
+        "years_experience": 5,
+        "last_used": "2024-10",
+        "source": "cv"
+      }
+    ],
+    "languages": [
+      {
+        "name": "English",
+        "level": "native",
+        "certifications": []
+      },
+      {
+        "name": "Spanish",
+        "level": "intermediate",
+        "certifications": ["DELE B2"]
+      }
+    ],
+    "certifications": [
+      {
+        "name": "AWS Certified Solutions Architect",
+        "issuer": "Amazon Web Services",
+        "date_obtained": "2023-06-15",
+        "expiry_date": "2026-06-15",
+        "credential_id": "ABC123XYZ",
+        "verification_url": "https://aws.amazon.com/verification/ABC123XYZ"
+      }
+    ]
+  },
+  "skill_details": {
+    "Python": {
+      "frameworks": ["Django", "Flask", "FastAPI", "Pandas", "NumPy"],
+      "projects": [
+        "E-commerce platform backend",
+        "Data analysis pipeline",
+        "ML model deployment"
+      ],
+      "achievements": [
+        "Improved API performance by 40%",
+        "Reduced processing time by 60%"
+      ]
+    },
+    "JavaScript": {
+      "frameworks": ["React", "Node.js", "Express"],
+      "projects": [
+        "Real-time dashboard",
+        "REST API development"
+      ]
+    }
+  },
+  "metadata": {
+    "total_skills": 45,
+    "cv_source": "my_cv.pdf",
+    "cv_last_updated": "2024-10-01",
+    "manual_additions": 3,
+    "auto_detected": 42
+  }
+}

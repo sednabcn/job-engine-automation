@@ -1,0 +1,338 @@
+{
+  "version": "1.0.0",
+  "last_updated": "2024-10-15T18:00:00Z",
+  "total_sprints": 3,
+  "active_sprint": "sprint_003",
+  "sprints": [
+    {
+      "sprint_id": "sprint_001",
+      "sprint_number": 1,
+      "name": "TensorFlow Foundations",
+      "goal": "Complete TensorFlow basics and build first CNN project",
+      "start_date": "2024-10-01",
+      "end_date": "2024-10-14",
+      "duration_weeks": 2,
+      "status": "completed",
+      "associated_learning_plan": "plan_001",
+      "target_job": "job_002",
+      "capacity_hours": 20,
+      "actual_hours": 18,
+      "completion_percentage": 100,
+      "tasks": [
+        {
+          "task_id": "task_001",
+          "title": "Complete TensorFlow tutorials",
+          "description": "Work through official TensorFlow beginner tutorials",
+          "skill": "TensorFlow",
+          "priority": "high",
+          "estimated_hours": 8,
+          "actual_hours": 7,
+          "status": "completed",
+          "completion_date": "2024-10-05",
+          "notes": "Tutorials were clearer than expected"
+        },
+        {
+          "task_id": "task_002",
+          "title": "Build CIFAR-10 CNN classifier",
+          "description": "Create CNN model for image classification",
+          "skill": "TensorFlow",
+          "priority": "high",
+          "estimated_hours": 10,
+          "actual_hours": 9,
+          "status": "completed",
+          "completion_date": "2024-10-12",
+          "github_url": "https://github.com/user/cifar-cnn",
+          "notes": "Achieved 78% accuracy"
+        },
+        {
+          "task_id": "task_003",
+          "title": "Take TensorFlow basics quiz",
+          "description": "Test knowledge with online assessment",
+          "skill": "TensorFlow",
+          "priority": "medium",
+          "estimated_hours": 2,
+          "actual_hours": 2,
+          "status": "completed",
+          "completion_date": "2024-10-14",
+          "score": 85,
+          "notes": "Passed with good score"
+        }
+      ],
+      "quality_gates": [
+        {
+          "gate_id": "qg_001",
+          "name": "Complete at least one project",
+          "type": "project_completion",
+          "status": "passed",
+          "checked_date": "2024-10-14"
+        },
+        {
+          "gate_id": "qg_002",
+          "name": "Pass knowledge assessment (>70%)",
+          "type": "assessment",
+          "required_score": 70,
+          "actual_score": 85,
+          "status": "passed",
+          "checked_date": "2024-10-14"
+        }
+      ],
+      "retrospective": {
+        "what_went_well": [
+          "Good momentum maintained",
+          "Project completed ahead of schedule",
+          "Clear learning path"
+        ],
+        "what_could_improve": [
+          "Could have spent more time on advanced topics",
+          "Documentation could be better"
+        ],
+        "action_items": [
+          "In next sprint, add 2 hours for documentation",
+          "Include more advanced examples"
+        ],
+        "overall_satisfaction": 4,
+        "difficulty_rating": 3,
+        "notes": "Solid first sprint. Ready for more complex topics."
+      },
+      "achievements": [
+        "First TensorFlow project completed",
+        "All quality gates passed",
+        "Stayed within time budget"
+      ]
+    },
+    {
+      "sprint_id": "sprint_002",
+      "sprint_number": 2,
+      "name": "Advanced TensorFlow & NLP Intro",
+      "goal": "Build NLP sentiment classifier and learn RNN/LSTM concepts",
+      "start_date": "2024-10-15",
+      "end_date": "2024-10-28",
+      "duration_weeks": 2,
+      "status": "completed",
+      "associated_learning_plan": "plan_001",
+      "target_job": "job_002",
+      "capacity_hours": 20,
+      "actual_hours": 22,
+      "completion_percentage": 90,
+      "tasks": [
+        {
+          "task_id": "task_004",
+          "title": "Learn RNN and LSTM concepts",
+          "description": "Study sequential models theory",
+          "skill": "TensorFlow",
+          "priority": "high",
+          "estimated_hours": 6,
+          "actual_hours": 8,
+          "status": "completed",
+          "completion_date": "2024-10-20",
+          "notes": "More complex than expected, needed extra time"
+        },
+        {
+          "task_id": "task_005",
+          "title": "Build sentiment analysis model",
+          "description": "LSTM-based text classifier for movie reviews",
+          "skill": "TensorFlow",
+          "priority": "high",
+          "estimated_hours": 12,
+          "actual_hours": 12,
+          "status": "completed",
+          "completion_date": "2024-10-27",
+          "github_url": "https://github.com/user/sentiment-lstm",
+          "notes": "Model achieved 82% accuracy"
+        },
+        {
+          "task_id": "task_006",
+          "title": "Deploy model to production",
+          "description": "Create API endpoint for model inference",
+          "skill": "TensorFlow",
+          "priority": "medium",
+          "estimated_hours": 2,
+          "actual_hours": 2,
+          "status": "completed",
+          "completion_date": "2024-10-28",
+          "notes": "Used FastAPI for deployment"
+        }
+      ],
+      "quality_gates": [
+        {
+          "gate_id": "qg_003",
+          "name": "Model achieves >80% accuracy",
+          "type": "performance_metric",
+          "required_value": 80,
+          "actual_value": 82,
+          "status": "passed",
+          "checked_date": "2024-10-27"
+        },
+        {
+          "gate_id": "qg_004",
+          "name": "Model deployed successfully",
+          "type": "deployment",
+          "status": "passed",
+          "checked_date": "2024-10-28"
+        }
+      ],
+      "retrospective": {
+        "what_went_well": [
+          "Successfully tackled more complex topic",
+          "Good model performance",
+          "Learned deployment skills as bonus"
+        ],
+        "what_could_improve": [
+          "Went over time budget slightly",
+          "Should have started earlier in week"
+        ],
+        "action_items": [
+          "Buffer 10% extra time for complex topics",
+          "Start high-priority tasks on Monday"
+        ],
+        "overall_satisfaction": 5,
+        "difficulty_rating": 4,
+        "notes": "Challenging but rewarding sprint"
+      }
+    },
+    {
+      "sprint_id": "sprint_003",
+      "sprint_number": 3,
+      "name": "PyTorch Introduction & Kubernetes Basics",
+      "goal": "Start PyTorch learning and complete Kubernetes fundamentals",
+      "start_date": "2024-10-29",
+      "end_date": "2024-11-11",
+      "duration_weeks": 2,
+      "status": "in_progress",
+      "associated_learning_plan": "plan_001",
+      "target_job": "job_002",
+      "capacity_hours": 20,
+      "actual_hours": 6,
+      "completion_percentage": 40,
+      "tasks": [
+        {
+          "task_id": "task_007",
+          "title": "Complete PyTorch tutorials",
+          "description": "Work through PyTorch 60-minute blitz",
+          "skill": "PyTorch",
+          "priority": "high",
+          "estimated_hours": 6,
+          "actual_hours": 4,
+          "status": "completed",
+          "completion_date": "2024-11-02",
+          "notes": "Background in TensorFlow helped a lot"
+        },
+        {
+          "task_id": "task_008",
+          "title": "Build image classifier with PyTorch",
+          "description": "Transfer learning with ResNet on custom dataset",
+          "skill": "PyTorch",
+          "priority": "high",
+          "estimated_hours": 10,
+          "actual_hours": 2,
+          "status": "in_progress",
+          "start_date": "2024-11-03",
+          "progress_percentage": 20,
+          "notes": "Started dataset preparation"
+        },
+        {
+          "task_id": "task_009",
+          "title": "Complete Kubernetes basics course",
+          "description": "Learn K8s fundamentals and deploy first app",
+          "skill": "Kubernetes",
+          "priority": "medium",
+          "estimated_hours": 4,
+          "actual_hours": 0,
+          "status": "not_started",
+          "notes": "Scheduled for next week"
+        }
+      ],
+      "quality_gates": [
+        {
+          "gate_id": "qg_005",
+          "name": "Complete PyTorch project",
+          "type": "project_completion",
+          "status": "pending"
+        },
+        {
+          "gate_id": "qg_006",
+          "name": "Deploy app to Kubernetes cluster",
+          "type": "practical_skill",
+          "status": "pending"
+        }
+      ],
+      "blockers": [],
+      "daily_logs": [
+        {
+          "date": "2024-10-29",
+          "hours_worked": 2,
+          "tasks_worked_on": ["task_007"],
+          "progress_notes": "Started PyTorch tutorials, completed tensor basics",
+          "energy_level": 4,
+          "focus_quality": 5
+        },
+        {
+          "date": "2024-10-31",
+          "hours_worked": 2,
+          "tasks_worked_on": ["task_007"],
+          "progress_notes": "Finished autograd and neural network sections",
+          "energy_level": 5,
+          "focus_quality": 5
+        },
+        {
+          "date": "2024-11-02",
+          "hours_worked": 2,
+          "tasks_worked_on": ["task_007", "task_008"],
+          "progress_notes": "Completed tutorials, started dataset collection for project",
+          "energy_level": 4,
+          "focus_quality": 4
+        }
+      ],
+      "burndown": {
+        "day_1": {"planned": 20, "actual": 20},
+        "day_3": {"planned": 20, "actual": 18},
+        "day_5": {"planned": 20, "actual": 16},
+        "day_7": {"planned": 20, "actual": 14},
+        "current": {"planned": 20, "actual": 14}
+      },
+      "notes": "Good progress on PyTorch. Will focus on project this week.",
+      "risks": [
+        {
+          "risk": "PyTorch project more complex than estimated",
+          "probability": "medium",
+          "impact": "medium",
+          "mitigation": "Allocated buffer time in week 2"
+        }
+      ]
+    }
+  ],
+  "statistics": {
+    "total_hours_invested": 46,
+    "average_hours_per_sprint": 15.3,
+    "sprints_completed": 2,
+    "sprints_in_progress": 1,
+    "tasks_completed": 6,
+    "tasks_in_progress": 1,
+    "tasks_not_started": 1,
+    "average_completion_rate": 95,
+    "quality_gates_passed": 4,
+    "quality_gates_pending": 2,
+    "average_satisfaction": 4.5,
+    "skills_worked_on": ["TensorFlow", "PyTorch", "Kubernetes"]
+  },
+  "upcoming_sprints": [
+    {
+      "sprint_id": "sprint_004",
+      "name": "MLOps & Production Deployment",
+      "tentative_start": "2024-11-12",
+      "goals": [
+        "Learn MLOps fundamentals",
+        "Set up CI/CD for ML models",
+        "Implement model monitoring"
+      ],
+      "priority": "high"
+    }
+  ],
+  "learnings": [
+    "2-week sprints work well for focused learning",
+    "Starting with easier tasks builds momentum",
+    "Quality gates ensure we don't skip important steps",
+    "Retrospectives help identify improvement areas",
+    "Having a deployed project is more valuable than just completing tutorials"
+  ]
+}	

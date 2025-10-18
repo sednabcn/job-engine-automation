@@ -65,13 +65,6 @@ ENV/
 htmlcov/
 .tox/
 
-# Data directories (user data should not be committed)
-data/my_cv.*
-data/target_job.*
-job_search_data/
-!job_search_data/.gitkeep
-exports/
-
 # OS
 .DS_Store
 Thumbs.db

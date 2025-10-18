@@ -1,0 +1,40 @@
+Subject: Following Up: Machine Learning Engineer Application
+
+Dear [Hiring Manager Name],
+
+I hope this email finds you well. I wanted to follow up on my application for the Machine Learning Engineer position that I submitted on [date]. I remain very excited about the opportunity to join Data Solutions Inc.
+
+Since submitting my application, I've continued to enhance my skills:
+
+- Completed an advanced PyTorch project on transfer learning
+- Published a technical blog post on "Deploying ML Models at Scale" that received positive community feedback
+- Contributed to an open-source ML framework (PR #[number])
+- Achieved [specific milestone or certification]
+
+These additions further strengthen my readiness for this role. I'm particularly excited about [specific aspect of the job/company] and would welcome the opportunity to discuss how I can contribute to your team.
+
+Would you have 15-20 minutes in the coming week for a brief conversation? I'm happy to work around your schedule.
+
+Thank you for your time and consideration. I look forward to hearing from you.
+
+Best regards,
+
+[Your Name]
+[Your Phone]
+[Your Email]
+[LinkedIn Profile]
+[Portfolio Website]
+
+---
+
+Follow-up Timeline:
+- First follow-up: 1 week after application
+- Second follow-up: 2 weeks after first follow-up
+- Final follow-up: 1 week before application deadline (if mentioned)
+
+Tone Guidelines:
+- Professional but enthusiastic
+- Brief and respectful of their time
+- Add value (mention new accomplishments)
+- Clear call to action
+- Don't sound desperate or pushy

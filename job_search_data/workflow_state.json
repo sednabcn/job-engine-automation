@@ -1,0 +1,67 @@
+{
+  "version": "1.0.0",
+  "last_updated": "2024-10-15T00:00:00Z",
+  "current_state": "idle",
+  "workflow_history": [],
+  "current_sprint": 6,
+  "mode": "reverse",
+  "started_date": "2025-10-18T09:00:27.600137",
+  "skills_mastered": [
+    "PyTorch",
+    "Docker"
+  ],
+  "projects_completed": [
+    {
+      "sprint": 3,
+      "goal": "Build and deploy ML model with Docker container",
+      "url": "https://github.com/user/pytorch-docker-ml",
+      "skills": [
+        "PyTorch",
+        "Docker"
+      ],
+      "completion_date": "2025-10-18T09:13:12.989080"
+    },
+    {
+      "sprint": 4,
+      "goal": "Build and deploy ML model with Docker container",
+      "url": "https://github.com/user/pytorch-docker-ml",
+      "skills": [
+        "PyTorch",
+        "Docker"
+      ],
+      "completion_date": "2025-10-18T09:15:38.568811"
+    },
+    {
+      "sprint": 5,
+      "goal": "Build and deploy ML model with Docker container",
+      "url": "https://github.com/user/pytorch-docker-ml",
+      "skills": [
+        "PyTorch",
+        "Docker"
+      ],
+      "completion_date": "2025-10-18T09:26:13.462797"
+    },
+    {
+      "sprint": 6,
+      "goal": "Build and deploy ML model with Docker container",
+      "url": "https://github.com/user/pytorch-docker-ml",
+      "skills": [
+        "PyTorch",
+        "Docker"
+      ],
+      "completion_date": "2025-10-18T09:29:09.210312"
+    }
+  ],
+  "tests_passed": {
+    "PyTorch": [
+      "beginner"
+    ],
+    "Docker": [
+      "intermediate"
+    ]
+  },
+  "quality_gates_passed": [],
+  "current_stage": "baseline",
+  "current_score": 0,
+  "baseline_score": 0
+}
