@@ -52,7 +52,17 @@ jobs:
         with:
           name: ${{ env.STATE_ARTIFACT }}
           path: job_search_data/
-      
+
+      - name: 🔍 Verify Restoration
+        run: |
+          if [ -d "${{ env.DATA_DIR }}" ] && [ "$(ls -A ${{ env.DATA_DIR }})" ]; then
+            echo "✅ Previous state restored"
+            ls -la ${{ env.DATA_DIR }}/
+          else
+            echo "ℹ️  No previous state - starting fresh"
+            mkdir -p ${{ env.DATA_DIR }}
+          fi
+          
       - name: 🐍 Setup Python
         uses: actions/setup-python@v5
         with:
