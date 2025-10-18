@@ -10,7 +10,7 @@ on:
       job_file:
         description: 'Path to job description file'
         required: false
-        default: 'data/job_description.pdf'
+        default: 'data/target_job.pdf'
       job_title:
         description: 'Job title (optional)'
         required: false
