@@ -1,308 +1,237 @@
 #!/usr/bin/env python3
 """
-Job Analysis Script for GitHub Actions
-Run: python3 scripts/run_analysis.py
+Main analysis script for GitHub Actions
+Runs CV vs Job analysis and generates output
+
+Location: .github/scripts/run_analysis.py
 """
 
 import sys
 import os
 from pathlib import Path
 
-# Add src to path
-sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
+# Calculate project root correctly for .github/scripts/ location
+# __file__ = /path/to/project/.github/scripts/run_analysis.py
+# .parent = /path/to/project/.github/scripts/
+# .parent = /path/to/project/.github/
+# .parent = /path/to/project/  ✅ CORRECT
+project_root = Path(__file__).resolve().parent.parent.parent
 
-from src.python_advanced_job_engine import AdvancedJobEngine
+# Add src directory to Python path
+sys.path.insert(0, str(project_root / "src"))
+
+# Verify path is correct
+print(f"🔍 Project root: {project_root}")
+print(f"🔍 Src path: {project_root / 'src'}")
+print(f"🔍 Python path: {sys.path[0]}")
+
+# Now import can work
+try:
+    from python_advanced_job_engine import AdvancedJobEngine
+except ImportError as e:
+    print(f"❌ Import failed: {e}")
+    print(f"📂 Current directory: {Path.cwd()}")
+    print(f"📂 Contents of src/:")
+    src_dir = project_root / "src"
+    if src_dir.exists():
+        for item in src_dir.iterdir():
+            print(f"   - {item.name}")
+    else:
+        print(f"   ❌ src/ directory not found at {src_dir}")
+    sys.exit(1)
+
 import json
-from datetime import datetime
+
+
+def set_github_output(name: str, value: str):
+    """Set GitHub Actions output variable"""
+    github_output = os.environ.get("GITHUB_OUTPUT")
+    if github_output:
+        with open(github_output, "a") as f:
+            f.write(f"{name}={value}\n")
+    else:
+        print(f"::set-output name={name}::{value}")
 
 
 def main():
     """Main analysis function"""
+    print("=" * 80)
+    print("JOB ANALYSIS - GITHUB ACTIONS")
+    print("=" * 80)
     
-    # Get configuration from environment
+    # Get file paths from environment
     cv_file = os.environ.get("CV_FILE", "data/my_cv.txt")
     job_file = os.environ.get("JOB_FILE", "data/target_job.txt")
     job_title = os.environ.get("JOB_TITLE", "Target Role")
     company_name = os.environ.get("COMPANY_NAME", "Target Company")
     generate_materials = os.environ.get("GENERATE_MATERIALS", "true").lower() == "true"
     
-    print("=" * 70)
-    print("JOB ANALYSIS ENGINE")
-    print("=" * 70)
-    print(f"CV File: {cv_file}")
-    print(f"Job File: {job_file}")
-    print(f"Job Title: {job_title}")
-    print(f"Company: {company_name}")
-    print(f"Generate Materials: {generate_materials}")
-    print()
+    print(f"\n📋 Configuration:")
+    print(f"   CV File: {cv_file}")
+    print(f"   Job File: {job_file}")
+    print(f"   Job Title: {job_title}")
+    print(f"   Company: {company_name}")
+    print(f"   Generate Materials: {generate_materials}")
+    
+    # Convert to absolute paths
+    cv_path = project_root / cv_file
+    job_path = project_root / job_file
     
     # Verify files exist
-    if not Path(cv_file).exists():
-        print(f"ERROR: CV file not found: {cv_file}")
-        return 1
+    if not cv_path.exists():
+        print(f"\n❌ Error: CV file not found: {cv_path}")
+        sys.exit(1)
     
-    if not Path(job_file).exists():
-        print(f"ERROR: Job file not found: {job_file}")
-        return 1
+    if not job_path.exists():
+        print(f"\n❌ Error: Job file not found: {job_path}")
+        sys.exit(1)
+    
+    print(f"\n✅ Files verified")
+    print(f"   CV: {cv_path.stat().st_size} bytes")
+    print(f"   Job: {job_path.stat().st_size} bytes")
     
     # Initialize engine
-    print("Initializing engine...")
-    engine = AdvancedJobEngine()
+    print(f"\n🔧 Initializing engine...")
+    try:
+        engine = AdvancedJobEngine()
+        print("✅ Engine initialized")
+    except Exception as e:
+        print(f"❌ Failed to initialize engine: {e}")
+        import traceback
+        traceback.print_exc()
+        sys.exit(1)
     
     # Run analysis
-    print("\n📊 Analyzing job match...")
+    print(f"\n📊 Running analysis...")
     try:
         analysis = engine.analyze_from_files(
-            cv_file=cv_file,
-            job_file=job_file,
-            job_title=job_title if job_title != "Target Role" else None,
-            company=company_name if company_name != "Target Company" else None
+            cv_file=str(cv_path),
+            job_file=str(job_path),
+            job_title=job_title,
+            company=company_name
         )
-        
-        # Validate analysis structure
-        if not analysis or not isinstance(analysis, dict):
-            print("ERROR: Analysis returned invalid data")
-            return 1
-        
-        if "score" not in analysis:
-            print("ERROR: Analysis missing 'score' key")
-            print(f"Available keys: {list(analysis.keys())}")
-            return 1
-        
-        if "job_id" not in analysis:
-            print("ERROR: Analysis missing 'job_id' key")
-            return 1
-        
-    except TypeError as e:
-        print(f"ERROR: Type error in analysis: {e}")
-        print("\nThis usually means:")
-        print("  1. CV or job description is too short/empty")
-        print("  2. Required fields missing in documents")
-        print("  3. Engine configuration issue")
-        import traceback
-        traceback.print_exc()
-        return 1
+        print("✅ Analysis complete")
     except Exception as e:
-        print(f"ERROR: Analysis failed: {e}")
+        print(f"❌ Analysis failed: {e}")
         import traceback
         traceback.print_exc()
-        return 1
+        sys.exit(1)
     
-    score = analysis["score"]["total_score"]
-    job_id = analysis["job_id"]
+    # Extract key results
+    job_id = analysis.get("job_id", "unknown")
+    score = analysis.get("score", {}).get("total_score", 0)
+    missing_required = len(analysis.get("gaps", {}).get("missing_required_skills", []))
+    missing_preferred = len(analysis.get("gaps", {}).get("missing_preferred_skills", []))
     
-    print(f"\n✅ Analysis complete!")
-    print(f"   Match Score: {score}%")
+    print(f"\n📈 Results:")
     print(f"   Job ID: {job_id}")
+    print(f"   Match Score: {score}%")
+    print(f"   Missing Required Skills: {missing_required}")
+    print(f"   Missing Preferred Skills: {missing_preferred}")
+    
+    # Determine status
+    if score >= 80:
+        status = "🟢 Strong Match"
+    elif score >= 60:
+        status = "🟡 Good Match"
+    else:
+        status = "🔴 Needs Development"
+    
+    print(f"   Status: {status}")
+    
+    # Set GitHub Actions outputs
+    set_github_output("job_id", job_id)
+    set_github_output("score", str(score))
+    set_github_output("status", status)
     
     # Create output directory
-    output_dir = Path("output")
+    output_dir = project_root / "output"
     output_dir.mkdir(exist_ok=True)
     
-    # Save core outputs
-    print("\n💾 Saving outputs...")
+    # Save analysis JSON
+    analysis_file = output_dir / "analysis.json"
+    with open(analysis_file, "w") as f:
+        json.dump(analysis, f, indent=2)
+    print(f"\n💾 Saved: {analysis_file}")
     
-    outputs = {
-        "match_score.json": analysis["score"],
-        "gap_analysis.json": analysis["gaps"],
-        "full_analysis.json": analysis,
-    }
-    
-    for filename, data in outputs.items():
-        with open(output_dir / filename, "w") as f:
-            json.dump(data, f, indent=2)
-        print(f"   ✅ {filename}")
-    
-    # Generate learning plan
-    print("\n📚 Creating learning plan...")
-    try:
-        learning_plan = engine.create_learning_plan(analysis, mode="standard")
-        with open(output_dir / "learning_plan.json", "w") as f:
-            json.dump(learning_plan, f, indent=2)
-        print("   ✅ learning_plan.json")
-    except Exception as e:
-        print(f"   ⚠️  Learning plan error: {e}")
-        learning_plan = {}
-    
-    # Generate improvement strategy
-    print("\n🎯 Creating improvement strategy...")
-    try:
-        strategy = engine.create_improvement_strategy(analysis, learning_plan)
-        with open(output_dir / "strategy.md", "w") as f:
-            f.write(strategy)
-        print("   ✅ strategy.md")
-    except Exception as e:
-        print(f"   ⚠️  Strategy error: {e}")
-        strategy = ""
-    
-    # Generate application materials
+    # Generate additional materials if requested
     if generate_materials:
-        print("\n✉️  Generating application materials...")
+        print(f"\n📝 Generating application materials...")
+        
         try:
+            # Learning plan
+            learning_plan = engine.create_learning_plan(analysis)
+            plan_file = output_dir / "learning_plan.json"
+            with open(plan_file, "w") as f:
+                json.dump(learning_plan, f, indent=2)
+            print(f"   ✅ Learning plan: {plan_file}")
+            
+            # Strategy
+            strategy = engine.create_improvement_strategy(analysis, learning_plan)
+            strategy_file = output_dir / "strategy.json"
+            with open(strategy_file, "w") as f:
+                json.dump(strategy, f, indent=2)
+            print(f"   ✅ Strategy: {strategy_file}")
+            
+            # Recruiter letters
             letters = engine.generate_recruiter_letter(analysis, learning_plan)
-            for letter_type, content in letters.items():
-                with open(output_dir / f"{letter_type}.txt", "w") as f:
+            
+            # Save each letter type
+            for letter_type, content in letters.get("templates", {}).items():
+                letter_file = output_dir / f"{letter_type}.txt"
+                with open(letter_file, "w") as f:
                     f.write(content)
-                print(f"   ✅ {letter_type}.txt")
+                print(f"   ✅ {letter_type}: {letter_file}")
+            
         except Exception as e:
-            print(f"   ⚠️  Letters error: {e}")
+            print(f"   ⚠️  Warning: Could not generate some materials: {e}")
+            import traceback
+            traceback.print_exc()
     
-    # Generate skill tests
-    print("\n🧪 Creating skill tests...")
-    try:
-        missing_skills = analysis["gaps"]["missing_required_skills"][:10]
-        tests = engine.generate_skill_tests(missing_skills)
-        with open(output_dir / "skill_tests.json", "w") as f:
-            json.dump(tests, f, indent=2)
-        print(f"   ✅ skill_tests.json ({len(missing_skills)} skills)")
-    except Exception as e:
-        print(f"   ⚠️  Tests error: {e}")
+    # Create summary for GitHub Actions
+    summary_file = output_dir / "summary.txt"
+    with open(summary_file, "w") as f:
+        f.write(f"### Analysis Results\n\n")
+        f.write(f"**Job:** {job_title} at {company_name}\n")
+        f.write(f"**Match Score:** {score}%\n")
+        f.write(f"**Status:** {status}\n\n")
+        
+        f.write(f"### Gap Analysis\n\n")
+        f.write(f"- **Missing Required Skills:** {missing_required}\n")
+        
+        gaps = analysis.get("gaps", {})
+        if gaps.get("missing_required_skills"):
+            f.write(f"\n**Skills to Learn:**\n")
+            for skill in gaps["missing_required_skills"][:5]:
+                f.write(f"- {skill}\n")
+        
+        f.write(f"\n### Recommendations\n\n")
+        recommendations = analysis.get("recommendations", [])
+        for rec in recommendations[:3]:
+            f.write(f"- [{rec.get('priority', 'N/A')}] {rec.get('action', 'N/A')}\n")
+        
+        f.write(f"\n---\n")
+        f.write(f"*Generated by Advanced Job Engine*\n")
     
-    # Generate complete report
-    print("\n📄 Generating report...")
-    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    print(f"   ✅ Summary: {summary_file}")
     
-    report_lines = [
-        "# Job Match Analysis Report",
-        "",
-        f"**Generated:** {timestamp}",
-        f"**Job ID:** {job_id}",
-        f"**CV:** {cv_file}",
-        f"**Job:** {job_file}",
-        "",
-        "---",
-        "",
-        f"## Match Score: {score}%",
-        "",
-        "### Score Breakdown"
-    ]
-    
-    for category, cat_score in analysis["score"]["breakdown"].items():
-        category_name = category.replace("_", " ").title()
-        report_lines.append(f"- {category_name}: {cat_score}%")
-    
-    report_lines.extend([
-        "",
-        "---",
-        "",
-        "## Gap Analysis",
-        ""
-    ])
-    
-    # Missing required skills
-    missing_req = analysis["gaps"]["missing_required_skills"]
-    report_lines.append(f"### Missing Required Skills ({len(missing_req)})")
-    for skill in missing_req[:15]:
-        report_lines.append(f"- {skill}")
-    if len(missing_req) > 15:
-        report_lines.append(f"\n... and {len(missing_req) - 15} more")
-    
-    report_lines.append("")
-    
-    # Missing preferred skills
-    missing_pref = analysis["gaps"]["missing_preferred_skills"]
-    report_lines.append(f"### Missing Preferred Skills ({len(missing_pref)})")
-    for skill in missing_pref[:10]:
-        report_lines.append(f"- {skill}")
-    if len(missing_pref) > 10:
-        report_lines.append(f"\n... and {len(missing_pref) - 10} more")
-    
-    # Experience and education gaps
-    exp_gap = analysis["gaps"]["experience_gap"]
-    edu_gap = analysis["gaps"]["education_gap"]
-    report_lines.extend([
-        "",
-        f"### Experience Gap: {exp_gap} years",
-        f"### Education Gap: {edu_gap}",
-        "",
-        "---",
-        "",
-        "## Recommendation",
-        ""
-    ])
-    
-    # Add recommendation based on score
-    if score >= 75:
-        report_lines.append("✅ **STRONG CANDIDATE** - Apply now!")
-        report_lines.append("")
-        report_lines.append("You have a strong match for this position. Your skills and experience align well with the requirements.")
-    elif score >= 60:
-        report_lines.append("⚠️  **NEEDS IMPROVEMENT** - Improve for 4-8 weeks")
-        report_lines.append("")
-        report_lines.append("You're close to being a strong candidate. Focus on the missing required skills for 4-8 weeks before applying.")
-    else:
-        report_lines.append("❌ **MAJOR GAPS** - Skill development needed (12-24 weeks)")
-        report_lines.append("")
-        report_lines.append("Significant skill gaps exist. Plan for 12-24 weeks of focused learning before applying.")
-    
-    # Write report
-    report = "\n".join(report_lines)
-    with open(output_dir / "complete_report.md", "w") as f:
-        f.write(report)
-    print("   ✅ complete_report.md")
-    
-    # Generate summary
-    status = "success" if score >= 75 else "needs_improvement"
-    status_text = "✅ STRONG CANDIDATE" if score >= 75 else "⚠️  NEEDS IMPROVEMENT"
-    
-    if score >= 75:
-        action_text = "Apply now!"
-    elif score >= 60:
-        action_text = "Improve for 4-8 weeks"
-    else:
-        action_text = "Improve for 12-24 weeks"
-    
-    summary_lines = [
-        "ANALYSIS SUMMARY",
-        "",
-        f"Job ID: {job_id}",
-        f"Match Score: {score}%",
-        f"Status: {status_text}",
-        "",
-        f"Action: {action_text}",
-        "",
-        "Files generated:",
-        "  ✅ complete_report.md",
-        "  ✅ match_score.json",
-        "  ✅ gap_analysis.json",
-        "  ✅ full_analysis.json",
-        "  ✅ learning_plan.json",
-        "  ✅ strategy.md",
-        "  ✅ skill_tests.json"
-    ]
-    
-    if generate_materials:
-        summary_lines.extend([
-            "  ✅ cover_letter.txt",
-            "  ✅ linkedin_message.txt",
-            "  ✅ followup_email.txt",
-            "  ✅ networking_email.txt"
-        ])
-    
-    summary = "\n".join(summary_lines)
-    with open(output_dir / "summary.txt", "w") as f:
-        f.write(summary)
-    print("   ✅ summary.txt")
-    
-    # Final output
-    print("\n" + "=" * 70)
+    print("\n" + "=" * 80)
     print("✅ ANALYSIS COMPLETE")
-    print("=" * 70)
-    print(f"📊 Match Score: {score}%")
-    print(f"🆔 Job ID: {job_id}")
-    print(f"📁 Output directory: {output_dir.absolute()}")
-    print("=" * 70)
+    print("=" * 80)
     
-    # Write GitHub Actions outputs (if running in Actions)
-    github_output = os.environ.get("GITHUB_OUTPUT")
-    if github_output:
-        with open(github_output, "a") as f:
-            f.write(f"score={score}\n")
-            f.write(f"job_id={job_id}\n")
-            f.write(f"status={status}\n")
+    # List all output files
+    print(f"\n📂 Output files created:")
+    for file in sorted(output_dir.glob("*")):
+        print(f"   - {file.name}")
     
     return 0
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    try:
+        sys.exit(main())
+    except Exception as e:
+        print(f"\n❌ Unexpected error: {e}")
+        import traceback
+        traceback.print_exc()
+        sys.exit(1)
