@@ -11,7 +11,7 @@ from pathlib import Path
 # Add src to path
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
-from python_advanced_job_engine import AdvancedJobEngine
+from src.python_advanced_job_engine import AdvancedJobEngine
 import json
 from datetime import datetime
 
