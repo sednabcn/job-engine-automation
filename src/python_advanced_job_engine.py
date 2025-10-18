@@ -88,7 +88,6 @@ class AdvancedJobEngine:
         with open(filepath, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=2, ensure_ascii=False)
 
-
     def read_document(self, file_path: str) -> str:
         """
         Read document from file (supports .txt, .pdf, .docx)
@@ -99,14 +98,32 @@ class AdvancedJobEngine:
         Returns:
             Extracted text content
         """
+        # Validate input
+        if not file_path or not file_path.strip():
+            raise ValueError(
+                "File path cannot be empty.\n"
+                "Please provide a valid file path (e.g., 'resume.txt', 'cv.pdf', 'job.docx')"
+            )
+        
+        file_path = file_path.strip()
         path = Path(file_path)
 
         if not path.exists():
-            raise FileNotFoundError(f"File not found: {file_path}")
+            raise FileNotFoundError(
+                f"File not found: {file_path}\n"
+                f"Please check:\n"
+                f"  1. The file exists at this location\n"
+                f"  2. The path is correct\n"
+                f"  3. You have permission to read the file"
+            )
 
         # Check if it's a directory
         if path.is_dir():
-            raise ValueError(f"Path is a directory, not a file: {file_path}")
+            raise ValueError(
+                f"Path is a directory, not a file: {file_path}\n"
+                f"Please provide a file path, not a folder path.\n"
+                f"Example: '{file_path}/resume.txt' instead of '{file_path}/'"
+            )
 
         # Determine file type and extract text
         ext = path.suffix.lower()
@@ -115,7 +132,8 @@ class AdvancedJobEngine:
         if not ext:
             raise ValueError(
                 f"File has no extension: {file_path}\n"
-                f"Please provide a file with one of these extensions: .txt, .pdf, .docx"
+                f"Please provide a file with one of these extensions: .txt, .pdf, .docx\n"
+                f"Example: rename '{file_path}' to '{file_path}.txt'"
             )
 
         if ext == ".txt":
@@ -128,9 +146,10 @@ class AdvancedJobEngine:
             raise ValueError(
                 f"Unsupported file format: {ext}\n"
                 f"Supported formats: .txt, .pdf, .docx\n"
-                f"File: {file_path}"
+                f"File: {file_path}\n"
+                f"Please convert your file to one of the supported formats."
             )
-   
+    
     def _read_txt(self, path: Path) -> str:
         """Read plain text file"""
         with open(path, "r", encoding="utf-8", errors="ignore") as f:
