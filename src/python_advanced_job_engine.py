@@ -99,6 +99,7 @@ class AdvancedJobEngine:
             Extracted text content
         """
         # Validate input
+        print(file_path,'file_path')
         if not file_path or not file_path.strip():
             raise ValueError(
                 "File path cannot be empty.\n"
