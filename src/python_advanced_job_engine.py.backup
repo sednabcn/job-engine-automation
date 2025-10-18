@@ -377,7 +377,7 @@ class AdvancedJobEngine:
         }
 
         # Save analysis
-        self.analyzed_jobs.append(analysis)
+        self.analyzed_jobs.update(analysis)
         self._save_json(self.jobs_file, self.analyzed_jobs)
 
         return analysis
@@ -468,7 +468,7 @@ class AdvancedJobEngine:
         plan["milestones"] = self._generate_milestones(plan)
 
         # Save plan
-        self.learning_progress.append(plan)
+        self.learning_progress.update(plan)
         self._save_json(self.progress_file, self.learning_progress)
 
         return plan

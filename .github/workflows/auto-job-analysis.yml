@@ -99,11 +99,40 @@ jobs:
           exit 1
         fi
         
-        echo "Files verified OK"
+        echo "Files verified:"
+        echo "  CV: $(wc -w < "$CV_FILE") words"
+        echo "  Job: $(wc -w < "$JOB_FILE") words"
+
+    - name: Debug analysis (if needed)
+      if: ${{ failure() }}
+      run: |
+        python3 << 'DEBUG'
+        import sys
+        sys.path.insert(0, "src")
+        from python_advanced_job_engine import AdvancedJobEngine
+        import os
+        
+        engine = AdvancedJobEngine()
+        cv = os.environ["CV_FILE"]
+        job = os.environ["JOB_FILE"]
+        
+        print("Debugging:")
+        try:
+            cv_text = engine.read_document(cv)
+            print(f"CV readable: {len(cv_text.split())} words")
+        except Exception as e:
+            print(f"CV error: {e}")
+        
+        try:
+            job_text = engine.read_document(job)
+            print(f"Job readable: {len(job_text.split())} words")
+        except Exception as e:
+            print(f"Job error: {e}")
+        DEBUG
 
     - name: Run analysis
       id: analysis
-      run: python3 .github/scripts/run_analysis.py
+      run: python3 scripts/run_analysis.py
 
     - name: Upload results
       uses: actions/upload-artifact@v4
