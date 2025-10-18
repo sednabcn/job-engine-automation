@@ -22,7 +22,7 @@ jobs:
             const repo = context.repo.repo;
 
             // 🔧 CONFIGURATION
-            const KEEP_DAYS = 1;            // Keep runs from the last 3 days
+            const KEEP_DAYS = 3;            // Keep runs from the last 3 days
             const KEEP_SUCCESSFUL = 2;      // Keep the 5 latest successful runs
             const DELETE_FAILED = true;     // Delete all failed runs
             const SLEEP_MS = 500;           // Pause between deletions
