@@ -88,70 +88,60 @@ class AdvancedJobEngine:
         with open(filepath, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=2, ensure_ascii=False)
 
+            
     def read_document(self, file_path: str) -> str:
         """
         Read document from file (supports .txt, .pdf, .docx)
 
-        Args:
-            file_path: Path to the document file
-
-        Returns:
-            Extracted text content
+        Improvements:
+        • Handles empty or None file paths
+        • Falls back to defaults (data/my_cv.txt, data/target_job.txt)
+        • Validates extension and existence
+        • Provides clear user feedback
         """
-        # Validate input
-        print(file_path,'file_path')
-        if not file_path or not file_path.strip():
+        # Detect empty input and apply fallbacks
+        if not file_path or not str(file_path).strip():
+            default_cv = Path("data/my_cv.txt")
+            default_job = Path("data/target_job.txt")
+
+        if default_cv.exists():
+            print("⚠️ No CV path provided — using default: data/my_cv.txt")
+            file_path = str(default_cv)
+        elif default_job.exists():
+            print("⚠️ No Job path provided — using default: data/target_job.txt")
+            file_path = str(default_job)
+        else:
             raise ValueError(
-                "File path cannot be empty.\n"
-                "Please provide a valid file path (e.g., 'resume.txt', 'cv.pdf', 'job.docx')"
+                "❌ File path cannot be empty.\n"
+                "Please provide a valid file path (e.g., 'resume.txt', 'cv.pdf', 'job.docx')\n"
+                "Hint: Place your CV in 'data/my_cv.txt' and job description in 'data/target_job.txt'."
             )
-        
-        file_path = file_path.strip()
+
         path = Path(file_path)
 
         if not path.exists():
-            raise FileNotFoundError(
-                f"File not found: {file_path}\n"
-                f"Please check:\n"
-                f"  1. The file exists at this location\n"
-                f"  2. The path is correct\n"
-                f"  3. You have permission to read the file"
-            )
+            raise FileNotFoundError(f"❌ File not found: {path.resolve()}")
 
-        # Check if it's a directory
-        if path.is_dir():
-            raise ValueError(
-                f"Path is a directory, not a file: {file_path}\n"
-                f"Please provide a file path, not a folder path.\n"
-                f"Example: '{file_path}/resume.txt' instead of '{file_path}/'"
-            )
-
-        # Determine file type and extract text
         ext = path.suffix.lower()
+        supported = [".txt", ".pdf", ".docx"]
 
-        # If no extension, raise a clear error
-        if not ext:
+        if ext not in supported:
             raise ValueError(
-                f"File has no extension: {file_path}\n"
-                f"Please provide a file with one of these extensions: .txt, .pdf, .docx\n"
-                f"Example: rename '{file_path}' to '{file_path}.txt'"
+                f"❌ Unsupported file format: {ext}\n"
+                f"Supported formats: {', '.join(supported)}"
             )
+
+        print(f"📂 Reading document: {path.resolve()}")
 
         if ext == ".txt":
             return self._read_txt(path)
         elif ext == ".pdf":
             return self._read_pdf(path)
-        elif ext in [".docx", ".doc"]:
+        elif ext == ".docx":
             return self._read_docx(path)
         else:
-            raise ValueError(
-                f"Unsupported file format: {ext}\n"
-                f"Supported formats: .txt, .pdf, .docx\n"
-                f"File: {file_path}\n"
-                f"Please convert your file to one of the supported formats."
-            )
+            raise ValueError(f"Unexpected file type: {ext}")
     
-
     def _read_txt(self, path: Path) -> str:
         """Read plain text file"""
         with open(path, "r", encoding="utf-8", errors="ignore") as f:
@@ -356,21 +346,36 @@ class AdvancedJobEngine:
             "analyzed_date": datetime.now().isoformat(),
         }
 
-    def analyze_from_files(
-        self, cv_file: str, job_file: str, job_title: str = "", company: str = ""
-    ) -> Dict[str, Any]:
+    def analyze_from_files(self, cv_file: str = "", job_file: str = "",
+                       job_title: str = "", company: str = "") -> Dict[str, Any]:
         """
         Analyze job match from document files
 
-        Args:
-            cv_file: Path to CV file (.txt, .pdf, .docx)
-            job_file: Path to job description file (.txt, .pdf, .docx)
-            job_title: Optional job title
-            company: Optional company name
-
-        Returns:
-            Complete analysis dictionary
+        Improvements:
+        • Automatically applies default paths if missing
+        • Validates file existence before reading
+        • Prints clear progress messages
         """
+        # Default paths
+        default_cv = Path("data/my_cv.txt")
+        default_job = Path("data/target_job.txt")
+
+        # Fallback logic for missing inputs
+        if not cv_file or not str(cv_file).strip():
+            if default_cv.exists():
+                print("⚠️ No CV provided — using default data/my_cv.txt")
+                cv_file = str(default_cv)
+        else:
+            raise ValueError("❌ No CV file provided and no default found in data/my_cv.txt")
+
+        if not job_file or not str(job_file).strip():
+            if default_job.exists():
+                print("⚠️ No Job description provided — using default data/target_job.txt")
+                job_file = str(default_job)
+            else:
+                raise ValueError("❌ No Job file provided and no default found in data/target_job.txt")
+
+        # Proceed with standard workflow
         print(f"📄 Reading CV from: {cv_file}")
         cv_text: str = self.read_document(cv_file)
         print(f"   ✅ Extracted {len(cv_text)} characters")
