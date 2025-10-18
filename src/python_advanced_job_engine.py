@@ -375,7 +375,7 @@ class AdvancedJobEngine:
         }
 
         # Save analysis
-        self.analyzed_jobs.append(analysis)
+        self.analyzed_jobs.update(analysis)
         self._save_json(self.jobs_file, self.analyzed_jobs)
 
         return analysis
@@ -466,7 +466,7 @@ class AdvancedJobEngine:
         plan["milestones"] = self._generate_milestones(plan)
 
         # Save plan
-        self.learning_progress.append(plan)
+        self.learning_progress.update(plan)
         self._save_json(self.progress_file, self.learning_progress)
 
         return plan
@@ -482,7 +482,7 @@ class AdvancedJobEngine:
         Returns:
             Sprint configuration dictionary
         """
-        sprint_num: int = self.state["current_sprint"] + 1
+        sprint_num: int = self.state.get("current_sprint",0) + 1
 
         sprint: Dict[str, Any] = {
             "sprint_number": sprint_num,
@@ -496,7 +496,7 @@ class AdvancedJobEngine:
 
         self.state["current_sprint"] = sprint_num
         self.state["mode"] = "reverse"
-        if not self.state["started_date"]:
+        if not self.state.get("started_date"):
             self.state["started_date"] = datetime.now().isoformat()
         self._save_json(self.state_file, self.state)
 
@@ -656,9 +656,10 @@ class AdvancedJobEngine:
             req_dict: Dict[str, Any] = dict(requirements)
 
             # Check score and projects
-            score_met: bool = score >= req_dict["score"]
-            projects_met: bool = projects >= req_dict["projects"]
-
+            # Check score and projects
+            score_met: bool = score >= req_dict.get("score", 0)
+            projects_met: bool = projects >= req_dict.get("projects", 0)
+          
             # Check additional requirements
             additional_met: bool = True
             if "brand" in req_dict:
@@ -823,38 +824,39 @@ engine.check_quality_gates()
         state = self.state
 
         print("\n📊 CURRENT STATUS:")
-        print(f"   Mode: {state['mode'] or 'Not started'}")
-        print(f"   Stage: {state['current_stage']}")
-        print(f"   Baseline Score: {state['baseline_score']}%")
-        print(f"   Current Score: {state['current_score']}%")
-        print(f"   Target Score: {state['target_score']}%")
+        print(f"   Mode: {state.get('mode') or 'Not started'}")
+        print(f"   Stage: {state.get('current_stage', 'baseline')}")
+        print(f"   Baseline Score: {state.get('baseline_score', 0)}%")
+        print(f"   Current Score: {state.get('current_score', 0)}%")
+        print(f"   Target Score: {state.get('target_score', 90)}%")
 
-        if state["baseline_score"] > 0:
-            improvement: int = state["current_score"] - state["baseline_score"]
+
+        if state.get('baseline_score', 0) > 0:
+            improvement: int = state.get('current_score', 0) - state.get('baseline_score', 0)
             print(f"   Improvement: +{improvement}%")
 
         print("\n🏃 SPRINT PROGRESS:")
-        print(f"   Total Sprints: {state['current_sprint']}")
-        print(f"   Skills Mastered: {len(state['skills_mastered'])}")
-        if state["skills_mastered"]:
-            print(f"      → {', '.join(state['skills_mastered'][:10])}")
+        print(f"   Total Sprints: {state.get('current_sprint', 0)}")
+        print(f"   Skills Mastered: {len(state.get('skills_mastered', []))}")
+        if state.get('skills_mastered', []):
+            print(f"      → {', '.join(state.get('skills_mastered', [])[:10])}")
 
-        print(f"\n🗂️ PROJECTS COMPLETED: {len(state['projects_completed'])}")
-        for i, project in enumerate(state["projects_completed"][-5:], 1):
+        print(f"\n🗂️ PROJECTS COMPLETED: {len(state.get('projects_completed', []))}")
+        for i, project in enumerate(state.get("projects_completed", [])[-5:], 1):
             print(f"   {i}. Sprint {project['sprint']}: {project['goal']}")
             print(f"      Skills: {', '.join(project['skills'])}")
             print(f"      URL: {project['url']}")
 
         print("\n📝 TESTS PASSED:")
-        if state["tests_passed"]:
-            for skill, levels in state["tests_passed"].items():
+        if state.get("tests_passed", {}):
+            for skill, levels in state.get("tests_passed", {}).items():
                 print(f"   {skill}: {', '.join(levels)}")
         else:
             print("   No tests passed yet")
 
         print("\n🏆 QUALITY GATES:")
         for gate in self.QUALITY_GATES.keys():
-            status: str = "✅" if gate in state["quality_gates_passed"] else "⏳"
+            status: str = "✅" if gate in state.get("quality_gates_passed", []) else "⏳"
             print(f"   {status} {gate.replace('_', ' ').title()}")
 
         print("\n🎯 READINESS FLAGS:")
@@ -862,7 +864,7 @@ engine.check_quality_gates()
         print(f"   Network Ready: {'✅' if state.get('network_ready') else '⏳'}")
         print(f"   Application Ready: {'✅' if state.get('application_ready') else '⏳'}")
 
-        if state["started_date"]:
+        if state.get("started_date"):
             start: datetime = datetime.fromisoformat(state["started_date"])
             days_elapsed: int = (datetime.now() - start).days
             print("\n⏱️ TIME TRACKING:")
@@ -873,12 +875,12 @@ engine.check_quality_gates()
                 total_hours: float = sum(
                     sprint.get("total_hours", 0)
                     for sprint in self.sprint_history
-                    if sprint.get("completed")
+                    if isinstance(sprint, dict) and sprint.get("completed")
                 )
                 print(f"   Total Learning Hours: {total_hours}h")
 
         print("\n" + "=" * 80)
-
+ 
     def create_improvement_strategy(
         self, analysis: Dict[str, Any], learning_plan: Dict[str, Any]
     ) -> Dict[str, Any]:
@@ -1003,7 +1005,7 @@ engine.check_quality_gates()
                 "advanced": self._generate_test(skill, "advanced"),
             }
 
-        self.skill_tests.append(tests)
+        self.skill_tests.update(tests)
         self._save_json(self.tests_file, self.skill_tests)
 
         return tests
@@ -1833,6 +1835,28 @@ Best regards,
         self, analysis: Dict, learning_plan: Dict, strategy: Dict, tests: Dict, letters: Dict
     ) -> str:
         """Generate comprehensive report"""
+
+        
+        
+        # Ensure sprint_history is a list of dicts
+        if not isinstance(self.sprint_history, list):
+            self.sprint_history = []
+
+        # Ensure all state keys exist with defaults
+        state_defaults = {
+             'skills_mastered': [],
+             'projects_completed': [],
+             'tests_passed': {},
+             'quality_gates_passed': [],
+             'current_sprint': 0,
+             'current_stage': 'baseline',
+             'current_score': 0,
+             'baseline_score': 0,
+        }
+        for key, default in state_defaults.items():
+             if key not in self.state:
+                 self.state[key] = default
+    
         report = f"""
 {'='*100}
 COMPLETE JOB SEARCH & DEVELOPMENT REPORT
@@ -1953,7 +1977,7 @@ Current Total Skills: {self._count_total_skills()}
 Projected Total Skills: {self._count_total_skills() + len(all_skills)}
 """
 
-        if self.state["mode"] == "reverse":
+        if self.state.get("mode") == "reverse":
             report += f"""
 {'='*100}
 SECTION 6.5: REVERSE WORKFLOW PROGRESS
@@ -1962,8 +1986,9 @@ SECTION 6.5: REVERSE WORKFLOW PROGRESS
 Sprint-Based Development Status:
 
 Current Sprint: {self.state['current_sprint']}
-Total Learning Hours: {sum(s.get('total_hours', 0) for s in self.sprint_history if s.get('completed'))}h
-Skills Mastered: {len(self.state['skills_mastered'])}
+Total Learning Hours: {sum(s.get('total_hours', 0) for s in self.sprint_history if isinstance(s, dict) and s.get('completed'))}
+
+Skills Mastered: {len(self.state.get('skills_mastered', []))}
 → {', '.join(self.state['skills_mastered']) if self.state['skills_mastered'] else 'None yet'}
 
 Projects Completed: {len(self.state['projects_completed'])}
@@ -2034,7 +2059,10 @@ REPORT END
         export_dir = self.data_dir / f"export_{job_id}"
         export_dir.mkdir(exist_ok=True)
 
-        analysis = next((a for a in self.analyzed_jobs if a["job_id"] == job_id), None)
+        analysis = next(
+        (a for a in self.analyzed_jobs if isinstance(a, dict) and a.get("job_id") == job_id), 
+        None
+        )
         if not analysis:
             return "Job analysis not found"
 

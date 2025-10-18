@@ -7,75 +7,23 @@ name: Reverse-Engine Job Search - Complete Automation
 # ---------------------------------------------------------------
 # 1️⃣ INITIAL SETUP
 #    • Place your CV file here:
-#         data/my_cv.txt
+#         data/my_cv.txt (or .pdf, .docx)
 #    • Place your target job description here:
-#         data/target_job.txt
+#         data/target_job.txt (or .pdf, .docx)
 #
 # 2️⃣ FILE FORMAT
 #    • The engine supports multiple formats:
 #         ✅ .txt  - Plain text files
 #         ✅ .pdf  - PDF documents
 #         ✅ .docx - Microsoft Word documents
-#    • Simply place your files in the data/ directory:
-#         data/my_cv.pdf
-#         data/target_job.docx
 #
 # 3️⃣ WORKFLOW EXECUTION
-#    • Trigger this workflow manually from the "Actions" tab
-#      or by committing updates to your data files.
-#    • The job automatically runs the analysis script:
-#         src/python_advanced_job_engine.py
+#    • Trigger manually from "Actions" tab
+#    • Runs automatically at 9 AM and 9 PM daily
 #
 # 4️⃣ OUTPUT
-#    • Processed results and analysis reports will be saved
-#      in the output directory defined by the script.
-#
-# 5️⃣ SECRETS
-#    • This workflow does NOT require any secrets or tokens.
-#      It operates fully locally on the repository data.
-#
-# ===============================================================
-# 🧩 NOTES FOR CONTRIBUTORS
-# ---------------------------------------------------------------
-#
-# 🔧 PURPOSE
-#    Automates CV–job text analysis using Python to identify
-#    matches, keywords, and recommendations.
-#
-# 🧱 STRUCTURE OVERVIEW
-#    ├── data/
-#    │     ├── my_cv.txt            # Candidate CV (plain text)
-#    │     └── target_job.txt       # Target job description (plain text)
-#    ├── src/
-#    │     └── python_advanced_job_engine.py
-#    └── .github/workflows/
-#          └── unified-reverse-job-engine.yml
-#
-# 🧠 HOW TO EXTEND FUNCTIONALITY
-#    1️⃣ Add Support for DOCX or PDF:
-#        • Edit src/python_advanced_job_engine.py:
-#             from docx import Document          # for .docx
-#             import PyPDF2                      # for .pdf
-#        • Update YAML defaults:
-#             cv_path: 'data/my_cv.docx'
-#             job_path: 'data/target_job.pdf'
-#
-#    2️⃣ Integrate APIs (Optional):
-#        • To use external AI or NLP services, add secrets under:
-#             Settings → Secrets → Actions
-#        • Example secrets:
-#             OPENAI_API_KEY
-#             HF_TOKEN
-#        • Reference them in YAML:
-#             env:
-#               OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-#
-#    3️⃣ Modify Output Storage:
-#        • Adjust output path inside src/python_advanced_job_engine.py
-#
-#    4️⃣ Logging and Debugging:
-#        • Use GitHub Actions logs to inspect runtime details.
-#        • Add "set -x" in shell steps for step tracing.
+#    • All data saved in: job_search_data/
+#    • Reports available as artifacts
 #
 # ===============================================================
 
@@ -91,9 +39,30 @@ on:
         options:
           - daily_report
           - start_sprint
+          - log_daily
           - end_sprint
           - quality_check
           - full_analysis
+      hours:
+        description: 'Hours spent today (for log_daily)'
+        required: false
+        default: '3'
+      concepts:
+        description: 'Concepts learned (comma-separated, for log_daily)'
+        required: false
+        default: ''
+      notes:
+        description: 'Daily notes (for log_daily)'
+        required: false
+        default: ''
+      project_url:
+        description: 'Project URL (for end_sprint)'
+        required: false
+        default: ''
+      test_scores:
+        description: 'Test scores JSON: {"skill": score} (for end_sprint)'
+        required: false
+        default: '{}'
       cv_path:
         description: 'Path to CV file (.txt, .pdf, .docx)'
         required: false
@@ -131,9 +100,7 @@ jobs:
       - name: 📦 Install dependencies
         run: |
           pip install --upgrade pip
-          # Add any additional dependencies if needed
-          pip install python-dateutil
-          pip install PyPDF2 python-docx
+          pip install python-dateutil PyPDF2 python-docx
           echo "✅ Installed: python-dateutil, PyPDF2, python-docx"
       
       - name: 📂 Ensure data directories exist
@@ -141,7 +108,15 @@ jobs:
           mkdir -p ${{ env.DATA_DIR }}
           mkdir -p data
           mkdir -p src
+          
+          # Verify script exists
+          if [ ! -f "src/python_advanced_job_engine.py" ]; then
+            echo "❌ Error: src/python_advanced_job_engine.py not found"
+            exit 1
+          fi
+          
           echo "✅ Data directories created"
+          echo "✅ Script verified at: src/python_advanced_job_engine.py"
       
       # =====================================================================
       # LOAD ENGINE AND STATE
@@ -152,35 +127,54 @@ jobs:
         run: |
           python << 'PYTHON_EOF'
           import os
+          import sys
           
-          # Import the engine
-          from python_advanced_job_engine import AdvancedJobEngine
-          
-          # Initialize engine
-          engine = AdvancedJobEngine(data_dir="${{ env.DATA_DIR }}")
-          
-          # Get current state
-          state = engine.state
-          current_score = state.get('current_score', 0)
-          baseline_score = state.get('baseline_score', 0)
-          current_sprint = state.get('current_sprint', 0)
-          mode = state.get('mode', 'none')
-          
-          print(f"current_score={current_score}")
-          print(f"baseline_score={baseline_score}")
-          print(f"current_sprint={current_sprint}")
-          print(f"mode={mode}")
-          print(f"initialized={mode != 'none'}")
-          
-          # Output for GitHub Actions
-          with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
-              f.write(f"current_score={current_score}\n")
-              f.write(f"baseline_score={baseline_score}\n")
-              f.write(f"current_sprint={current_sprint}\n")
-              f.write(f"mode={mode}\n")
-              f.write(f"initialized={mode != 'none'}\n")
+          try:
+              # Add src to path
+              sys.path.insert(0, os.path.join(os.getcwd(), 'src'))
+              
+              # Import the engine
+              from python_advanced_job_engine import AdvancedJobEngine
+              
+              # Initialize engine
+              engine = AdvancedJobEngine(data_dir="${{ env.DATA_DIR }}")
+              
+              # Get current state with safe defaults
+              state = engine.state
+              current_score = state.get('current_score', 0)
+              baseline_score = state.get('baseline_score', 0)
+              current_sprint = state.get('current_sprint', 0)
+              mode = state.get('mode') or 'none'
+              
+              print(f"current_score={current_score}")
+              print(f"baseline_score={baseline_score}")
+              print(f"current_sprint={current_sprint}")
+              print(f"mode={mode}")
+              
+              # Determine if initialized
+              initialized = 'true' if (mode and mode != 'none') else 'false'
+              print(f"initialized={initialized}")
+              
+              # Output for GitHub Actions
+              with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+                  f.write(f"current_score={current_score}\n")
+                  f.write(f"baseline_score={baseline_score}\n")
+                  f.write(f"current_sprint={current_sprint}\n")
+                  f.write(f"mode={mode}\n")
+                  f.write(f"initialized={initialized}\n")
+              
+              print("\n✅ Engine initialized successfully")
+              
+          except ImportError as e:
+              print(f"❌ Import Error: {e}")
+              print("Ensure script is at: src/python_advanced_job_engine.py")
+              exit(1)
+          except Exception as e:
+              print(f"❌ Error: {e}")
+              import traceback
+              traceback.print_exc()
+              exit(1)
           PYTHON_EOF
-      
       # =====================================================================
       # DAILY MONITORING & PROGRESS REPORT
       # =====================================================================
@@ -192,35 +186,341 @@ jobs:
         run: |
           python << 'PYTHON_EOF'
           import os
+          import sys
           from datetime import datetime
           
-          from python_advanced_job_engine import AdvancedJobEngine
+          try:
+              sys.path.insert(0, 'src')
+              from python_advanced_job_engine import AdvancedJobEngine
+              
+              engine = AdvancedJobEngine(data_dir="${{ env.DATA_DIR }}")
+              
+              if engine.state.get('mode') is None:
+                  print("\n⚠️  Workflow not initialized yet.")
+                  print("   Run 'full_analysis' action first with your CV and job description.")
+                  exit(0)
+              
+              print("\n" + "="*80)
+              print(f"DAILY PROGRESS REPORT - {datetime.now().strftime('%Y-%m-%d %H:%M')}")
+              print("="*80)
+              
+              # Display the dashboard
+              engine.display_progress_dashboard()
+              
+              # Check if sprint reminder needed
+              if engine.sprint_history:
+                  last_sprint = engine.sprint_history[-1]
+                  if isinstance(last_sprint, dict) and not last_sprint.get('completed', False):
+                      days_logged = len(last_sprint.get('daily_logs', []))
+                      print(f"\n⏰ SPRINT REMINDER:")
+                      print(f"   Current sprint: {last_sprint['sprint_number']}")
+                      print(f"   Days logged: {days_logged}/14")
+                      print(f"   Don't forget to log today's progress!")
+              
+              print("\n" + "="*80)
+              
+          except Exception as e:
+              print(f"❌ Error: {e}")
+              import traceback
+              traceback.print_exc()
+              exit(1)
+          PYTHON_EOF
+      
+      # =====================================================================
+      # FULL JOB ANALYSIS (Initial or Re-analysis)
+      # =====================================================================
+
+      - name: 🎯 Run Full Job Analysis
+        if: github.event.inputs.action == 'full_analysis'
+        run: |
+          python << 'PYTHON_EOF'
+          import os
+          import sys
+          from pathlib import Path
           
-          engine = AdvancedJobEngine(data_dir="${{ env.DATA_DIR }}")
+          try:
+              sys.path.insert(0, 'src')
+              from python_advanced_job_engine import AdvancedJobEngine
+              
+              # Get file paths
+              cv_path = "${{ github.event.inputs.cv_path }}"
+              job_path = "${{ github.event.inputs.job_path }}"
+              
+              print("\n" + "="*80)
+              print("FULL JOB ANALYSIS")
+              print("="*80)
+              
+              # Initialize engine
+              engine = AdvancedJobEngine(data_dir="${{ env.DATA_DIR }}")
+              
+              # Analyze from files (supports .txt, .pdf, .docx)
+              print(f"\n📊 Analyzing CV: {cv_path}")
+              print(f"📊 Against Job: {job_path}")
+              
+              analysis = engine.analyze_from_files(
+                  cv_file=cv_path,
+                  job_file=job_path,
+                  job_title="Target Role",
+                  company="Target Company"
+              )
+              
+              # Create learning plan (Reverse mode)
+              print("\n📚 Creating learning plan (REVERSE mode)...")
+              learning_plan = engine.create_learning_plan(analysis, mode="reverse")
+              
+              # Create improvement strategy
+              print("\n🎯 Creating improvement strategy...")
+              strategy = engine.create_improvement_strategy(analysis, learning_plan)
+              
+              # Generate skill tests
+              print("\n📝 Generating skill tests...")
+              missing_skills = analysis['gaps']['missing_required_skills'][:5]
+              tests = engine.generate_skill_tests(missing_skills)
+              
+              # Generate letters
+              print("\n✉️  Generating application materials...")
+              letters = engine.generate_recruiter_letter(analysis, learning_plan)
+              
+              # Update state
+              engine.state['baseline_score'] = analysis['score']['total_score']
+              engine.state['current_score'] = analysis['score']['total_score']
+              engine.state['mode'] = 'reverse'
+              engine.state['current_stage'] = 'baseline'
+              engine._save_json(engine.state_file, engine.state)
+              
+              # Display results
+              print("\n" + "="*80)
+              print("ANALYSIS COMPLETE")
+              print("="*80)
+              print(f"\n📊 Match Score: {analysis['score']['total_score']}%")
+              print(f"📋 Missing Skills: {len(analysis['gaps']['missing_required_skills'])}")
+              print(f"⏱️  Timeline: {learning_plan['estimated_duration']}")
+              print(f"\n✅ All data saved to: {engine.data_dir}")
+              print(f"\n🚀 Next Step: Start your first sprint!")
+              print("="*80)
+              
+          except FileNotFoundError as e:
+              print(f"❌ {e}")
+              exit(1)
+          except ImportError as e:
+              print(f"❌ {e}")
+              print("\n💡 Install required libraries:")
+              print("   pip install PyPDF2 python-docx")
+              exit(1)
+          except Exception as e:
+              print(f"❌ Error: {e}")
+              import traceback
+              traceback.print_exc()
+              exit(1)
+          PYTHON_EOF
           
-          if engine.state.get('mode') is None:
-              print("\n⚠️  Workflow not initialized yet.")
-              print("   Run 'full_analysis' action first with your CV and job description.")
-              exit(0)
+      # =====================================================================
+      # START NEW SPRINT
+      # =====================================================================
+      
+      - name: 🏃 Start Sprint
+        if: github.event.inputs.action == 'start_sprint'
+        run: |
+          python << 'PYTHON_EOF'
+          import os
+          import sys
           
-          print("\n" + "="*80)
-          print(f"DAILY PROGRESS REPORT - {datetime.now().strftime('%Y-%m-%d %H:%M')}")
-          print("="*80)
+          try:
+              sys.path.insert(0, 'src')
+              from python_advanced_job_engine import AdvancedJobEngine
+              
+              engine = AdvancedJobEngine(data_dir="${{ env.DATA_DIR }}")
+              
+              if engine.state.get('mode') is None:
+                  print("❌ Workflow not initialized. Run 'full_analysis' first.")
+                  exit(1)
+              
+              # Get next skills to work on from learning plan
+              if not engine.learning_progress:
+                  print("❌ No learning plan found. Run 'full_analysis' first.")
+                  exit(1)
+              
+              plan = engine.learning_progress[-1] if isinstance(engine.learning_progress, list) else engine.learning_progress
+              
+              # Get next skills from study level
+              skills_to_learn = []
+              mastered_lower = [s.lower() for s in engine.state.get('skills_mastered', [])]
+              
+              for item in plan['levels']['study']:
+                  if item['skill'].lower() not in mastered_lower:
+                      skills_to_learn.append(item['skill'])
+                      if len(skills_to_learn) >= 2:
+                          break
+              
+              if not skills_to_learn:
+                  # Try practice level
+                  for item in plan['levels']['practice']:
+                      if item['skill'].lower() not in mastered_lower:
+                          skills_to_learn.append(item['skill'])
+                          if len(skills_to_learn) >= 2:
+                              break
+              
+              if not skills_to_learn:
+                  print("🎉 All planned skills mastered! Consider:")
+                  print("   1. Re-analyze with updated CV")
+                  print("   2. Add more advanced skills")
+                  print("   3. Focus on positioning and branding")
+                  exit(0)
+              
+              project_goal = f"Build project demonstrating {' and '.join(skills_to_learn)}"
+              
+              # Start sprint
+              sprint = engine.start_sprint(skills_to_learn, project_goal)
+              
+              print("\n📌 To log daily progress:")
+              print("   Run workflow with action: log_daily")
+              print("   Provide hours, concepts, and notes")
+              
+          except Exception as e:
+              print(f"❌ Error: {e}")
+              import traceback
+              traceback.print_exc()
+              exit(1)
+          PYTHON_EOF
+      
+      # =====================================================================
+      # LOG DAILY PROGRESS
+      # =====================================================================
+
+      - name: 📝 Log Daily Progress
+        if: github.event.inputs.action == 'log_daily'
+        run: |
+          python << 'PYTHON_EOF'
+          import sys
           
-          # Display the dashboard
-          engine.display_progress_dashboard()
-          
-          # Check if sprint reminder needed
-          if engine.sprint_history:
+          try:
+              sys.path.insert(0, 'src')
+              from python_advanced_job_engine import AdvancedJobEngine
+              
+              engine = AdvancedJobEngine(data_dir="${{ env.DATA_DIR }}")
+              
+              if not engine.sprint_history:
+                  print("❌ No active sprint. Start a sprint first.")
+                  exit(1)
+              
               last_sprint = engine.sprint_history[-1]
-              if not last_sprint.get('completed', False):
-                  days_logged = len(last_sprint.get('daily_logs', []))
-                  print(f"\n⏰ SPRINT REMINDER:")
-                  print(f"   Current sprint: {last_sprint['sprint_number']}")
-                  print(f"   Days logged: {days_logged}/14")
-                  print(f"   Don't forget to log today's progress!")
+              if not isinstance(last_sprint, dict) or last_sprint.get('completed', False):
+                  print("❌ No active sprint. Current sprint is completed.")
+                  exit(1)
+              
+              # Get inputs
+              hours = float("${{ github.event.inputs.hours }}")
+              concepts_str = "${{ github.event.inputs.concepts }}"
+              concepts = [c.strip() for c in concepts_str.split(',') if c.strip()]
+              notes = "${{ github.event.inputs.notes }}"
+              
+              if not concepts:
+                  concepts = ["Daily learning progress"]
+              
+              # Log daily progress
+              engine.log_daily(hours, concepts, notes)
+              
+              print(f"\n✅ Successfully logged {hours}h with {len(concepts)} concepts")
+              
+          except ValueError as e:
+              print(f"❌ Invalid hours value: {e}")
+              exit(1)
+          except Exception as e:
+              print(f"❌ Error: {e}")
+              import traceback
+              traceback.print_exc()
+              exit(1)
+          PYTHON_EOF
+
+      # =====================================================================
+      # END CURRENT SPRINT
+      # =====================================================================
+      
+      - name: 🏁 End Sprint
+        if: github.event.inputs.action == 'end_sprint'
+        run: |
+          python << 'PYTHON_EOF'
+          import os
+          import sys
+          import json
+          from pathlib import Path
           
-          print("\n" + "="*80)
+          try:
+              sys.path.insert(0, 'src')
+              from python_advanced_job_engine import AdvancedJobEngine
+              
+              engine = AdvancedJobEngine(data_dir="${{ env.DATA_DIR }}")
+              
+              if not engine.sprint_history:
+                  print("❌ No active sprint found.")
+                  exit(1)
+              
+              current_sprint = engine.sprint_history[-1]
+              
+              if not isinstance(current_sprint, dict):
+                  print("❌ Invalid sprint data.")
+                  exit(1)
+              
+              if current_sprint.get('completed', False):
+                  print("❌ Current sprint already completed.")
+                  print("   Start a new sprint with 'start_sprint' action")
+                  exit(1)
+              
+              print("\n" + "="*80)
+              print(f"ENDING SPRINT {current_sprint['sprint_number']}")
+              print("="*80)
+              
+              # Get project URL and test scores from inputs
+              project_url = "${{ github.event.inputs.project_url }}"
+              test_scores_str = "${{ github.event.inputs.test_scores }}"
+              
+              if not project_url:
+                  project_url = "https://github.com/user/sprint-project"
+                  print("⚠️  Using default project URL (provide via inputs)")
+              
+              if test_scores_str and test_scores_str != '{}':
+                  test_scores = json.loads(test_scores_str)
+              else:
+                  # Default passing scores
+                  test_scores = {
+                      skill: 70.0
+                      for skill in current_sprint['skills_targeted']
+                  }
+                  print("⚠️  Using default test scores (70% for all skills)")
+              
+              # End sprint
+              result = engine.end_sprint(project_url, test_scores)
+
+              # Re-analyze with updated CV
+              cv_path = "${{ github.event.inputs.cv_path }}"
+              job_path = "${{ github.event.inputs.job_path }}"
+
+              try:
+                  print("\n🔄 Re-analyzing job match...")
+                  analysis = engine.analyze_from_files(cv_path, job_path)
+                  new_score = analysis['score']['total_score']
+                  old_score = engine.state.get('current_score', 0)
+                  
+                  engine.state['current_score'] = new_score
+                  engine._save_json(engine.state_file, engine.state)
+                  
+                  print(f"\n📊 Score Update:")
+                  print(f"   Previous: {old_score}%")
+                  print(f"   Current:  {new_score}%")
+                  print(f"   Change:   {new_score - old_score:+.1f}%")
+              except Exception as e:
+                  print(f"⚠️  Could not re-analyze: {e}")
+              
+              print("\n" + "="*80)
+              
+          except json.JSONDecodeError as e:
+              print(f"❌ Invalid JSON in test_scores: {e}")
+              exit(1)
+          except Exception as e:
+              print(f"❌ Error: {e}")
+              import traceback
+              traceback.print_exc()
+              exit(1)
           PYTHON_EOF
       
       # =====================================================================
@@ -235,263 +535,66 @@ jobs:
         run: |
           python << 'PYTHON_EOF'
           import os
-          
-          from python_advanced_job_engine import AdvancedJobEngine
-          
-          engine = AdvancedJobEngine(data_dir="${{ env.DATA_DIR }}")
-          
-          if engine.state.get('mode') is None:
-              print("⚠️  No workflow initialized")
-              exit(0)
-          
-          print("\n" + "="*80)
-          print("QUALITY GATE ASSESSMENT")
-          print("="*80)
-          
-          # Check quality gates
-          gates_status = engine.check_quality_gates()
-          
-          state = engine.state
-          score = state['current_score']
-          projects = len(state['projects_completed'])
-          
-          print(f"\n📊 Current Status:")
-          print(f"   Match Score: {score}%")
-          print(f"   Projects: {projects}")
-          print(f"   Skills Mastered: {len(state['skills_mastered'])}")
-          
-          print(f"\n🚪 Quality Gates:")
-          for gate_name, passed in gates_status.items():
-              status = "✅" if passed else "⏳"
-              req = engine.QUALITY_GATES[gate_name]
-              print(f"   {status} {gate_name.upper()}")
-              print(f"      Score: {score}/{req['score']}%")
-              print(f"      Projects: {projects}/{req['projects']}")
-          
-          # Check if ready for applications
-          if gates_status.get('application_ready', False):
-              print(f"\n🎉 CONGRATULATIONS!")
-              print(f"   You've passed all quality gates!")
-              print(f"   YOU ARE NOW APPLICATION-READY! 🚀")
-              
-              # Output for notifications
-              with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
-                  f.write("application_ready=true\n")
-          else:
-              with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
-                  f.write("application_ready=false\n")
-          
-          print("\n" + "="*80)
-          PYTHON_EOF
-      
-      # =====================================================================
-      # FULL JOB ANALYSIS (Initial or Re-analysis)
-      # =====================================================================
-
-      - name: 🎯 Run Full Job Analysis
-        if: github.event.inputs.action == 'full_analysis'
-        run: |
-          python << 'PYTHON_EOF'
-          import os
-          from pathlib import Path
-    
-          from python_advanced_job_engine import AdvancedJobEngine
-    
-          # Get file paths
-          cv_path = "${{ github.event.inputs.cv_path }}"
-          job_path = "${{ github.event.inputs.job_path }}"
-          
-          print("\n" + "="*80)
-          print("FULL JOB ANALYSIS")
-          print("="*80)
-    
-          # Initialize engine
-          engine = AdvancedJobEngine(data_dir="${{ env.DATA_DIR }}")
-    
-          # Use analyze_from_files which supports .txt, .pdf, .docx
-          print("\n📊 Analyzing job vs CV (supports .txt, .pdf, .docx)...")
+          import sys
           
           try:
-            analysis = engine.analyze_from_files(
-            cv_file=cv_path,
-            job_file=job_path,
-            job_title="Target Role",
-            company="Target Company"
-            )
-          except FileNotFoundError as e:
-            print(f"❌ {e}")
-            exit(1)
-          except ImportError as e:
-            print(f"❌ {e}")
-            print("\n💡 Install required libraries:")
-            print("   pip install PyPDF2 python-docx")
-            exit(1)
-          except Exception as e:
-            print(f"❌ Error: {e}")
-            exit(1)
-          
-          # Create learning plan (Reverse mode)
-          print("\n📚 Creating learning plan (REVERSE mode)...")
-          learning_plan = engine.create_learning_plan(analysis, mode="reverse")
-          
-          # Create improvement strategy
-          print("\n🎯 Creating improvement strategy...")
-          strategy = engine.create_improvement_strategy(analysis, learning_plan)
-          
-          # Generate skill tests
-          print("\n📝 Generating skill tests...")
-          missing_skills = analysis['gaps']['missing_required_skills'][:5]
-          tests = engine.generate_skill_tests(missing_skills)
-          
-          # Generate letters
-          print("\n✉️  Generating application materials...")
-          letters = engine.generate_recruiter_letter(analysis, learning_plan)
-          
-          # Update state
-          engine.state['baseline_score'] = analysis['score']['total_score']
-          engine.state['current_score'] = analysis['score']['total_score']
-          engine.state['mode'] = 'reverse'
-          engine.state['current_stage'] = 'baseline'
-          engine._save_json(engine.state_file, engine.state)
-          
-          # Display results
-          print("\n" + "="*80)
-          print("ANALYSIS COMPLETE")
-          print("="*80)
-          print(f"\n📊 Match Score: {analysis['score']['total_score']}%")
-          print(f"📋 Missing Skills: {len(analysis['gaps']['missing_required_skills'])}")
-          print(f"⏱️  Timeline: {learning_plan['estimated_duration']}")
-          print(f"\n✅ All data saved to: {engine.data_dir}")
-          print(f"\n🚀 Next Step: Start your first sprint!")
-          print("="*80)
-          PYTHON_EOF
-      
-      # =====================================================================
-      # START NEW SPRINT
-      # =====================================================================
-      
-      - name: 🏃 Start Sprint
-        if: github.event.inputs.action == 'start_sprint'
-        run: |
-          python << 'PYTHON_EOF'
-          import os
-          
-          from python_advanced_job_engine import AdvancedJobEngine
-          
-          engine = AdvancedJobEngine(data_dir="${{ env.DATA_DIR }}")
-          
-          if engine.state.get('mode') is None:
-              print("❌ Workflow not initialized. Run 'full_analysis' first.")
-              exit(1)
-          
-          # Get next skills to work on from learning plan
-          if not engine.learning_progress:
-              print("❌ No learning plan found. Run 'full_analysis' first.")
-              exit(1)
-          
-          plan = engine.learning_progress[-1]
-          
-          # Get next skills from study level
-          skills_to_learn = []
-          for item in plan['levels']['study']:
-              if item['skill'].lower() not in [s.lower() for s in engine.state.get('skills_mastered', [])]:
-                  skills_to_learn.append(item['skill'])
-                  if len(skills_to_learn) >= 2:
-                      break
-          
-          if not skills_to_learn:
-              # Try practice level
-              for item in plan['levels']['practice']:
-                  if item['skill'].lower() not in [s.lower() for s in engine.state.get('skills_mastered', [])]:
-                      skills_to_learn.append(item['skill'])
-                      if len(skills_to_learn) >= 2:
-                          break
-          
-          if not skills_to_learn:
-              print("🎉 All planned skills mastered! Consider:")
-              print("   1. Re-analyze with updated CV")
-              print("   2. Add more advanced skills")
-              print("   3. Focus on positioning and branding")
-              exit(0)
-          
-          project_goal = f"Build project demonstrating {' and '.join(skills_to_learn)}"
-          
-          # Start sprint
-          sprint = engine.start_sprint(skills_to_learn, project_goal)
-          
-          print("\n📌 To log daily progress, run:")
-          print("   workflow_dispatch with action: log_daily")
-          PYTHON_EOF
-      
-      # =====================================================================
-      # END CURRENT SPRINT
-      # =====================================================================
-      
-      - name: 🏁 End Sprint
-        if: github.event.inputs.action == 'end_sprint'
-        run: |
-          python << 'PYTHON_EOF'
-          import os
-          from pathlib import Path
-          
-          from python_advanced_job_engine import AdvancedJobEngine
-          
-          engine = AdvancedJobEngine(data_dir="${{ env.DATA_DIR }}")
-          
-          if not engine.sprint_history:
-              print("❌ No active sprint found.")
-              exit(1)
-          
-          current_sprint = engine.sprint_history[-1]
-          
-          if current_sprint.get('completed', False):
-              print("❌ Current sprint already completed.")
-              print("   Start a new sprint with 'start_sprint' action")
-              exit(1)
-          
-          print("\n" + "="*80)
-          print(f"ENDING SPRINT {current_sprint['sprint_number']}")
-          print("="*80)
-          
-          # Prompt for project URL and test scores
-          print("\n⚠️  This is a simulation. In real usage:")
-          print("   1. Provide project URL via workflow input")
-          print("   2. Provide test scores via workflow input")
-          print("   3. Or use GitHub Issues/Discussions for input")
-          
-          # Simulated scores (in real use, get from inputs)
-          project_url = "https://github.com/user/sprint-project"
-          test_scores = {
-              skill: 70.0  # Baseline passing score
-              for skill in current_sprint['skills_targeted']
-          }
-          
-          # End sprint
-          result = engine.end_sprint(project_url, test_scores)
-
-          # Re-analyze with updated CV
-          cv_path = "${{ github.event.inputs.cv_path }}"
-          job_path = "${{ github.event.inputs.job_path }}"
-
-          try:
-              print("\n🔄 Re-analyzing job match...")
-              analysis = engine.analyze_from_files(cv_path, job_path)
-              new_score = analysis['score']['total_score']
-              old_score = engine.state['current_score']
+              sys.path.insert(0, 'src')
+              from python_advanced_job_engine import AdvancedJobEngine
               
-              engine.state['current_score'] = new_score
-              engine._save_json(engine.state_file, engine.state)
+              engine = AdvancedJobEngine(data_dir="${{ env.DATA_DIR }}")
               
-              print(f"\n📊 Score Update:")
-              print(f"   Previous: {old_score}%")
-              print(f"   Current:  {new_score}%")
-              print(f"   Change:   {new_score - old_score:+.1f}%")
+              if engine.state.get('mode') is None:
+                  print("⚠️  No workflow initialized")
+                  exit(0)
+              
+              print("\n" + "="*80)
+              print("QUALITY GATE ASSESSMENT")
+              print("="*80)
+              
+              # Check quality gates
+              gates_status = engine.check_quality_gates()
+              
+              state = engine.state
+              score = state.get('current_score', 0)
+              projects = len(state.get('projects_completed', []))
+              
+              print(f"\n📊 Current Status:")
+              print(f"   Match Score: {score}%")
+              print(f"   Projects: {projects}")
+              print(f"   Skills Mastered: {len(state.get('skills_mastered', []))}")
+              
+              print(f"\n🚪 Quality Gates:")
+              for gate_name, passed in gates_status.items():
+                  status = "✅" if passed else "⏳"
+                  req = engine.QUALITY_GATES[gate_name]
+                  print(f"   {status} {gate_name.upper()}")
+                  if "score" in req:
+                      print(f"      Score: {score}/{req['score']}%")
+                  if "projects" in req:
+                      print(f"      Projects: {projects}/{req['projects']}")
+              
+              # Check if ready for applications
+              if gates_status.get('application_ready', False):
+                  print(f"\n🎉 CONGRATULATIONS!")
+                  print(f"   You've passed all quality gates!")
+                  print(f"   YOU ARE NOW APPLICATION-READY! 🚀")
+                  
+                  # Output for notifications
+                  with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+                      f.write("application_ready=true\n")
+              else:
+                  with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+                      f.write("application_ready=false\n")
+              
+              print("\n" + "="*80)
+              
           except Exception as e:
-              print(f"⚠️  Could not re-analyze: {e}")
-          
-          print("\n" + "="*80)
+              print(f"❌ Error: {e}")
+              import traceback
+              traceback.print_exc()
+              exit(1)
           PYTHON_EOF
-      
+
       # =====================================================================
       # SPRINT RECOMMENDATIONS
       # =====================================================================
@@ -501,84 +604,76 @@ jobs:
         run: |
           python << 'PYTHON_EOF'
           import os
+          import sys
           
-          from python_advanced_job_engine import AdvancedJobEngine
-          
-          engine = AdvancedJobEngine(data_dir="${{ env.DATA_DIR }}")
-          
-          if not engine.sprint_history:
-              print("\n💡 No sprints completed yet.")
-              print("   Start your first sprint to begin tracking!")
-              exit(0)
-          
-          completed_sprints = [s for s in engine.sprint_history if s.get('completed')]
-          
-          if not completed_sprints:
-              print("\n⏳ Sprint in progress...")
-              current = engine.sprint_history[-1]
-              days_logged = len(current.get('daily_logs', []))
-              print(f"   Sprint {current['sprint_number']}: Day {days_logged}/14")
-              exit(0)
-          
-          last_sprint = completed_sprints[-1]
-          
-          print("\n" + "="*80)
-          print("SPRINT RECOMMENDATIONS")
-          print("="*80)
-          
-          improvement = last_sprint.get('score_improvement', 0)
-          
-          print(f"\n📊 Last Sprint Performance:")
-          print(f"   Score Improvement: {improvement:+.1f}%")
-          print(f"   Total Hours: {last_sprint.get('total_hours', 0):.1f}h")
-          
-          print(f"\n💡 Recommendations:")
-          
-          if improvement < 3:
-              print("   ⚠️  Slow Progress Detected")
-              print("   • Focus on ONE skill per sprint instead of multiple")
-              print("   • Spend more time on fundamentals")
-              print("   • Consider getting mentorship or tutoring")
-              print("   • Extend sprint to 21 days if needed")
-              print("   • Review learning resources - try different ones")
-          elif improvement > 10:
-              print("   🚀 Excellent Progress!")
-              print("   • You're learning quickly - great job!")
-              print("   • Consider tackling more advanced topics")
-              print("   • You could reduce sprint to 10 days")
-              print("   • Add complexity to projects")
-              print("   • Help others to reinforce learning")
-          else:
-              print("   ✅ Good Steady Progress")
-              print("   • Current approach is working well")
-              print("   • Maintain consistency")
-              print("   • Continue with current sprint structure")
-              print("   • Consider increasing project complexity")
-          
-          # Next sprint suggestion
-          state = engine.state
-          if state['current_score'] < 65:
-              print(f"\n🎯 Next Sprint Focus: FOUNDATION")
-              print(f"   • Core Tier 1 skills")
-              print(f"   • Basic projects")
-              print(f"   • Beginner tests")
-          elif state['current_score'] < 80:
-              print(f"\n🎯 Next Sprint Focus: SKILL BUILDING")
-              print(f"   • Intermediate topics")
-              print(f"   • Medium complexity projects")
-              print(f"   • Intermediate tests")
-          elif state['current_score'] < 90:
-              print(f"\n🎯 Next Sprint Focus: MASTERY")
-              print(f"   • Advanced concepts")
-              print(f"   • Production-grade projects")
-              print(f"   • Advanced tests")
-          else:
-              print(f"\n🎯 Next Focus: POSITIONING")
-              print(f"   • Professional branding")
-              print(f"   • Network building")
-              print(f"   • Application preparation")
-          
-          print("\n" + "="*80)
+          try:
+              sys.path.insert(0, 'src')
+              from python_advanced_job_engine import AdvancedJobEngine
+              
+              engine = AdvancedJobEngine(data_dir="${{ env.DATA_DIR }}")
+              
+              if not engine.sprint_history:
+                  print("\n💡 No sprints completed yet.")
+                  print("   Start your first sprint to begin tracking!")
+                  exit(0)
+              
+              completed_sprints = [
+                  s for s in engine.sprint_history 
+                  if isinstance(s, dict) and s.get('completed')
+              ]
+              
+              if not completed_sprints:
+                  print("\n⏳ Sprint in progress...")
+                  current = engine.sprint_history[-1]
+                  if isinstance(current, dict):
+                      days_logged = len(current.get('daily_logs', []))
+                      print(f"   Sprint {current.get('sprint_number', '?')}: Day {days_logged}/14")
+                  exit(0)
+              
+              last_sprint = completed_sprints[-1]
+              
+              print("\n" + "="*80)
+              print("SPRINT RECOMMENDATIONS")
+              print("="*80)
+              
+              total_hours = last_sprint.get('total_hours', 0)
+              
+              print(f"\n📊 Last Sprint Performance:")
+              print(f"   Total Hours: {total_hours:.1f}h")
+              
+              state = engine.state
+              current_score = state.get('current_score', 0)
+              
+              print(f"\n💡 Recommendations:")
+              
+              if current_score < 65:
+                  print(f"\n🎯 Next Sprint Focus: FOUNDATION")
+                  print(f"   • Core Tier 1 skills")
+                  print(f"   • Basic projects")
+                  print(f"   • Beginner tests")
+              elif current_score < 80:
+                  print(f"\n🎯 Next Sprint Focus: SKILL BUILDING")
+                  print(f"   • Intermediate topics")
+                  print(f"   • Medium complexity projects")
+                  print(f"   • Intermediate tests")
+              elif current_score < 90:
+                  print(f"\n🎯 Next Sprint Focus: MASTERY")
+                  print(f"   • Advanced concepts")
+                  print(f"   • Production-grade projects")
+                  print(f"   • Advanced tests")
+              else:
+                  print(f"\n🎯 Next Focus: POSITIONING")
+                  print(f"   • Professional branding")
+                  print(f"   • Network building")
+                  print(f"   • Application preparation")
+              
+              print("\n" + "="*80)
+              
+          except Exception as e:
+              print(f"❌ Error: {e}")
+              import traceback
+              traceback.print_exc()
+              exit(1)
           PYTHON_EOF
       
       # =====================================================================
@@ -590,66 +685,78 @@ jobs:
         run: |
           python << 'PYTHON_EOF'
           import os
+          import sys
           
-          from python_advanced_job_engine import AdvancedJobEngine
-          
-          engine = AdvancedJobEngine(data_dir="${{ env.DATA_DIR }}")
-          state = engine.state
-          
-          score = state.get('current_score', 0)
-          baseline = state.get('baseline_score', 0)
-          gates = state.get('quality_gates_passed', [])
-          
-          milestones = []
-          
-          # Score milestones
-          if score >= 50 and baseline < 50:
-              milestones.append("🎯 Reached 50% Match Score!")
-          if score >= 65 and 'foundation' in gates:
-              milestones.append("🏆 FOUNDATION GATE PASSED!")
-          if score >= 75 and baseline < 75:
-              milestones.append("🎯 Reached 75% Match Score!")
-          if score >= 80 and 'competency' in gates:
-              milestones.append("🏆 COMPETENCY GATE PASSED!")
-          if score >= 90 and 'mastery' in gates:
-              milestones.append("🏆 MASTERY GATE PASSED!")
-          
-          # Sprint milestones
-          sprint_count = len([s for s in engine.sprint_history if s.get('completed')])
-          if sprint_count == 1:
-              milestones.append("🎊 First Sprint Complete!")
-          elif sprint_count == 5:
-              milestones.append("🎊 Five Sprints Complete!")
-          elif sprint_count == 10:
-              milestones.append("🎊 Ten Sprints Complete - You're Dedicated!")
-          
-          # Skill milestones
-          skills_count = len(state.get('skills_mastered', []))
-          if skills_count == 1:
-              milestones.append("✨ First Skill Mastered!")
-          elif skills_count == 5:
-              milestones.append("✨ Five Skills Mastered!")
-          elif skills_count == 10:
-              milestones.append("✨ Ten Skills Mastered - Impressive!")
-          
-          # Project milestones
-          projects = len(state.get('projects_completed', []))
-          if projects == 1:
-              milestones.append("🚀 First Project Complete!")
-          elif projects == 5:
-              milestones.append("🚀 Five Projects Complete!")
-          
-          # Application readiness
-          if state.get('application_ready', False):
-              milestones.append("🎉 APPLICATION READY - TIME TO APPLY!")
-          
-          if milestones:
-              print("\n" + "="*80)
-              print("🎉 MILESTONES ACHIEVED!")
-              print("="*80)
-              for milestone in milestones:
-                  print(f"\n   {milestone}")
-              print("\n" + "="*80)
+          try:
+              sys.path.insert(0, 'src')
+              from python_advanced_job_engine import AdvancedJobEngine
+              
+              engine = AdvancedJobEngine(data_dir="${{ env.DATA_DIR }}")
+              state = engine.state
+              
+              score = state.get('current_score', 0)
+              baseline = state.get('baseline_score', 0)
+              gates = state.get('quality_gates_passed', [])
+              
+              milestones = []
+              
+              # Score milestones
+              if score >= 50 and baseline < 50:
+                  milestones.append("🎯 Reached 50% Match Score!")
+              if score >= 65 and 'foundation' in gates:
+                  milestones.append("🏆 FOUNDATION GATE PASSED!")
+              if score >= 75 and baseline < 75:
+                  milestones.append("🎯 Reached 75% Match Score!")
+              if score >= 80 and 'competency' in gates:
+                  milestones.append("🏆 COMPETENCY GATE PASSED!")
+              if score >= 90 and 'mastery' in gates:
+                  milestones.append("🏆 MASTERY GATE PASSED!")
+              
+              # Sprint milestones
+              sprint_count = len([
+                  s for s in engine.sprint_history 
+                  if isinstance(s, dict) and s.get('completed')
+              ])
+              if sprint_count == 1:
+                  milestones.append("🎊 First Sprint Complete!")
+              elif sprint_count == 5:
+                  milestones.append("🎊 Five Sprints Complete!")
+              elif sprint_count == 10:
+                  milestones.append("🎊 Ten Sprints Complete - You're Dedicated!")
+              
+              # Skill milestones
+              skills_count = len(state.get('skills_mastered', []))
+              if skills_count == 1:
+                  milestones.append("✨ First Skill Mastered!")
+              elif skills_count == 5:
+                  milestones.append("✨ Five Skills Mastered!")
+              elif skills_count == 10:
+                  milestones.append("✨ Ten Skills Mastered - Impressive!")
+              
+              # Project milestones
+              projects = len(state.get('projects_completed', []))
+              if projects == 1:
+                  milestones.append("🚀 First Project Complete!")
+              elif projects == 5:
+                  milestones.append("🚀 Five Projects Complete!")
+              
+              # Application readiness
+              if state.get('application_ready', False):
+                  milestones.append("🎉 APPLICATION READY - TIME TO APPLY!")
+              
+              if milestones:
+                  print("\n" + "="*80)
+                  print("🎉 MILESTONES ACHIEVED!")
+                  print("="*80)
+                  for milestone in milestones:
+                      print(f"\n   {milestone}")
+                  print("\n" + "="*80)
+              
+          except Exception as e:
+              print(f"❌ Error: {e}")
+              import traceback
+              traceback.print_exc()
+              exit(1)
           PYTHON_EOF
       
       # ===================================================================
@@ -661,121 +768,226 @@ jobs:
         run: |
           python << 'PYTHON_EOF'
           import os
+          import sys
           from datetime import datetime
           from pathlib import Path
           
-          from python_advanced_job_engine import AdvancedJobEngine
-          
-          engine = AdvancedJobEngine(data_dir="${{ env.DATA_DIR }}")
-          
-          if engine.state.get('mode') is None:
-              print("\n📋 Workflow not initialized yet")
-              print("   Run with action='full_analysis' to get started")
-              exit(0)
-          
-          # Create markdown report
-          state = engine.state
-          score = state['current_score']
-          baseline = state['baseline_score']
-          improvement = score - baseline
-          
-          report_content = f"""
-          # Reverse-Engine Job Search Progress
-          
-          **Generated:** {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
-          **Mode:** {state.get('mode', 'N/A').upper()}
+          try:
+              sys.path.insert(0, 'src')
+              from python_advanced_job_engine import AdvancedJobEngine
+              
+              engine = AdvancedJobEngine(data_dir="${{ env.DATA_DIR }}")
+              
+              if engine.state.get('mode') is None:
+                  print("\n📋 Workflow not initialized yet")
+                  print("   Run with action='full_analysis' to get started")
+                  exit(0)
+              
+              # Create markdown report
+              state = engine.state
+              score = state.get('current_score', 0)
+              baseline = state.get('baseline_score', 0)
+              improvement = score - baseline
+              
+              report_content = f"""
+              # Reverse-Engine Job Search Progress
 
-          ---
+              **Generated:** {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+              **Mode:** {state.get('mode', 'N/A').upper()}
 
-          ## 📊 Match Score Progress
+              ---
 
-          | Metric | Value |
-          |--------|-------|
-          | Baseline Score | {baseline}% |
-          | Current Score | {score}% |
-          | Improvement | +{improvement}% |
-          | Target Score | {state.get('target_score', 90)}% |
-          | Remaining | {state.get('target_score', 90) - score}% |
+              ## 📊 Match Score Progress
+              | Metric | Value |
+              |--------|-------|
+              | Baseline Score | {baseline}% |
+              | Current Score | {score}% |
+              | Improvement | +{improvement}% |
+              | Target Score | {state.get('target_score', 90)}% |
+              | Remaining | {state.get('target_score', 90) - score}% |
 
-          ---
+              ---
 
-          ## 🎯 Skills Mastered ({len(state.get('skills_mastered', []))})
-
-          """
-          
-          for skill in state.get('skills_mastered', []):
-              report_content += f"- ✅ {skill}\n"
-          
-          report_content += f"""
-          ---
-
-          ## 🏗️ Projects Completed ({len(state.get('projects_completed', []))})
-
-          """
-          
-          for i, proj in enumerate(state.get('projects_completed', []), 1):
-              report_content += f"{i}. **{proj['goal']}**\n"
-              report_content += f"   - Skills: {', '.join(proj['skills'])}\n"
-              report_content += f"   - URL: {proj['url']}\n\n"
-          
-          report_content += f"""
-          ---
-
-          ## 🚪 Quality Gates
-
-          | Gate | Status | Required |
-          |------|--------|----------|
-          | Foundation | {'✅ Passed' if 'foundation' in state.get('quality_gates_passed', []) else '⏳ Pending'} | 65% score, 2 projects |
-          | Competency | {'✅ Passed' if 'competency' in state.get('quality_gates_passed', []) else '⏳ Pending'} | 80% score, 4 projects |
-          | Mastery | {'✅ Passed' if 'mastery' in state.get('quality_gates_passed', []) else '⏳ Pending'} | 90% score, 5 projects |
-          | Application Ready | {'✅ Passed' if state.get('application_ready') else '⏳ Pending'} | All gates + branding |
-          
-          ---
-
-          ## 📈 Sprint Progress
-
-          - **Total Sprints:** {state.get('current_sprint', 0)}
-          - **Current Stage:** {state.get('current_stage', 'baseline').replace('_', ' ').title()}
-          - **Started:** {state.get('started_date', 'N/A')[:10]}
-
-         ---
-
-         ## 🎯 Current Status
-
-         """
-          
-          if score < 65:
-              report_content += """**Focus:** Foundation Building
-              - Master Tier 1 critical skills
-              - Build foundational projects
-              - Pass beginner-level tests
+              ## 🎯 Skills Mastered ({len(state.get('skills_mastered', []))})
+              
               """
-          elif score < 80:
-              report_content += """**Focus:** Skill Development
-              - Deepen intermediate skills
-              - Build complex projects
-              - Pass intermediate tests
+              
+              for skill in state.get('skills_mastered', []):
+                  report_content += f"- ✅ {skill}\n"
+              
+              report_content += f"""
+              ---
+
+              ## 🏗️ Projects Completed ({len(state.get('projects_completed', []))})
+
               """
-          elif score < 90:
-            report_content += """**Focus:** Advanced Mastery
-            - Master advanced concepts
-            - Build production-grade projects
-            - Pass advanced tests
-            """
-          else:
-              report_content += """**Focus:** Application Preparation
-              - Polish professional brand
-              - Build network connections
-              - Prepare application materials
-              - **YOU'RE READY TO APPLY! 🎉**
+              
+              for i, proj in enumerate(state.get('projects_completed', []), 1):
+                  report_content += f"{i}. **{proj.get('goal', 'N/A')}**\n"
+                  report_content += f"   - Skills: {', '.join(proj.get('skills', []))}\n"
+                  report_content += f"   - URL: {proj.get('url', 'N/A')}\n\n"
+              
+              report_content += f"""
+              ---
+
+              ## 🚪 Quality Gates
+
+              | Gate | Status | Required |
+              |------|--------|----------|
+              | Foundation | {'✅ Passed' if 'foundation' in state.get('quality_gates_passed', []) else '⏳ Pending'} | 65% score, 2 projects |
+              | Competency | {'✅ Passed' if 'competency' in state.get('quality_gates_passed', []) else '⏳ Pending'} | 80% score, 4 projects |
+              | Mastery | {'✅ Passed' if 'mastery' in state.get('quality_gates_passed', []) else '⏳ Pending'} | 90% score, 5 projects |
+              | Application Ready | {'✅ Passed' if state.get('application_ready') else '⏳ Pending'} | All gates + branding |
+
+              ---
+
+              ## 📈 Sprint Progress
+
+              - **Total Sprints:** {state.get('current_sprint', 0)}
+              - **Current Stage:** {state.get('current_stage', 'baseline').replace('_', ' ').title()}
+              - **Started:** {state.get('started_date', 'N/A')[:10] if state.get('started_date') else 'N/A'}
+
+              ---
+
+              ## 🎯 Current Status
+
               """
-          
-          # Save report
-          report_path = Path("PROGRESS_REPORT.md")
-          report_path.write_text(report_content)
-          
-          print("\n✅ Summary report generated: PROGRESS_REPORT.md")
-          print(report_content)
+              
+              if score < 65:
+                  report_content += """**Focus:** Foundation Building
+                  - Master Tier 1 critical skills
+                  - Build foundational projects
+                  - Pass beginner-level tests
+                  """
+              elif score < 80:
+                  report_content += """**Focus:** Skill Development
+                  - Deepen intermediate skills
+                  - Build complex projects
+                  - Pass intermediate tests
+                  """
+              elif score < 90:
+                  report_content += """**Focus:** Advanced Mastery
+                  - Master advanced concepts
+                  - Build production-grade projects
+                  - Pass advanced tests
+                  """
+              else:
+                  report_content += """**Focus:** Application Preparation
+                  - Polish professional brand
+                  - Build network connections
+                  - Prepare application materials
+                  - **YOU'RE READY TO APPLY! 🎉**
+                  """
+              
+              report_content += f"""
+
+              ---
+
+              ## 📝 Tests Passed
+
+              """
+              tests_passed = state.get('tests_passed', {})
+              if tests_passed:
+                  for skill, levels in tests_passed.items():
+                      report_content += f"- **{skill}**: {', '.join(levels)}\n"
+              else:
+                  report_content += "- No tests passed yet\n"
+              
+              report_content += f"""
+
+              ---
+
+              ## 🎯 Readiness Flags
+
+              - Brand Ready: {'✅' if state.get('brand_ready') else '⏳ In Progress'}
+              - Network Ready: {'✅' if state.get('network_ready') else '⏳ In Progress'}
+              - Application Ready: {'✅' if state.get('application_ready') else '⏳ In Progress'}
+
+              ---
+
+              ## 📊 Recent Sprint Activity
+
+              """
+              
+              if engine.sprint_history:
+                  completed = [
+                      s for s in engine.sprint_history 
+                      if isinstance(s, dict) and s.get('completed')
+                  ]
+                  
+                  if completed:
+                      for sprint in completed[-3:]:  # Last 3 completed sprints
+                          report_content += f"\n### Sprint {sprint.get('sprint_number', '?')}\n"
+                          report_content += f"- **Goal:** {sprint.get('project_goal', 'N/A')}\n"
+                          report_content += f"- **Skills:** {', '.join(sprint.get('skills_targeted', []))}\n"
+                          report_content += f"- **Hours:** {sprint.get('total_hours', 0):.1f}h\n"
+                          report_content += f"- **Completed:** {sprint.get('completion_date', 'N/A')[:10]}\n"
+                  else:
+                      report_content += "\nNo completed sprints yet\n"
+              else:
+                  report_content += "\nNo sprint history available\n"
+              
+              report_content += """
+
+              ---
+
+              ## 💡 Next Actions
+
+              """
+              
+              if score < 65:
+                  report_content += """
+                  1. **Continue Foundation Sprint** - Focus on Tier 1 skills
+                  2. **Build 2 Basic Projects** - Demonstrate fundamental understanding
+                  3. **Pass Beginner Tests** - Validate skill acquisition
+                  4. **Daily Learning** - Log progress consistently
+                  """
+              elif score < 80:
+                  report_content += """
+                  1. **Start Intermediate Sprint** - Tackle more complex topics
+                  2. **Build Medium Projects** - Show practical application
+                  3. **Pass Intermediate Tests** - Prove deeper understanding
+                  4. **Contribute to Open Source** - Gain real-world experience
+                  """
+              elif score < 90:
+                  report_content += """
+                  1. **Master Advanced Topics** - Deep dive into specializations
+                  2. **Build Production Projects** - Create portfolio showpieces
+                  3. **Pass Advanced Tests** - Demonstrate expertise
+                  4. **Start Networking** - Connect with industry professionals
+                  """
+              else:
+                  report_content += """
+                  1. **Polish LinkedIn Profile** - Showcase all skills and projects
+                  2. **Build Professional Brand** - Blog posts, GitHub, portfolio
+                  3. **Network Actively** - Reach out to target companies
+                  4. **Apply to Jobs** - You're ready! 🚀
+                  """
+              
+              report_content += """
+
+              ---
+
+              *Generated by Reverse-Engine Job Search Automation*
+              """
+              
+              # Save report
+              report_path = Path("PROGRESS_REPORT.md")
+              report_path.write_text(report_content)
+              
+              print("\n✅ Summary report generated: PROGRESS_REPORT.md")
+              print("\n" + "="*80)
+              print("REPORT PREVIEW")
+              print("="*80)
+              print(report_content[:1000])  # Preview first 1000 chars
+              print("\n[... full report saved to PROGRESS_REPORT.md ...]")
+              print("="*80)
+              
+          except Exception as e:
+              print(f"❌ Error: {e}")
+              import traceback
+              traceback.print_exc()
+              # Don't exit with error - report generation is not critical
           PYTHON_EOF
       
       # =====================================================================
@@ -803,8 +1015,41 @@ jobs:
           echo "✅ Reverse-Engine Workflow Complete"
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
           echo ""
-          echo "📊 Check the artifacts for detailed progress reports"
-          echo "📁 All data saved in: ${{ env.DATA_DIR }}"
+          echo "📊 Action Performed: ${{ github.event.inputs.action || 'scheduled' }}"
+          echo "📁 Data Directory: ${{ env.DATA_DIR }}"
+          echo "📄 Report Available: PROGRESS_REPORT.md (in artifacts)"
+          echo ""
+          echo "💡 Available Actions:"
+          echo "   • full_analysis   - Analyze CV vs job description"
+          echo "   • start_sprint    - Begin new learning sprint"
+          echo "   • log_daily       - Log daily progress (hours, concepts, notes)"
+          echo "   • end_sprint      - Complete sprint with project & tests"
+          echo "   • quality_check   - Assess quality gate progress"
+          echo "   • daily_report    - View comprehensive dashboard"
           echo ""
           echo "🚀 Keep building towards that 90%+ match score!"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+      
+      # =====================================================================
+      # CONDITIONAL NOTIFICATIONS (Optional - for future integration)
+      # =====================================================================
+      
+      - name: 🎉 Application Ready Notification
+        if: steps.quality_gates.outputs.application_ready == 'true'
+        run: |
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "🎉🎉🎉 CONGRATULATIONS! YOU'RE APPLICATION READY! 🎉🎉🎉"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo ""
+          echo "✅ All quality gates passed"
+          echo "✅ Match score target achieved"
+          echo "✅ Professional brand ready"
+          echo "✅ Network established"
+          echo ""
+          echo "🚀 NEXT STEPS:"
+          echo "   1. Polish your CV with new skills"
+          echo "   2. Update LinkedIn profile"
+          echo "   3. Prepare application materials"
+          echo "   4. START APPLYING TO JOBS!"
+          echo ""
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
