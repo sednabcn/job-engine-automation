@@ -1,0 +1,154 @@
+#!/usr/bin/env python3
+"""
+Test script for Advanced Job Engine file analysis
+"""
+import sys
+from pathlib import Path
+
+# Add src to path if needed
+sys.path.insert(0, str(Path(__file__).parent / "src"))
+
+from src.python_advanced_job_engine import AdvancedJobEngine
+
+
+def create_test_files():
+    """Create sample test files for demo"""
+    test_dir = Path("test_data")
+    test_dir.mkdir(exist_ok=True)
+    
+    # Sample CV
+    cv_content = """
+John Smith
+Data Scientist
+Email: john.smith@email.com
+Phone: (555) 123-4567
+
+EXPERIENCE
+Data Analyst at TechCo (2021-2023)
+- Built machine learning models for customer segmentation
+- Analyzed large datasets using Python and SQL
+- Created dashboards in Tableau
+
+SKILLS
+- Programming: Python, SQL, R
+- Libraries: Pandas, NumPy, Scikit-learn, Matplotlib
+- Tools: Git, Jupyter, Excel
+- Databases: PostgreSQL, MySQL
+
+EDUCATION
+Bachelor of Science in Computer Science
+University of Technology, 2021
+
+PROJECTS
+- Customer Churn Prediction Model (Python, Scikit-learn)
+- Sales Analytics Dashboard (Tableau, SQL)
+- Sentiment Analysis Tool (Python, NLP)
+"""
+    
+    # Sample Job Description
+    job_content = """
+Senior Machine Learning Engineer
+TechCorp Inc.
+
+REQUIREMENTS:
+- 5+ years of experience in machine learning and AI
+- Strong proficiency in Python, PyTorch, TensorFlow
+- Experience with cloud platforms (AWS, Azure, or GCP)
+- Docker and Kubernetes for containerization
+- MLOps and production ML systems
+- Master's degree in Computer Science or related field preferred
+
+RESPONSIBILITIES:
+- Design and implement deep learning models
+- Build and deploy ML pipelines
+- Optimize models for production
+- Collaborate with cross-functional teams
+- Mentor junior engineers
+
+NICE TO HAVE:
+- Experience with NLP or Computer Vision
+- Publications in ML conferences
+- Open source contributions
+- Experience with large-scale distributed systems
+"""
+    
+    cv_file = test_dir / "sample_cv.txt"
+    job_file = test_dir / "sample_job.txt"
+    
+    cv_file.write_text(cv_content)
+    job_file.write_text(job_content)
+    
+    return str(cv_file), str(job_file)
+
+
+def main():
+    print("=" * 80)
+    print("TESTING FILE ANALYSIS")
+    print("=" * 80)
+    
+    # Create test files
+    print("\n📝 Creating test files...")
+    cv_file, job_file = create_test_files()
+    print(f"✅ CV file: {cv_file}")
+    print(f"✅ Job file: {job_file}")
+    
+    # Initialize engine
+    print("\n🚀 Initializing Job Engine...")
+    engine = AdvancedJobEngine(data_dir="test_job_data")
+    
+    # Test file reading
+    print("\n📄 Testing file reading...")
+    try:
+        cv_text = engine.read_document(cv_file)
+        print(f"✅ CV read successfully: {len(cv_text)} characters")
+        
+        job_text = engine.read_document(job_file)
+        print(f"✅ Job description read successfully: {len(job_text)} characters")
+    except Exception as e:
+        print(f"❌ Error reading files: {e}")
+        return 1
+    
+    # Test full analysis
+    print("\n🔍 Running full analysis...")
+    try:
+        analysis = engine.analyze_from_files(
+            cv_file=cv_file,
+            job_file=job_file,
+            job_title="Senior ML Engineer",
+            company="TechCorp"
+        )
+        
+        print(f"\n✅ Analysis complete!")
+        print(f"   Match Score: {analysis['score']['total_score']}%")
+        print(f"   Missing Required Skills: {len(analysis['gaps']['missing_required_skills'])}")
+        print(f"   Missing Preferred Skills: {len(analysis['gaps']['missing_preferred_skills'])}")
+        
+        if analysis['gaps']['missing_required_skills']:
+            print(f"\n   Top missing skills:")
+            for skill in analysis['gaps']['missing_required_skills'][:5]:
+                print(f"     - {skill}")
+        
+        # Generate learning plan
+        print("\n📚 Generating learning plan...")
+        learning_plan = engine.create_learning_plan(analysis)
+        print(f"✅ Learning plan created: {learning_plan['estimated_duration']}")
+        
+        # Export results
+        print("\n📦 Exporting results...")
+        export_result = engine.export_all(analysis['job_id'])
+        print(export_result)
+        
+        print("\n" + "=" * 80)
+        print("✅ ALL TESTS PASSED!")
+        print("=" * 80)
+        return 0
+        
+    except Exception as e:
+        print(f"\n❌ Error during analysis: {e}")
+        import traceback
+        traceback.print_exc()
+        return 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())

@@ -1,0 +1,24 @@
+
+Senior Machine Learning Engineer
+TechCorp Inc.
+
+REQUIREMENTS:
+- 5+ years of experience in machine learning and AI
+- Strong proficiency in Python, PyTorch, TensorFlow
+- Experience with cloud platforms (AWS, Azure, or GCP)
+- Docker and Kubernetes for containerization
+- MLOps and production ML systems
+- Master's degree in Computer Science or related field preferred
+
+RESPONSIBILITIES:
+- Design and implement deep learning models
+- Build and deploy ML pipelines
+- Optimize models for production
+- Collaborate with cross-functional teams
+- Mentor junior engineers
+
+NICE TO HAVE:
+- Experience with NLP or Computer Vision
+- Publications in ML conferences
+- Open source contributions
+- Experience with large-scale distributed systems

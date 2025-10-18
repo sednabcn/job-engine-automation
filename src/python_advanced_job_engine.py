@@ -150,6 +150,7 @@ class AdvancedJobEngine:
                 f"Please convert your file to one of the supported formats."
             )
     
+
     def _read_txt(self, path: Path) -> str:
         """Read plain text file"""
         with open(path, "r", encoding="utf-8", errors="ignore") as f:

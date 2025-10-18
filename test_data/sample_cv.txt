@@ -1,0 +1,26 @@
+
+John Smith
+Data Scientist
+Email: john.smith@email.com
+Phone: (555) 123-4567
+
+EXPERIENCE
+Data Analyst at TechCo (2021-2023)
+- Built machine learning models for customer segmentation
+- Analyzed large datasets using Python and SQL
+- Created dashboards in Tableau
+
+SKILLS
+- Programming: Python, SQL, R
+- Libraries: Pandas, NumPy, Scikit-learn, Matplotlib
+- Tools: Git, Jupyter, Excel
+- Databases: PostgreSQL, MySQL
+
+EDUCATION
+Bachelor of Science in Computer Science
+University of Technology, 2021
+
+PROJECTS
+- Customer Churn Prediction Model (Python, Scikit-learn)
+- Sales Analytics Dashboard (Tableau, SQL)
+- Sentiment Analysis Tool (Python, NLP)
