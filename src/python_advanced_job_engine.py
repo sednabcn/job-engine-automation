@@ -89,7 +89,6 @@ class AdvancedJobEngine:
             json.dump(data, f, indent=2, ensure_ascii=False)
 
 
-    
     def read_document(self, file_path: str) -> str:
         """
         Read document from file (supports .txt, .pdf, .docx)
@@ -105,8 +104,19 @@ class AdvancedJobEngine:
         if not path.exists():
             raise FileNotFoundError(f"File not found: {file_path}")
 
+        # Check if it's a directory
+        if path.is_dir():
+            raise ValueError(f"Path is a directory, not a file: {file_path}")
+
         # Determine file type and extract text
         ext = path.suffix.lower()
+
+        # If no extension, raise a clear error
+        if not ext:
+            raise ValueError(
+                f"File has no extension: {file_path}\n"
+                f"Please provide a file with one of these extensions: .txt, .pdf, .docx"
+            )
 
         if ext == ".txt":
             return self._read_txt(path)
@@ -115,8 +125,12 @@ class AdvancedJobEngine:
         elif ext in [".docx", ".doc"]:
             return self._read_docx(path)
         else:
-            raise ValueError(f"Unsupported file format: {ext}. Supported: .txt, .pdf, .docx")
-
+            raise ValueError(
+                f"Unsupported file format: {ext}\n"
+                f"Supported formats: .txt, .pdf, .docx\n"
+                f"File: {file_path}"
+            )
+   
     def _read_txt(self, path: Path) -> str:
         """Read plain text file"""
         with open(path, "r", encoding="utf-8", errors="ignore") as f:
@@ -377,7 +391,7 @@ class AdvancedJobEngine:
         }
 
         # Save analysis
-        self.analyzed_jobs.append(analysis)
+        self.analyzed_jobs.update(analysis)
         self._save_json(self.jobs_file, self.analyzed_jobs)
 
         return analysis
@@ -468,7 +482,7 @@ class AdvancedJobEngine:
         plan["milestones"] = self._generate_milestones(plan)
 
         # Save plan
-        self.learning_progress.append(plan)
+        self.learning_progress.update(plan)
         self._save_json(self.progress_file, self.learning_progress)
 
         return plan
