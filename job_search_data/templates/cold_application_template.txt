@@ -1,0 +1,33 @@
+Subject: {job_title} Candidate - {unique_value_proposition}
+
+Dear {hiring_manager_name},
+
+I'm reaching out to express interest in {job_title} opportunities at {company_name}. While I don't see an active posting, I believe my background aligns well with your team's needs.
+
+Why I'm reaching out:
+{company_research}
+
+What I bring:
+• {skill_category_1}: {specific_skills_1}
+• {skill_category_2}: {specific_skills_2}
+• {skill_category_3}: {specific_skills_3}
+
+Recent work:
+{project_showcase}
+
+My approach to continuous growth:
+✓ Current match score for similar roles: {match_score}%
+✓ Active learning: {current_learning}
+✓ {sprint_count} completed learning sprints
+✓ {project_count} relevant projects
+
+I understand timing might not be right, but I'd welcome the opportunity to connect and discuss how I could contribute to {company_name}'s success.
+
+Portfolio: {portfolio_link}
+GitHub: {github_link}
+
+Would you be open to a brief conversation?
+
+Best regards,
+{candidate_name}
+{contact_info}

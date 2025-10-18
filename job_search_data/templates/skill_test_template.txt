@@ -1,0 +1,90 @@
+# Skill Assessment: {skill_name}
+
+**Level:** {difficulty_level}
+**Estimated Time:** {time_estimate}
+**Passing Score:** 70%
+
+## Knowledge Check (40%)
+
+### Question 1 (10 points)
+{question_1}
+
+**Your Answer:**
+{answer_space}
+
+**Correct Answer:**
+{correct_answer_1}
+
+---
+
+### Question 2 (10 points)
+{question_2}
+
+**Your Answer:**
+{answer_space}
+
+**Correct Answer:**
+{correct_answer_2}
+
+---
+
+### Question 3 (10 points)
+{question_3}
+
+**Your Answer:**
+{answer_space}
+
+**Correct Answer:**
+{correct_answer_3}
+
+---
+
+### Question 4 (10 points)
+{question_4}
+
+**Your Answer:**
+{answer_space}
+
+**Correct Answer:**
+{correct_answer_4}
+
+## Practical Exercise (60%)
+
+### Exercise Description
+{exercise_description}
+
+### Requirements
+1. {requirement_1}
+2. {requirement_2}
+3. {requirement_3}
+4. {requirement_4}
+
+### Evaluation Criteria
+- Code quality (15 points)
+- Functionality (20 points)
+- Best practices (15 points)
+- Documentation (10 points)
+
+### Submission
+**Repository:** {submission_repo}
+**Deadline:** {deadline}
+
+## Scoring
+
+| Component | Points | Score |
+|-----------|--------|-------|
+| Knowledge Check | 40 | ___ |
+| Practical Exercise | 60 | ___ |
+| **Total** | **100** | **___** |
+
+**Result:** {pass_fail}
+
+## Feedback
+{feedback_notes}
+
+## Next Steps
+{next_steps}
+
+---
+*Test taken: {test_date}*
+*Graded by: {grader}*

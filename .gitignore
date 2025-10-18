@@ -82,5 +82,21 @@ Thumbs.db
 
 DOCS/
 data/*.json
-
+job_search_data/*.json
+job_search_data/example_data_*
+job_search_data/export_packages/*
 data/exports
+
+# Job search data - exclude all dynamic files
+job_search_data/*.json
+job_search_data/analysis_*
+job_search_data/sprint_*
+job_search_data/learning_*
+
+# Keep templates
+!job_search_data/templates/
+
+# Output directories
+output/
+batch_results/
+PROGRESS_REPORT.md

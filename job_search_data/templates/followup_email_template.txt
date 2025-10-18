@@ -1,0 +1,35 @@
+Subject: Following Up - {job_title} Application
+
+Dear {recruiter_name},
+
+I hope this email finds you well. I wanted to follow up on my application for the {job_title} position submitted on {application_date}.
+
+Since applying, I've continued to strengthen my qualifications:
+
+{recent_progress}
+
+Key highlights of my application:
+• Match Score: {match_score}%
+• Relevant Projects: {project_count}
+• Skills Mastered: {skills_count}
+
+Strong alignment in:
+✓ {strength_1}
+✓ {strength_2}
+✓ {strength_3}
+
+Growing in:
+→ {growth_area_1} - {progress_1}
+→ {growth_area_2} - {progress_2}
+
+I remain very interested in this opportunity and would welcome the chance to discuss how I can contribute to {company_name}.
+
+Portfolio: {portfolio_link}
+Latest Project: {recent_project_link}
+
+Thank you for your time and consideration.
+
+Best regards,
+{candidate_name}
+{phone}
+{email}

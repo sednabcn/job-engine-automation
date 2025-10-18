@@ -1,0 +1,23 @@
+Subject: Thank You - Future Opportunities at {company_name}
+
+Dear {recruiter_name},
+
+Thank you for considering my application for the {job_title} position and for taking the time to inform me of your decision.
+
+While I'm disappointed, I remain very interested in {company_name} and would welcome the opportunity to be considered for future openings.
+
+Since my application, I've continued growing:
+{recent_improvements}
+
+I'm particularly interested in:
+• {interest_area_1}
+• {interest_area_2}
+• {interest_area_3}
+
+If you have a moment, I would greatly appreciate any feedback on my application. Understanding areas for improvement would be invaluable as I continue developing my skills.
+
+Thank you again for your consideration. I hope our paths cross again in the future.
+
+Best regards,
+{candidate_name}
+Portfolio: {portfolio_link}

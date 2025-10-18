@@ -1,0 +1,28 @@
+Subject: Advice from a {their_role} - Career Transition Question
+
+Hi {contact_name},
+
+I hope this message finds you well. My name is {candidate_name}, and I'm working toward a career in {target_field}.
+
+I came across your profile and was impressed by your work on {their_achievement}. I'm particularly interested in {specific_area} and would greatly appreciate any insights you might share.
+
+My background:
+• {background_summary}
+• Current focus: {current_learning}
+• Recent projects: {project_highlights}
+
+I'm specifically curious about:
+1. {question_1}
+2. {question_2}
+3. {question_3}
+
+Would you be open to a 15-minute coffee chat (virtual or in-person)? I'd love to learn from your experience.
+
+No pressure at all - I know you're busy! Even a brief email response would be incredibly valuable.
+
+Thank you for considering.
+
+Best regards,
+{candidate_name}
+Portfolio: {portfolio_link}
+LinkedIn: {linkedin_link}

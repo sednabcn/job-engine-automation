@@ -1,0 +1,252 @@
+name: Unified Job Search Engine
+
+on:
+  schedule:
+    - cron: '0 9,21 * * *'
+  workflow_dispatch:
+    inputs:
+      action:
+        description: 'Action to perform'
+        type: choice
+        options:
+          - full_analysis
+          - batch_analysis
+          - start_sprint
+          - log_daily
+          - end_sprint
+          - daily_report
+          - quality_check
+      # ... other inputs
+
+env:
+  STATE_ARTIFACT: job-search-state-v1
+  CACHE_KEY_PREFIX: job-search-
+
+jobs:
+  job-search-engine:
+    runs-on: ubuntu-latest
+    
+    steps:
+      # ========================================
+      # RESTORE PERSISTENT STATE
+      # ========================================
+      
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+      
+      # Method 1: Try cache first (fastest)
+      - name: 💾 Restore from Cache
+        id: cache
+        uses: actions/cache/restore@v4
+        with:
+          path: job_search_data/
+          key: ${{ env.CACHE_KEY_PREFIX }}${{ github.run_id }}
+          restore-keys: |
+            ${{ env.CACHE_KEY_PREFIX }}
+      
+      # Method 2: Fall back to artifact if cache miss
+      - name: 📥 Restore from Artifact
+        if: steps.cache.outputs.cache-hit != 'true'
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          name: ${{ env.STATE_ARTIFACT }}
+          path: job_search_data/
+      
+      - name: 🐍 Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+      
+      - name: 📦 Install Dependencies
+        run: |
+          pip install -r requirements.txt
+      
+      # ========================================
+      # VERIFY STATE INTEGRITY
+      # ========================================
+      
+      - name: 🔍 Verify State
+        id: verify
+        run: |
+          python << 'EOF'
+          import os
+          import json
+          from pathlib import Path
+          
+          state_file = Path("job_search_data/state.json")
+          
+          if state_file.exists():
+              with open(state_file) as f:
+                  state = json.load(f)
+              print(f"✅ State loaded: Sprint {state.get('current_sprint', 0)}")
+              print(f"   Score: {state.get('current_score', 0)}%")
+              restored = "true"
+          else:
+              print("⚠️  No previous state found - starting fresh")
+              restored = "false"
+          
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+              f.write(f"state_restored={restored}\n")
+          EOF
+      
+      # ========================================
+      # EXECUTE REQUESTED ACTION
+      # ========================================
+      
+      - name: 🎯 Execute Action
+        run: |
+          python << 'EOF'
+          from src.python_advanced_job_engine import AdvancedJobEngine
+          
+          action = "${{ github.event.inputs.action }}" or "daily_report"
+          engine = AdvancedJobEngine(data_dir="job_search_data")
+          
+          if action == "full_analysis":
+              # Single job analysis
+              analysis = engine.analyze_from_files(
+                  cv_file="${{ github.event.inputs.cv_file }}",
+                  job_file="${{ github.event.inputs.job_file }}"
+              )
+              print(f"✅ Analysis: {analysis['score']['total_score']}%")
+          
+          elif action == "batch_analysis":
+              # Multiple jobs
+              job_files = "${{ github.event.inputs.job_files }}".split(',')
+              for job_file in job_files:
+                  analysis = engine.analyze_from_files(
+                      cv_file="${{ github.event.inputs.cv_file }}",
+                      job_file=job_file.strip()
+                  )
+                  print(f"✅ {job_file}: {analysis['score']['total_score']}%")
+          
+          elif action == "start_sprint":
+              sprint = engine.start_sprint(
+                  skills=["${{ github.event.inputs.skills }}".split(',')],
+                  project_goal="${{ github.event.inputs.project_goal }}"
+              )
+              print(f"✅ Sprint {sprint['sprint_number']} started")
+          
+          elif action == "log_daily":
+              engine.log_daily(
+                  hours=float("${{ github.event.inputs.hours }}"),
+                  concepts="${{ github.event.inputs.concepts }}".split(','),
+                  notes="${{ github.event.inputs.notes }}"
+              )
+              print("✅ Daily progress logged")
+          
+          elif action == "end_sprint":
+              result = engine.end_sprint(
+                  project_url="${{ github.event.inputs.project_url }}",
+                  test_scores={}  # Parse from input
+              )
+              print(f"✅ Sprint completed: {result['skills_gained']} skills")
+          
+          elif action == "daily_report":
+              engine.display_progress_dashboard()
+          
+          elif action == "quality_check":
+              gates = engine.check_quality_gates()
+              print(f"✅ Gates: {sum(gates.values())}/{len(gates)} passed")
+          
+          EOF
+      
+      # ========================================
+      # SAVE PERSISTENT STATE
+      # ========================================
+      
+      - name: 💾 Save to Cache
+        uses: actions/cache/save@v4
+        if: always()
+        with:
+          path: job_search_data/
+          key: ${{ env.CACHE_KEY_PREFIX }}${{ github.run_id }}
+      
+      - name: 💾 Save to Artifact
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ${{ env.STATE_ARTIFACT }}
+          path: job_search_data/
+          retention-days: 90
+          overwrite: true
+      
+      # ========================================
+      # OPTIONAL: COMMIT STATE
+      # ========================================
+      
+      - name: 💾 Commit State (Optional)
+        if: github.event.inputs.commit_state == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Only commit state files, not analysis results
+          git add job_search_data/state.json
+          git add job_search_data/sprint_history.json
+          
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "chore: update job search state [skip ci]"
+            git push
+          fi
+      
+      # ========================================
+      # GENERATE REPORTS
+      # ========================================
+      
+      - name: 📊 Generate Report
+        if: always()
+        run: |
+          python << 'EOF'
+          from src.python_advanced_job_engine import AdvancedJobEngine
+          from datetime import datetime
+          
+          engine = AdvancedJobEngine(data_dir="job_search_data")
+          state = engine.state
+          
+          report = f"""
+          # Job Search Progress Report
+          
+          **Generated:** {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+          **Match Score:** {state.get('current_score', 0)}%
+          **Sprints Completed:** {state.get('current_sprint', 0)}
+          **Skills Mastered:** {len(state.get('skills_mastered', []))}
+          **Projects:** {len(state.get('projects_completed', []))}
+          
+          ## Quality Gates
+          - Foundation: {'✅' if 'foundation' in state.get('quality_gates_passed', []) else '⏳'}
+          - Competency: {'✅' if 'competency' in state.get('quality_gates_passed', []) else '⏳'}
+          - Mastery: {'✅' if 'mastery' in state.get('quality_gates_passed', []) else '⏳'}
+          - Application Ready: {'✅' if state.get('application_ready') else '⏳'}
+          """
+          
+          with open('PROGRESS_REPORT.md', 'w') as f:
+              f.write(report)
+          
+          print(report)
+          EOF
+      
+      - name: 📤 Upload Report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: progress-report-${{ github.run_number }}
+          path: PROGRESS_REPORT.md
+          retention-days: 30
+      
+      # ========================================
+      # STATUS SUMMARY
+      # ========================================
+      
+      - name: 📋 Job Summary
+        if: always()
+        run: |
+          cat PROGRESS_REPORT.md >> $GITHUB_STEP_SUMMARY
+          
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "---" >> $GITHUB_STEP_SUMMARY
+          echo "**State Persistence:** Cache + Artifact" >> $GITHUB_STEP_SUMMARY
+          echo "**State Restored:** ${{ steps.verify.outputs.state_restored }}" >> $GITHUB_STEP_SUMMARY

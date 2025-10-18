@@ -1,0 +1,72 @@
+# Interview Preparation: {job_title} at {company_name}
+
+## Company Research
+- Founded: {company_founded}
+- Mission: {company_mission}
+- Recent news: {recent_news}
+- Products/Services: {products}
+- Culture: {culture_notes}
+
+## Role Analysis
+- Key responsibilities: {responsibilities}
+- Required skills: {required_skills}
+- Team structure: {team_info}
+- Growth opportunities: {growth_potential}
+
+## My Match Profile
+- Overall score: {match_score}%
+- Strengths: {top_strengths}
+- Growth areas: {growth_areas}
+- Recent progress: {recent_improvements}
+
+## STAR Stories Prepared
+
+### Story 1: {achievement_1_title}
+**Situation:** {situation_1}
+**Task:** {task_1}
+**Action:** {action_1}
+**Result:** {result_1}
+
+### Story 2: {achievement_2_title}
+**Situation:** {situation_2}
+**Task:** {task_2}
+**Action:** {action_2}
+**Result:** {result_2}
+
+### Story 3: {achievement_3_title}
+**Situation:** {situation_3}
+**Task:** {task_3}
+**Action:** {action_3}
+**Result:** {result_3}
+
+## Technical Prep
+- Skills to review: {technical_review}
+- Practice problems: {practice_links}
+- Portfolio pieces to highlight: {portfolio_highlights}
+
+## Questions to Ask Them
+1. {question_1}
+2. {question_2}
+3. {question_3}
+4. {question_4}
+5. {question_5}
+
+## Addressing Gaps
+**Gap:** {gap_1}
+**Response:** {gap_response_1}
+
+**Gap:** {gap_2}
+**Response:** {gap_response_2}
+
+## Logistics
+- Date/Time: {interview_datetime}
+- Format: {interview_format}
+- Duration: {interview_duration}
+- Interviewer(s): {interviewer_names}
+- What to bring: {materials_needed}
+
+## Post-Interview
+- Send thank you within 24 hours
+- Mention specific discussion points
+- Reiterate interest
+- Address any concerns raised

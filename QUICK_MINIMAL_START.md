@@ -564,3 +564,23 @@ If you encounter issues:
 ---
 
 Good luck with your job search! 🚀
+
+# Initial setup
+gh workflow run unified-job-search.yml \
+  -f action=full_analysis \
+  -f cv_file=data/my_cv.pdf \
+  -f job_file=data/target_job.pdf
+
+# Start learning
+gh workflow run unified-job-search.yml \
+  -f action=start_sprint
+
+# Daily logging
+gh workflow run unified-job-search.yml \
+  -f action=log_daily \
+  -f hours=3 \
+  -f concepts="React,TypeScript"
+
+# Check progress
+gh workflow run unified-job-search.yml \
+  -f action=daily_report
