@@ -1,93 +1,100 @@
 name: Cleanup Old Workflow Runs
+
 on:
   push:
     branches: ["dev", "master"]
   workflow_dispatch:
+
 jobs:
   cleanup:
     runs-on: ubuntu-latest
     permissions:
       actions: write
       contents: read
-      issues: write
+
     steps:
-      - name: Delete old and failed workflow runs
+      - name: Delete old workflow runs (keep latest N successful)
         uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const owner = context.repo.owner;
             const repo = context.repo.repo;
-            const KEEP_DAYS = 1;
-            const MAX_PAGES = 100;
-            const DELETE_ALL_FAILED = true;
-            
-            console.log(`🧹 Cleaning workflow runs for ${owner}/${repo}`);
-            console.log(`📅 Policy: Delete runs older than ${KEEP_DAYS} day(s) + ALL failed runs`);
-            
+
+            // 🔧 CONFIGURATION
+            const KEEP_DAYS = 3;            // Keep runs from the last 3 days
+            const KEEP_SUCCESSFUL = 5;      // Keep the 5 latest successful runs
+            const DELETE_FAILED = true;     // Delete all failed runs
+            const SLEEP_MS = 500;           // Pause between deletions
+
+            console.log(`🧹 Cleanup started for ${owner}/${repo}`);
+            console.log(`📅 Keep runs from last ${KEEP_DAYS} days and last ${KEEP_SUCCESSFUL} successful runs`);
+
             const cutoffDate = new Date();
             cutoffDate.setDate(cutoffDate.getDate() - KEEP_DAYS);
-            
-            const { data: workflowsData } = await github.rest.actions.listRepoWorkflows({ owner, repo });
-            const workflows = workflowsData.workflows || [];
-            
+
+            const workflows = await github.paginate(
+              github.rest.actions.listRepoWorkflows,
+              { owner, repo }
+            );
+
             for (const workflow of workflows) {
-              console.log(`\n🔍 Processing: ${workflow.name} (id=${workflow.id})`);
-              
-              let allRuns = [];
-              for (let page = 1; page <= MAX_PAGES; page++) {
-                const { data } = await github.rest.actions.listWorkflowRuns({
-                  owner,
-                  repo,
-                  workflow_id: workflow.id,
-                  per_page: 100,
-                  page
-                });
-                if (!data.workflow_runs.length) break;
-                allRuns = allRuns.concat(data.workflow_runs);
-              }
-              
-              if (!allRuns.length) {
+              console.log(`\n🔍 Processing workflow: ${workflow.name} (id=${workflow.id})`);
+
+              const runs = await github.paginate(
+                github.rest.actions.listWorkflowRuns,
+                { owner, repo, workflow_id: workflow.id, per_page: 100 }
+              );
+
+              if (!runs.length) {
                 console.log("  ⚠️ No runs found.");
                 continue;
               }
-              
-              allRuns.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-              
+
+              // Sort by date (newest first)
+              runs.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
+              // Keep track of successful runs
+              let keptSuccessful = 0;
               const runsToDelete = [];
-              
-              for (const run of allRuns) {
+
+              for (const run of runs) {
                 const runDate = new Date(run.created_at);
                 const isOld = runDate < cutoffDate;
-                const isFailed = run.conclusion && run.conclusion !== 'success';
+                const isFailed = run.conclusion && run.conclusion !== "success";
+                const isSuccess = run.conclusion === "success";
                 const isCurrent = run.id === context.runId;
-                
-                // Never delete current cleanup run
-                if (isCurrent) {
-                  console.log(`  ⏭️ Skipping current cleanup run (${run.id})`);
+
+                if (isCurrent) continue; // never delete current run
+
+                if (isFailed && DELETE_FAILED) {
+                  runsToDelete.push({ run, reason: `FAILED (${run.conclusion})` });
                   continue;
                 }
-                
-                // Delete if: (older than 1 day) OR (failed regardless of age)
-                if (isOld || (DELETE_ALL_FAILED && isFailed)) {
-                  runsToDelete.push(run);
+
+                if (isSuccess) {
+                  keptSuccessful++;
+                  if (keptSuccessful > KEEP_SUCCESSFUL || isOld) {
+                    runsToDelete.push({ run, reason: isOld ? `OLD (${KEEP_DAYS}+ days)` : "EXCEEDS keep limit" });
+                  }
                 }
               }
-              
-              console.log(`  📊 Total: ${allRuns.length} runs | Keeping: ${allRuns.length - runsToDelete.length} | Deleting: ${runsToDelete.length}`);
-              
-              for (const run of runsToDelete) {
+
+              console.log(
+                `  📊 Total: ${runs.length} | Deleting: ${runsToDelete.length} | Keeping: ${
+                  runs.length - runsToDelete.length
+                }`
+              );
+
+              for (const { run, reason } of runsToDelete) {
                 try {
-                  const age = Math.floor((new Date() - new Date(run.created_at)) / (1000 * 60 * 60 * 24));
-                  const reason = run.conclusion !== 'success' ? `FAILED (${run.conclusion})` : `OLD (${age}d)`;
                   await github.rest.actions.deleteWorkflowRun({ owner, repo, run_id: run.id });
-                  console.log(`  🗑️ Deleted [${reason}] run #${run.run_number} (id=${run.id})`);
-                  await new Promise(r => setTimeout(r, 300));
+                  console.log(`  🗑️ Deleted run #${run.run_number} [${reason}]`);
+                  await new Promise(r => setTimeout(r, SLEEP_MS));
                 } catch (err) {
-                  console.log(`  ❌ Could not delete run ${run.id}: ${err.message}`);
+                  console.log(`  ❌ Could not delete run #${run.run_number}: ${err.message}`);
                 }
               }
             }
-            
-            console.log("\n✅ Cleanup finished.");
- 
+
+            console.log("\n✅ Cleanup completed successfully.");
