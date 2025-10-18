@@ -21,7 +21,6 @@ on:
 env:
   STATE_ARTIFACT: job-search-state-v1
   CACHE_KEY_PREFIX: job-search-
-  DATA_DIR: job_search_data
 
 jobs:
   job-search-engine:
@@ -44,48 +43,24 @@ jobs:
           key: ${{ env.CACHE_KEY_PREFIX }}${{ github.run_id }}
           restore-keys: |
             ${{ env.CACHE_KEY_PREFIX }}
-        continue-on-error: true
       
       # Method 2: Fall back to artifact if cache miss
       - name: 📥 Restore from Artifact
         if: steps.cache.outputs.cache-hit != 'true'
         uses: actions/download-artifact@v4
+        continue-on-error: true
         with:
           name: ${{ env.STATE_ARTIFACT }}
           path: job_search_data/
-        continue-on-error: true
-      
-      # Method 3: Verify and create if needed
-      - name: 🔍 Verify State
+
+      - name: 🔍 Verify Restoration
         run: |
-          # Set DATA_DIR with fallback
-          DATA_DIR="${DATA_DIR:-job_search_data}"
-          
-          echo "📂 Data directory: $DATA_DIR"
-          
-          # Ensure directory exists
-          mkdir -p "$DATA_DIR"
-          
-          # Check for existing state
-          if [ -f "$DATA_DIR/workflow_state.json" ]; then
-            echo "✅ Previous state found"
-            echo "📊 State file size: $(du -h "$DATA_DIR/workflow_state.json" | cut -f1)"
-            
-            # Show state summary
-            if command -v jq &> /dev/null; then
-              echo "📈 Current sprint: $(jq -r '.current_sprint // 0' "$DATA_DIR/workflow_state.json")"
-              echo "📈 Current score: $(jq -r '.current_score // 0' "$DATA_DIR/workflow_state.json")%"
-            fi
+          if [ -d "${{ env.DATA_DIR }}" ] && [ "$(ls -A ${{ env.DATA_DIR }})" ]; then
+            echo "✅ Previous state restored"
+            ls -la ${{ env.DATA_DIR }}/
           else
             echo "ℹ️  No previous state - starting fresh"
-            echo "📁 Created directory: $DATA_DIR"
-          fi
-          
-          # List contents if any
-          if [ "$(ls -A "$DATA_DIR" 2>/dev/null)" ]; then
-            echo ""
-            echo "📁 Directory contents:"
-            ls -lh "$DATA_DIR/" | head -10
+            mkdir -p ${{ env.DATA_DIR }}
           fi
           
       - name: 🐍 Setup Python
