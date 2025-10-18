@@ -346,6 +346,65 @@ class AdvancedJobEngine:
             "analyzed_date": datetime.now().isoformat(),
         }
 
+
+    def read_document(self, file_path: str) -> str:
+        """
+        Read document from file (supports .txt, .pdf, .docx)
+
+        Features:
+        • Handles empty or missing file paths gracefully
+        • Falls back to defaults (data/my_cv.txt, data/target_job.txt)
+        • Checks existence and valid file type
+        • Prints clear messages for every step
+        """
+        # Define default file paths at the top (avoids UnboundLocalError)
+        default_cv = Path("data/my_cv.txt")
+        default_job = Path("data/target_job.txt")
+
+        # Handle empty path input
+        if not file_path or not str(file_path).strip():
+            if default_cv.exists():
+                print("⚠️ No CV path provided — using default: data/my_cv.txt")
+                file_path = str(default_cv)
+            elif default_job.exists():
+                print("⚠️ No Job path provided — using default: data/target_job.txt")
+                file_path = str(default_job)
+            else:
+                raise ValueError(
+                    "❌ File path cannot be empty.\n"
+                    "Please provide a valid file path (e.g., 'resume.txt', 'cv.pdf', 'job.docx').\n"
+                    "Hint: Place your CV in 'data/my_cv.txt' and job in 'data/target_job.txt'."
+                )
+
+        # Convert to Path
+        path = Path(file_path)
+
+        # Ensure the file exists
+        if not path.exists():
+            raise FileNotFoundError(f"❌ File not found: {path.resolve()}")
+
+        # Validate extension
+        ext = path.suffix.lower()
+        supported_formats = [".txt", ".pdf", ".docx"]
+        if ext not in supported_formats:
+            raise ValueError(
+                f"❌ Unsupported file format: {ext}\n"
+                f"Supported formats: {', '.join(supported_formats)}"
+            )
+
+        print(f"📂 Reading document: {path.resolve()}")
+
+        # Dispatch to appropriate reader
+        if ext == ".txt":
+            return self._read_txt(path)
+        elif ext == ".pdf":
+            return self._read_pdf(path)
+        elif ext == ".docx":
+            return self._read_docx(path)
+        else:
+            raise ValueError(f"Unexpected file type: {ext}")
+
+    
     def analyze_from_files(self, cv_file: str = "", job_file: str = "",
                        job_title: str = "", company: str = "") -> Dict[str, Any]:
         """
