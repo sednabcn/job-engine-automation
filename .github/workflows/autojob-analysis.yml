@@ -6,11 +6,11 @@ on:
       cv_file:
         description: 'Path to CV file'
         required: false
-        default: 'data/my_cv.pdf'
+        default: 'data/my_cv.txt'
       job_file:
         description: 'Path to job description file'
         required: false
-        default: 'data/target_job.pdf'
+        default: 'data/target_job.txt'
       job_title:
         description: 'Job title (optional)'
         required: false
@@ -36,6 +36,10 @@ on:
       - 'data/**.docx'
       - 'data/**.txt'
 
+env:
+  DEFAULT_CV: 'data/my_cv.txt'
+  DEFAULT_JOB: 'data/target_job.txt'
+
 jobs:
   analyze:
     runs-on: ubuntu-latest
@@ -60,37 +64,73 @@ jobs:
         mkdir -p job_search_data
         mkdir -p output
 
+    # =====================================================
+    # CRITICAL FIX: Set file paths with proper defaults
+    # =====================================================
+    - name: 🔧 Set file paths
+      id: set_paths
+      run: |
+        # Get inputs (will be empty on push trigger)
+        INPUT_CV="${{ github.event.inputs.cv_file }}"
+        INPUT_JOB="${{ github.event.inputs.job_file }}"
+        INPUT_TITLE="${{ github.event.inputs.job_title }}"
+        INPUT_COMPANY="${{ github.event.inputs.company_name }}"
+        INPUT_MATERIALS="${{ github.event.inputs.generate_materials }}"
+        
+        # Set defaults if empty
+        CV_FILE="${INPUT_CV:-${{ env.DEFAULT_CV }}}"
+        JOB_FILE="${INPUT_JOB:-${{ env.DEFAULT_JOB }}}"
+        JOB_TITLE="${INPUT_TITLE:-Target Role}"
+        COMPANY_NAME="${INPUT_COMPANY:-Target Company}"
+        GENERATE_MATERIALS="${INPUT_MATERIALS:-true}"
+        
+        echo "📋 Configuration:"
+        echo "   CV: $CV_FILE"
+        echo "   Job: $JOB_FILE"
+        echo "   Title: $JOB_TITLE"
+        echo "   Company: $COMPANY_NAME"
+        echo "   Generate Materials: $GENERATE_MATERIALS"
+        
+        # Export to environment
+        echo "CV_FILE=$CV_FILE" >> $GITHUB_ENV
+        echo "JOB_FILE=$JOB_FILE" >> $GITHUB_ENV
+        echo "JOB_TITLE=$JOB_TITLE" >> $GITHUB_ENV
+        echo "COMPANY_NAME=$COMPANY_NAME" >> $GITHUB_ENV
+        echo "GENERATE_MATERIALS=$GENERATE_MATERIALS" >> $GITHUB_ENV
+
     - name: 🔍 Verify Input Files
       run: |
         echo "Checking data files..."
+        echo ""
+        echo "📂 Available files:"
+        ls -lh data/
+        echo ""
     
         # Check if CV exists and is not empty
-        if [ ! -f "${{ github.event.inputs.cv_file }}" ]; then
-            echo "❌ Error: CV file not found: ${{ github.event.inputs.cv_file }}"
-            echo "💡 Available files:"
-            ls -lh data/
+        if [ ! -f "$CV_FILE" ]; then
+            echo "❌ Error: CV file not found: $CV_FILE"
             exit 1
         fi
         
-        if [ ! -s "${{ github.event.inputs.cv_file }}" ]; then
-          echo "❌ Error: CV file is empty: ${{ github.event.inputs.cv_file }}"
+        if [ ! -s "$CV_FILE" ]; then
+          echo "❌ Error: CV file is empty: $CV_FILE"
           exit 1
         fi
     
         # Check if job file exists and is not empty
-        if [ ! -f "${{ github.event.inputs.job_file }}" ]; then
-           echo "❌ Error: Job file not found: ${{ github.event.inputs.job_file }}"
+        if [ ! -f "$JOB_FILE" ]; then
+           echo "❌ Error: Job file not found: $JOB_FILE"
            exit 1
         fi
     
-        if [ ! -s "${{ github.event.inputs.job_file }}" ]; then
-           echo "❌ Error: Job file is empty: ${{ github.event.inputs.job_file }}"
+        if [ ! -s "$JOB_FILE" ]; then
+           echo "❌ Error: Job file is empty: $JOB_FILE"
            exit 1
         fi
     
         echo "✅ Files verified:"
-        ls -lh "${{ github.event.inputs.cv_file }}"
-        ls -lh "${{ github.event.inputs.job_file }}"
+        echo "   CV:  $CV_FILE ($(stat -c%s "$CV_FILE" 2>/dev/null || stat -f%z "$CV_FILE") bytes)"
+        echo "   Job: $JOB_FILE ($(stat -c%s "$JOB_FILE" 2>/dev/null || stat -f%z "$JOB_FILE") bytes)"
 
     - name: Run job analysis
       id: analysis
@@ -101,141 +141,209 @@ jobs:
         import os
         from datetime import datetime
         
+        # Get values from environment (set in previous step)
+        cv_file = os.environ.get('CV_FILE')
+        job_file = os.environ.get('JOB_FILE')
+        job_title = os.environ.get('JOB_TITLE')
+        company = os.environ.get('COMPANY_NAME')
+        generate_materials = os.environ.get('GENERATE_MATERIALS', 'true').lower() == 'true'
+        
+        print("="*70)
+        print("🔍 JOB ANALYSIS ENGINE")
+        print("="*70)
+        
         # Initialize engine
         engine = AdvancedJobEngine()
         
-        # Get inputs
-        cv_file = "${{ github.event.inputs.cv_file }}" or "data/my_cv.pdf"
-        job_file = "${{ github.event.inputs.job_file }}" or "data/job_description.pdf"
-        job_title = "${{ github.event.inputs.job_title }}" or None
-        company = "${{ github.event.inputs.company_name }}" or None
-        generate_materials = "${{ github.event.inputs.generate_materials }}" != "false"
-        
         # Run analysis
-        print(f"🔍 Analyzing: {cv_file} vs {job_file}")
-        print(f"📅 Started at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+        print(f"\n📄 CV: {cv_file}")
+        print(f"📋 Job: {job_file}")
+        print(f"🏢 Company: {company}")
+        print(f"💼 Title: {job_title}")
+        print(f"📅 Started: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+        print()
         
-        analysis = engine.analyze_from_files(
-            cv_file=cv_file,
-            job_file=job_file,
-            job_title=job_title,
-            company=company
-        )
+        try:
+            analysis = engine.analyze_from_files(
+                cv_file=cv_file,
+                job_file=job_file,
+                job_title=job_title if job_title != 'Target Role' else None,
+                company=company if company != 'Target Company' else None
+            )
+            
+            job_id = analysis['job_id']
+            score = analysis['score']['total_score']
+            
+            print(f"✅ Analysis complete!")
+            print(f"📊 Match Score: {score}%")
+            print(f"🆔 Job ID: {job_id}")
+            
+        except Exception as e:
+            print(f"❌ Analysis failed: {e}")
+            import traceback
+            traceback.print_exc()
+            exit(1)
         
         # Generate learning plan
-        print("📚 Creating learning plan...")
-        learning_plan = engine.create_learning_plan(analysis, mode="standard")
+        print("\n📚 Creating learning plan...")
+        try:
+            learning_plan = engine.create_learning_plan(analysis, mode="standard")
+            print("✅ Learning plan created")
+        except Exception as e:
+            print(f"⚠️  Learning plan error: {e}")
+            learning_plan = {}
         
         # Generate improvement strategy
-        print("🎯 Creating improvement strategy...")
-        strategy = engine.create_improvement_strategy(analysis, learning_plan)
+        print("\n🎯 Creating improvement strategy...")
+        try:
+            strategy = engine.create_improvement_strategy(analysis, learning_plan)
+            print("✅ Strategy created")
+        except Exception as e:
+            print(f"⚠️  Strategy error: {e}")
+            strategy = "Strategy generation failed"
         
         # Generate application materials (if requested)
         letters = {}
         if generate_materials:
-            print("✉️ Generating application materials...")
-            letters = engine.generate_recruiter_letter(analysis, learning_plan)
+            print("\n✉️  Generating application materials...")
+            try:
+                letters = engine.generate_recruiter_letter(analysis, learning_plan)
+                print("✅ Application materials created")
+            except Exception as e:
+                print(f"⚠️  Letters error: {e}")
         
         # Generate skill tests
-        print("🧪 Creating skill tests...")
-        tests = engine.generate_skill_tests(analysis['gaps']['missing_required_skills'])
+        print("\n🧪 Creating skill tests...")
+        try:
+            missing_skills = analysis['gaps']['missing_required_skills'][:10]
+            tests = engine.generate_skill_tests(missing_skills)
+            print(f"✅ Created tests for {len(missing_skills)} skills")
+        except Exception as e:
+            print(f"⚠️  Tests error: {e}")
+            tests = {}
         
         # Save results
-        job_id = analysis['job_id']
+        print("\n💾 Saving outputs...")
         
-        # Save match score
         with open('output/match_score.json', 'w') as f:
             json.dump(analysis['score'], f, indent=2)
+        print("  ✅ match_score.json")
         
-        # Save gap analysis
         with open('output/gap_analysis.json', 'w') as f:
             json.dump(analysis['gaps'], f, indent=2)
+        print("  ✅ gap_analysis.json")
         
-        # Save learning plan
+        with open('output/full_analysis.json', 'w') as f:
+            json.dump(analysis, f, indent=2)
+        print("  ✅ full_analysis.json")
+        
         with open('output/learning_plan.json', 'w') as f:
             json.dump(learning_plan, f, indent=2)
+        print("  ✅ learning_plan.json")
         
-        # Save improvement strategy
         with open('output/improvement_strategy.md', 'w') as f:
             f.write(strategy)
+        print("  ✅ improvement_strategy.md")
         
         # Save application materials
-        if generate_materials:
-            with open('output/cover_letter.txt', 'w') as f:
-                f.write(letters.get('cover_letter', ''))
-            
-            with open('output/linkedin_message.txt', 'w') as f:
-                f.write(letters.get('linkedin_message', ''))
-            
-            with open('output/followup_email.txt', 'w') as f:
-                f.write(letters.get('followup_email', ''))
-            
-            with open('output/networking_email.txt', 'w') as f:
-                f.write(letters.get('networking_email', ''))
+        if generate_materials and letters:
+            for letter_type in ['cover_letter', 'linkedin_message', 'followup_email', 'networking_email']:
+                content = letters.get(letter_type, f"# {letter_type}\n\nNot generated")
+                with open(f'output/{letter_type}.txt', 'w') as f:
+                    f.write(content)
+                print(f"  ✅ {letter_type}.txt")
         
         # Save skill tests
         with open('output/skill_tests.json', 'w') as f:
             json.dump(tests, f, indent=2)
+        print("  ✅ skill_tests.json")
         
         # Create complete report
         report = f"""# Job Match Analysis Report
 
-        ## Match Score:
-        {analysis['score']['total_score']}%
+**Generated:** {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+**Job ID:** {job_id}
 
-        ### Score Breakdown
-        """
-        for category, score in analysis['score']['breakdown'].items():
-            report += f"- {category.replace('_', ' ').title()}: {score}%\n"
+---
+
+## Match Score: {score}%
+
+### Score Breakdown
+"""
+        for category, cat_score in analysis['score']['breakdown'].items():
+            report += f"- {category.replace('_', ' ').title()}: {cat_score}%\n"
         
-        report += f"\n### Missing Required Skills ({len(analysis['gaps']['missing_required_skills'])})\n"
-        for skill in analysis['gaps']['missing_required_skills']:
+        report += f"\n---\n\n## Gap Analysis\n\n"
+        report += f"### Missing Required Skills ({len(analysis['gaps']['missing_required_skills'])})\n"
+        for skill in analysis['gaps']['missing_required_skills'][:15]:
             report += f"- {skill}\n"
+        if len(analysis['gaps']['missing_required_skills']) > 15:
+            report += f"\n... and {len(analysis['gaps']['missing_required_skills']) - 15} more\n"
         
         report += f"\n### Missing Preferred Skills ({len(analysis['gaps']['missing_preferred_skills'])})\n"
-        for skill in analysis['gaps']['missing_preferred_skills']:
+        for skill in analysis['gaps']['missing_preferred_skills'][:10]:
             report += f"- {skill}\n"
         
         report += f"\n### Experience Gap: {analysis['gaps']['experience_gap']} years\n"
         report += f"### Education Gap: {analysis['gaps']['education_gap']}\n"
         
+        report += f"\n---\n\n## Recommendation\n\n"
+        if score >= 75:
+            report += "✅ **STRONG CANDIDATE** - Apply now!\n"
+        elif score >= 60:
+            report += "⚠️  **NEEDS IMPROVEMENT** - Improve for 4-8 weeks\n"
+        else:
+            report += "❌ **MAJOR GAPS** - Focus on skill development for 12-24 weeks\n"
+        
         with open('output/complete_report.md', 'w') as f:
             f.write(report)
+        print("  ✅ complete_report.md")
         
         # Create summary
+        status = '✅ STRONG CANDIDATE' if score >= 75 else '⚠️ NEEDS IMPROVEMENT'
+        action = 'Apply now!' if score >= 75 else f"Improve for {12 if score < 60 else 4}-{24 if score < 60 else 8} weeks"
+        
         summary = f"""ANALYSIS SUMMARY
 
-        Job ID: {job_id}
-        Match Score: {analysis['score']['total_score']}%
-        Status: {'✅ STRONG CANDIDATE' if analysis['score']['total_score'] >= 75 else '⚠️ NEEDS IMPROVEMENT'}
+Job ID: {job_id}
+Match Score: {score}%
+Status: {status}
 
-        Action: {'Apply now!' if analysis['score']['total_score'] >= 75 else f"Improve for {12 if analysis['score']['total_score'] < 60 else 4}-{24 if analysis['score']['total_score'] < 60 else 8} weeks"}
+Action: {action}
 
-        Files generated:
-          - complete_report.md
-          - match_score.json
-          - gap_analysis.json
-          - learning_plan.json
-          - improvement_strategy.md
-          {f"- cover_letter.txt" if generate_materials else ""}
-          {f"- linkedin_message.txt" if generate_materials else ""}
-          {f"- followup_email.txt" if generate_materials else ""}
-          {f"- networking_email.txt" if generate_materials else ""}
-          - skill_tests.json
-        """
+Files generated:
+  - complete_report.md
+  - match_score.json
+  - gap_analysis.json
+  - full_analysis.json
+  - learning_plan.json
+  - improvement_strategy.md
+  - skill_tests.json"""
+
+        if generate_materials:
+            summary += """
+  - cover_letter.txt
+  - linkedin_message.txt
+  - followup_email.txt
+  - networking_email.txt"""
         
         with open('output/summary.txt', 'w') as f:
             f.write(summary)
+        print("  ✅ summary.txt")
         
-        print(f"\n✅ Analysis complete! Score: {analysis['score']['total_score']}%")
-        print(f"📊 Job ID: {job_id}")
-        print(f"⏰ Completed at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+        print(f"\n{'='*70}")
+        print(f"✅ ANALYSIS COMPLETE")
+        print(f"{'='*70}")
+        print(f"📊 Match Score: {score}%")
+        print(f"🆔 Job ID: {job_id}")
+        print(f"⏰ Completed: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+        print(f"{'='*70}")
         
         # Set output for next steps
         with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
-            f.write(f"score={analysis['score']['total_score']}\n")
+            f.write(f"score={score}\n")
             f.write(f"job_id={job_id}\n")
-            f.write(f"status={'success' if analysis['score']['total_score'] >= 75 else 'needs_improvement'}\n")
+            f.write(f"status={'success' if score >= 75 else 'needs_improvement'}\n")
         
         EOF
 
@@ -255,7 +363,18 @@ jobs:
         echo "" >> $GITHUB_STEP_SUMMARY
         echo "📥 Download the 'job-analysis-results' artifact to view all reports" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
-        cat output/summary.txt >> $GITHUB_STEP_SUMMARY
+        
+        if [ -f output/summary.txt ]; then
+          cat output/summary.txt >> $GITHUB_STEP_SUMMARY
+        fi
+        
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "---" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### 📂 Files Generated" >> $GITHUB_STEP_SUMMARY
+        echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+        ls -lh output/ >> $GITHUB_STEP_SUMMARY
+        echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
 
     - name: Send email notification
       if: ${{ github.event.inputs.send_notification == 'true' }}
