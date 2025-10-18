@@ -60,6 +60,38 @@ jobs:
         mkdir -p job_search_data
         mkdir -p output
 
+    - name: 🔍 Verify Input Files
+      run: |
+        echo "Checking data files..."
+    
+        # Check if CV exists and is not empty
+        if [ ! -f "${{ github.event.inputs.cv_file }}" ]; then
+            echo "❌ Error: CV file not found: ${{ github.event.inputs.cv_file }}"
+            echo "💡 Available files:"
+            ls -lh data/
+            exit 1
+        fi
+        
+        if [ ! -s "${{ github.event.inputs.cv_file }}" ]; then
+          echo "❌ Error: CV file is empty: ${{ github.event.inputs.cv_file }}"
+          exit 1
+        fi
+    
+        # Check if job file exists and is not empty
+        if [ ! -f "${{ github.event.inputs.job_file }}" ]; then
+           echo "❌ Error: Job file not found: ${{ github.event.inputs.job_file }}"
+           exit 1
+        fi
+    
+        if [ ! -s "${{ github.event.inputs.job_file }}" ]; then
+           echo "❌ Error: Job file is empty: ${{ github.event.inputs.job_file }}"
+           exit 1
+        fi
+    
+        echo "✅ Files verified:"
+        ls -lh "${{ github.event.inputs.cv_file }}"
+        ls -lh "${{ github.event.inputs.job_file }}"
+
     - name: Run job analysis
       id: analysis
       run: |

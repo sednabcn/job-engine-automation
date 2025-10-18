@@ -1,93 +1,4 @@
-### AL ###
-#Template for AL projects for Dynamics 365 Business Central
-#launch.json folder
-.vscode/
-#Cache folder
-.alcache/
-#Symbols folder
-.alpackages/
-#Snapshots folder
-.snapshots/
-#Testing Output folder
-.output/
-#Extension App-file
-*.app
-#Rapid Application Development File
-rad.json
-#Translation Base-file
-*.g.xlf
-#License-file
-*.flf
-#Test results file
-TestResults.xml
-
-
-## 📄 **.gitignore**
-```
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
-
-# Virtual environments
-venv/
-env/
-ENV/
-.venv
-
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-
-# Testing
-.pytest_cache/
-.coverage
-htmlcov/
-.tox/
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Environment
-.env
-.env.local
-
-# Logs
-*.log
-
-# Temporary files
-*.tmp
-*.bak
-
-DOCS/
-data/*.json
-job_search_data/*.json
-job_search_data/example_data_*
-job_search_data/export_packages/*
-data/exports
-
-# Job search data - exclude all dynamic files
+# Dynamic job search data
 job_search_data/*.json
 job_search_data/analysis_*
 job_search_data/sprint_*
@@ -100,3 +11,25 @@ job_search_data/learning_*
 output/
 batch_results/
 PROGRESS_REPORT.md
+*.log
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+venv/
+.venv/
+ENV/
+.pytest_cache/
+.coverage
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+.DS_Store
+
+# Temp files
+*.tmp
+*.bak

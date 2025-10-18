@@ -1,28 +1,15 @@
-Subject: {job_title} at {company_name} - Impressed by Your Work
-
 Hi {recruiter_name},
 
-I hope this message finds you well. I recently came across the {job_title} opening at {company_name} and was immediately drawn to it.
+I'm interested in the {job_title} role at {company_name}.
 
-Quick context on my background:
-• {skill_1} with {experience_1}
-• {skill_2} with {experience_2}
-• {skill_3} with {experience_3}
-
-What caught my attention:
-{company_highlight}
-
-I've been actively developing skills in {growth_areas} to strengthen my candidacy. Recent projects include:
-→ {project_1}
-→ {project_2}
-
-Current match score: {match_score}% (and growing!)
-
-Would you be open to a brief conversation about this role? I'd love to learn more about the team's priorities and share how I could contribute.
+Background:
+• {skill_1}
+• {skill_2}
+• Match: {match_score}%
 
 Portfolio: {portfolio_link}
 
-Thanks for your consideration!
+Open to a brief chat?
 
 Best,
 {candidate_name}

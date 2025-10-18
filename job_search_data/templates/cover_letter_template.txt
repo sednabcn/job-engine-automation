@@ -1,38 +1,17 @@
 Dear Hiring Manager,
 
-I am writing to express my strong interest in the {job_title} position at {company_name}. With my background in {top_skills} and proven track record in {key_achievements}, I am excited about the opportunity to contribute to your team.
+I am writing to express my interest in the {job_title} position at {company_name}.
 
-## Why I'm a Great Fit
+With {match_score}% alignment to your requirements, I bring:
+• {skill_1}
+• {skill_2}
+• {skill_3}
 
-Your job posting emphasizes {key_requirements}. I bring:
+Recent achievements: {achievements}
 
-{matching_skills_section}
+I am actively developing: {learning_focus}
 
-## Recent Accomplishments
-
-{achievements_section}
-
-## Addressing Growth Areas
-
-I notice your position requires {missing_skills}. To bridge this gap, I have:
-
-{learning_progress_section}
-
-## What Excites Me About This Role
-
-{motivation_section}
-
-I am particularly drawn to {company_name} because {company_research}. I would welcome the opportunity to discuss how my background, skills, and enthusiasm can contribute to your team's success.
-
-Thank you for considering my application. I look forward to speaking with you.
+Portfolio: {portfolio_link}
 
 Best regards,
 {candidate_name}
-{contact_info}
-
----
-Attachments:
-- Resume/CV
-- Portfolio: {portfolio_link}
-- GitHub: {github_link}
-- LinkedIn: {linkedin_link}

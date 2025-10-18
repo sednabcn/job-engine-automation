@@ -88,6 +88,8 @@ class AdvancedJobEngine:
         with open(filepath, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=2, ensure_ascii=False)
 
+
+    
     def read_document(self, file_path: str) -> str:
         """
         Read document from file (supports .txt, .pdf, .docx)
