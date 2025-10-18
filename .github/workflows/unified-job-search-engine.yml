@@ -35,6 +35,12 @@ jobs:
       - name: 📥 Checkout
         uses: actions/checkout@v4
       
+      # Create data directory FIRST
+      - name: 📁 Initialize Data Directory
+        run: |
+          mkdir -p job_search_data
+          echo "✅ Data directory created"
+      
       # Method 1: Try cache first (fastest)
       - name: 💾 Restore from Cache
         id: cache
@@ -55,10 +61,10 @@ jobs:
           path: job_search_data/
         continue-on-error: true
       
-      # Method 3: Verify and create if needed
-      - name: 🔍 Verify State
+      # Method 3: Initialize state if nothing was restored
+      - name: 🔍 Verify and Initialize State
+        id: verify
         run: |
-          # Set DATA_DIR with fallback
           DATA_DIR="${DATA_DIR:-job_search_data}"
           
           echo "📂 Data directory: $DATA_DIR"
@@ -76,12 +82,30 @@ jobs:
               echo "📈 Current sprint: $(jq -r '.current_sprint // 0' "$DATA_DIR/workflow_state.json")"
               echo "📈 Current score: $(jq -r '.current_score // 0' "$DATA_DIR/workflow_state.json")%"
             fi
+            
+            echo "state_restored=true" >> $GITHUB_OUTPUT
           else
-            echo "ℹ️  No previous state - starting fresh"
-            echo "📁 Created directory: $DATA_DIR"
+            echo "ℹ️  No previous state - initializing fresh state"
+            
+            # Create initial state file
+            cat > "$DATA_DIR/workflow_state.json" << 'JSON'
+          {
+            "current_sprint": 0,
+            "current_score": 0,
+            "skills_mastered": [],
+            "projects_completed": [],
+            "quality_gates_passed": [],
+            "application_ready": false,
+            "initialized_at": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+          }
+          JSON
+            
+            echo "✅ Fresh state initialized"
+            echo "state_restored=false" >> $GITHUB_OUTPUT
+            echo "state_initialized=true" >> $GITHUB_OUTPUT
           fi
           
-          # List contents if any
+          # List contents
           if [ "$(ls -A "$DATA_DIR" 2>/dev/null)" ]; then
             echo ""
             echo "📁 Directory contents:"
@@ -99,34 +123,6 @@ jobs:
           pip install -r requirements.txt
       
       # ========================================
-      # VERIFY STATE INTEGRITY
-      # ========================================
-      
-      - name: 🔍 Verify State
-        id: verify
-        run: |
-          python << 'EOF'
-          import os
-          import json
-          from pathlib import Path
-          
-          state_file = Path("job_search_data/state.json")
-          
-          if state_file.exists():
-              with open(state_file) as f:
-                  state = json.load(f)
-              print(f"✅ State loaded: Sprint {state.get('current_sprint', 0)}")
-              print(f"   Score: {state.get('current_score', 0)}%")
-              restored = "true"
-          else:
-              print("⚠️  No previous state found - starting fresh")
-              restored = "false"
-          
-          with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
-              f.write(f"state_restored={restored}\n")
-          EOF
-      
-      # ========================================
       # EXECUTE REQUESTED ACTION
       # ========================================
       
@@ -134,56 +130,104 @@ jobs:
         run: |
           python << 'EOF'
           from src.python_advanced_job_engine import AdvancedJobEngine
+          import os
           
           action = "${{ github.event.inputs.action }}" or "daily_report"
           engine = AdvancedJobEngine(data_dir="job_search_data")
           
-          if action == "full_analysis":
-              # Single job analysis
-              analysis = engine.analyze_from_files(
-                  cv_file="${{ github.event.inputs.cv_file }}",
-                  job_file="${{ github.event.inputs.job_file }}"
-              )
-              print(f"✅ Analysis: {analysis['score']['total_score']}%")
+          print(f"🎯 Executing action: {action}")
+          print(f"📊 State restored: ${{ steps.verify.outputs.state_restored }}")
           
-          elif action == "batch_analysis":
-              # Multiple jobs
-              job_files = "${{ github.event.inputs.job_files }}".split(',')
-              for job_file in job_files:
-                  analysis = engine.analyze_from_files(
-                      cv_file="${{ github.event.inputs.cv_file }}",
-                      job_file=job_file.strip()
+          try:
+              if action == "full_analysis":
+                  # Single job analysis
+                  cv_file = "${{ github.event.inputs.cv_file }}"
+                  job_file = "${{ github.event.inputs.job_file }}"
+                  
+                  if cv_file and job_file:
+                      analysis = engine.analyze_from_files(
+                          cv_file=cv_file,
+                          job_file=job_file
+                      )
+                      print(f"✅ Analysis: {analysis['score']['total_score']}%")
+                  else:
+                      print("⚠️  Missing cv_file or job_file inputs")
+              
+              elif action == "batch_analysis":
+                  # Multiple jobs
+                  job_files_input = "${{ github.event.inputs.job_files }}"
+                  cv_file = "${{ github.event.inputs.cv_file }}"
+                  
+                  if job_files_input and cv_file:
+                      job_files = [f.strip() for f in job_files_input.split(',')]
+                      for job_file in job_files:
+                          analysis = engine.analyze_from_files(
+                              cv_file=cv_file,
+                              job_file=job_file
+                          )
+                          print(f"✅ {job_file}: {analysis['score']['total_score']}%")
+                  else:
+                      print("⚠️  Missing required inputs")
+              
+              elif action == "start_sprint":
+                  skills_input = "${{ github.event.inputs.skills }}"
+                  project_goal = "${{ github.event.inputs.project_goal }}"
+                  
+                  if skills_input:
+                      skills = [s.strip() for s in skills_input.split(',')]
+                      sprint = engine.start_sprint(
+                          skills=skills,
+                          project_goal=project_goal or "General skill development"
+                      )
+                      print(f"✅ Sprint {sprint['sprint_number']} started")
+                  else:
+                      print("⚠️  Missing skills input")
+              
+              elif action == "log_daily":
+                  hours_input = "${{ github.event.inputs.hours }}"
+                  concepts_input = "${{ github.event.inputs.concepts }}"
+                  notes = "${{ github.event.inputs.notes }}"
+                  
+                  if hours_input and concepts_input:
+                      concepts = [c.strip() for c in concepts_input.split(',')]
+                      engine.log_daily(
+                          hours=float(hours_input),
+                          concepts=concepts,
+                          notes=notes or "Daily progress"
+                      )
+                      print("✅ Daily progress logged")
+                  else:
+                      print("⚠️  Missing required inputs")
+              
+              elif action == "end_sprint":
+                  project_url = "${{ github.event.inputs.project_url }}"
+                  
+                  result = engine.end_sprint(
+                      project_url=project_url or "",
+                      test_scores={}  # Parse from input if needed
                   )
-                  print(f"✅ {job_file}: {analysis['score']['total_score']}%")
+                  print(f"✅ Sprint completed: {result.get('skills_gained', 0)} skills")
+              
+              elif action == "daily_report":
+                  print("📊 Generating daily progress report...")
+                  engine.display_progress_dashboard()
+              
+              elif action == "quality_check":
+                  gates = engine.check_quality_gates()
+                  passed = sum(gates.values())
+                  total = len(gates)
+                  print(f"✅ Quality Gates: {passed}/{total} passed")
+                  for gate, status in gates.items():
+                      print(f"  {'✅' if status else '❌'} {gate}")
+              
+              else:
+                  print(f"❌ Unknown action: {action}")
           
-          elif action == "start_sprint":
-              sprint = engine.start_sprint(
-                  skills=["${{ github.event.inputs.skills }}".split(',')],
-                  project_goal="${{ github.event.inputs.project_goal }}"
-              )
-              print(f"✅ Sprint {sprint['sprint_number']} started")
-          
-          elif action == "log_daily":
-              engine.log_daily(
-                  hours=float("${{ github.event.inputs.hours }}"),
-                  concepts="${{ github.event.inputs.concepts }}".split(','),
-                  notes="${{ github.event.inputs.notes }}"
-              )
-              print("✅ Daily progress logged")
-          
-          elif action == "end_sprint":
-              result = engine.end_sprint(
-                  project_url="${{ github.event.inputs.project_url }}",
-                  test_scores={}  # Parse from input
-              )
-              print(f"✅ Sprint completed: {result['skills_gained']} skills")
-          
-          elif action == "daily_report":
-              engine.display_progress_dashboard()
-          
-          elif action == "quality_check":
-              gates = engine.check_quality_gates()
-              print(f"✅ Gates: {sum(gates.values())}/{len(gates)} passed")
+          except Exception as e:
+              print(f"❌ Error executing action: {e}")
+              import traceback
+              traceback.print_exc()
+              raise
           
           EOF
       
@@ -218,8 +262,8 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           
           # Only commit state files, not analysis results
-          git add job_search_data/state.json
-          git add job_search_data/sprint_history.json
+          git add job_search_data/workflow_state.json 2>/dev/null || true
+          git add job_search_data/sprint_history.json 2>/dev/null || true
           
           if git diff --staged --quiet; then
             echo "No changes to commit"
@@ -238,30 +282,60 @@ jobs:
           python << 'EOF'
           from src.python_advanced_job_engine import AdvancedJobEngine
           from datetime import datetime
+          import json
+          from pathlib import Path
           
-          engine = AdvancedJobEngine(data_dir="job_search_data")
-          state = engine.state
+          try:
+              engine = AdvancedJobEngine(data_dir="job_search_data")
+              state = engine.state
+              
+              # Get state values with defaults
+              current_score = state.get('current_score', 0)
+              current_sprint = state.get('current_sprint', 0)
+              skills_mastered = state.get('skills_mastered', [])
+              projects = state.get('projects_completed', [])
+              gates_passed = state.get('quality_gates_passed', [])
+              app_ready = state.get('application_ready', False)
+              
+              report = f"""# Job Search Progress Report
           
-          report = f"""
-          # Job Search Progress Report
-          
-          **Generated:** {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
-          **Match Score:** {state.get('current_score', 0)}%
-          **Sprints Completed:** {state.get('current_sprint', 0)}
-          **Skills Mastered:** {len(state.get('skills_mastered', []))}
-          **Projects:** {len(state.get('projects_completed', []))}
+          **Generated:** {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}  
+          **State Status:** {'Restored' if '${{ steps.verify.outputs.state_restored }}' == 'true' else 'Initialized'}  
+          **Match Score:** {current_score}%  
+          **Sprints Completed:** {current_sprint}  
+          **Skills Mastered:** {len(skills_mastered)}  
+          **Projects:** {len(projects)}
           
           ## Quality Gates
-          - Foundation: {'✅' if 'foundation' in state.get('quality_gates_passed', []) else '⏳'}
-          - Competency: {'✅' if 'competency' in state.get('quality_gates_passed', []) else '⏳'}
-          - Mastery: {'✅' if 'mastery' in state.get('quality_gates_passed', []) else '⏳'}
-          - Application Ready: {'✅' if state.get('application_ready') else '⏳'}
+          - Foundation: {'✅' if 'foundation' in gates_passed else '⏳'}
+          - Competency: {'✅' if 'competency' in gates_passed else '⏳'}
+          - Mastery: {'✅' if 'mastery' in gates_passed else '⏳'}
+          - Application Ready: {'✅' if app_ready else '⏳'}
+          
+          ## Next Steps
+          {'✅ Ready to apply!' if app_ready else '⏳ Continue skill development'}
           """
+              
+              with open('PROGRESS_REPORT.md', 'w') as f:
+                  f.write(report)
+              
+              print(report)
           
-          with open('PROGRESS_REPORT.md', 'w') as f:
-              f.write(report)
+          except Exception as e:
+              error_report = f"""# Job Search Progress Report
           
-          print(report)
+          **Generated:** {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}  
+          **Status:** ⚠️  Error generating report
+          
+          **Error:** {str(e)}
+          
+          This is likely a first run. The system will initialize on the next action.
+          """
+              
+              with open('PROGRESS_REPORT.md', 'w') as f:
+                  f.write(error_report)
+              
+              print(error_report)
           EOF
       
       - name: 📤 Upload Report
@@ -285,3 +359,4 @@ jobs:
           echo "---" >> $GITHUB_STEP_SUMMARY
           echo "**State Persistence:** Cache + Artifact" >> $GITHUB_STEP_SUMMARY
           echo "**State Restored:** ${{ steps.verify.outputs.state_restored }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Run Number:** ${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
