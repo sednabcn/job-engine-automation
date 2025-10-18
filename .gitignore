@@ -81,3 +81,6 @@ Thumbs.db
 *.bak
 
 DOCS/
+data/*.json
+
+data/exports
