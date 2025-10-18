@@ -4,6 +4,8 @@ on:
   push:
     branches: ["dev", "master"]
   workflow_dispatch:
+  schedule:
+    - cron: '0 */6 * * *'  # Run every 6 hours
 
 jobs:
   cleanup:
@@ -11,90 +13,199 @@ jobs:
     permissions:
       actions: write
       contents: read
-
+    
     steps:
-      - name: Delete old workflow runs (keep latest N successful)
+      - name: Delete old workflow runs
         uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const owner = context.repo.owner;
             const repo = context.repo.repo;
-
+            
             // 🔧 CONFIGURATION
-            const KEEP_DAYS = 3;            // Keep runs from the last 3 days
-            const KEEP_SUCCESSFUL = 2;      // Keep the 5 latest successful runs
-            const DELETE_FAILED = true;     // Delete all failed runs
-            const SLEEP_MS = 500;           // Pause between deletions
-
+            const KEEP_DAYS = 1;              // Keep runs from the last 1 day
+            const KEEP_SUCCESSFUL = 2;        // Keep the 2 latest successful runs per workflow
+            const DELETE_FAILED = true;       // Delete failed runs older than KEEP_DAYS
+            const DELETE_CANCELLED = true;    // Delete cancelled runs older than KEEP_DAYS
+            const SLEEP_MS = 100;             // Pause between deletions (reduced for speed)
+            const DRY_RUN = false;            // Set to true to see what would be deleted without deleting
+            
             console.log(`🧹 Cleanup started for ${owner}/${repo}`);
-            console.log(`📅 Keep runs from last ${KEEP_DAYS} days and last ${KEEP_SUCCESSFUL} successful runs`);
-
+            console.log(`📅 Keep: last ${KEEP_DAYS} day(s), ${KEEP_SUCCESSFUL} successful runs per workflow`);
+            console.log(`🗑️  Delete: failed=${DELETE_FAILED}, cancelled=${DELETE_CANCELLED}`);
+            if (DRY_RUN) console.log(`⚠️  DRY RUN MODE - Nothing will be deleted`);
+            
             const cutoffDate = new Date();
             cutoffDate.setDate(cutoffDate.getDate() - KEEP_DAYS);
-
+            console.log(`📆 Cutoff date: ${cutoffDate.toISOString()}`);
+            
+            // Get all workflows
             const workflows = await github.paginate(
               github.rest.actions.listRepoWorkflows,
-              { owner, repo }
+              { owner, repo, per_page: 100 }
             );
-
+            
+            console.log(`\n📋 Found ${workflows.length} workflows\n`);
+            
+            let totalDeleted = 0;
+            let totalKept = 0;
+            let totalErrors = 0;
+            
             for (const workflow of workflows) {
-              console.log(`\n🔍 Processing workflow: ${workflow.name} (id=${workflow.id})`);
-
-              const runs = await github.paginate(
-                github.rest.actions.listWorkflowRuns,
-                { owner, repo, workflow_id: workflow.id, per_page: 100 }
-              );
-
-              if (!runs.length) {
-                console.log("  ⚠️ No runs found.");
+              console.log(`\n${'='.repeat(80)}`);
+              console.log(`🔍 Processing: ${workflow.name} (ID: ${workflow.id})`);
+              console.log(`${'='.repeat(80)}`);
+              
+              let runs;
+              try {
+                runs = await github.paginate(
+                  github.rest.actions.listWorkflowRuns,
+                  { owner, repo, workflow_id: workflow.id, per_page: 100 }
+                );
+              } catch (error) {
+                console.log(`  ❌ Error fetching runs: ${error.message}`);
                 continue;
               }
-
+              
+              if (!runs.length) {
+                console.log("  ⚠️  No runs found.");
+                continue;
+              }
+              
               // Sort by date (newest first)
               runs.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-
-              // Keep track of successful runs
+              
+              console.log(`  📊 Total runs: ${runs.length}`);
+              
+              // Track successful runs to keep
               let keptSuccessful = 0;
               const runsToDelete = [];
-
+              const runsToKeep = [];
+              
               for (const run of runs) {
                 const runDate = new Date(run.created_at);
+                const ageInDays = (Date.now() - runDate.getTime()) / (1000 * 60 * 60 * 24);
                 const isOld = runDate < cutoffDate;
-                const isFailed = run.conclusion && run.conclusion !== "success";
-                const isSuccess = run.conclusion === "success";
                 const isCurrent = run.id === context.runId;
-
-                if (isCurrent) continue; // never delete current run
-
-                if (isFailed && DELETE_FAILED) {
-                  runsToDelete.push({ run, reason: `FAILED (${run.conclusion})` });
+                
+                const conclusion = run.conclusion || 'in_progress';
+                const isSuccess = conclusion === 'success';
+                const isFailed = conclusion === 'failure';
+                const isCancelled = conclusion === 'cancelled';
+                
+                // Never delete current run
+                if (isCurrent) {
+                  runsToKeep.push({ run, reason: 'CURRENT RUN' });
                   continue;
                 }
-
+                
+                // Delete old failed runs
+                if (isFailed && DELETE_FAILED && isOld) {
+                  runsToDelete.push({ 
+                    run, 
+                    reason: `FAILED + OLD (${ageInDays.toFixed(1)} days)` 
+                  });
+                  continue;
+                }
+                
+                // Delete old cancelled runs
+                if (isCancelled && DELETE_CANCELLED && isOld) {
+                  runsToDelete.push({ 
+                    run, 
+                    reason: `CANCELLED + OLD (${ageInDays.toFixed(1)} days)` 
+                  });
+                  continue;
+                }
+                
+                // Handle successful runs
                 if (isSuccess) {
                   keptSuccessful++;
-                  if (keptSuccessful > KEEP_SUCCESSFUL || isOld) {
-                    runsToDelete.push({ run, reason: isOld ? `OLD (${KEEP_DAYS}+ days)` : "EXCEEDS keep limit" });
+                  if (keptSuccessful <= KEEP_SUCCESSFUL) {
+                    runsToKeep.push({ 
+                      run, 
+                      reason: `SUCCESS #${keptSuccessful}` 
+                    });
+                  } else if (isOld) {
+                    runsToDelete.push({ 
+                      run, 
+                      reason: `OLD SUCCESS (${ageInDays.toFixed(1)} days, exceeds limit)` 
+                    });
+                  } else {
+                    runsToKeep.push({ 
+                      run, 
+                      reason: `RECENT SUCCESS (${ageInDays.toFixed(1)} days)` 
+                    });
+                  }
+                  continue;
+                }
+                
+                // Keep recent runs of other statuses
+                if (!isOld) {
+                  runsToKeep.push({ 
+                    run, 
+                    reason: `RECENT (${ageInDays.toFixed(1)} days, ${conclusion})` 
+                  });
+                } else {
+                  runsToDelete.push({ 
+                    run, 
+                    reason: `OLD (${ageInDays.toFixed(1)} days, ${conclusion})` 
+                  });
+                }
+              }
+              
+              console.log(`\n  📊 Summary:`);
+              console.log(`     • To Delete: ${runsToDelete.length}`);
+              console.log(`     • To Keep:   ${runsToKeep.length}`);
+              
+              // Show what will be deleted
+              if (runsToDelete.length > 0) {
+                console.log(`\n  🗑️  Runs to delete:`);
+                for (const { run, reason } of runsToDelete.slice(0, 5)) {
+                  const date = new Date(run.created_at).toISOString().split('T')[0];
+                  console.log(`     • #${run.run_number} - ${date} - ${reason}`);
+                }
+                if (runsToDelete.length > 5) {
+                  console.log(`     ... and ${runsToDelete.length - 5} more`);
+                }
+              }
+              
+              // Delete runs
+              if (!DRY_RUN) {
+                for (const { run, reason } of runsToDelete) {
+                  try {
+                    await github.rest.actions.deleteWorkflowRun({ 
+                      owner, 
+                      repo, 
+                      run_id: run.id 
+                    });
+                    totalDeleted++;
+                    // Only log every 10th deletion to reduce noise
+                    if (totalDeleted % 10 === 0) {
+                      console.log(`  🗑️  Deleted ${totalDeleted} runs so far...`);
+                    }
+                    await new Promise(r => setTimeout(r, SLEEP_MS));
+                  } catch (err) {
+                    console.log(`  ❌ Failed to delete run #${run.run_number}: ${err.message}`);
+                    totalErrors++;
                   }
                 }
               }
-
-              console.log(
-                `  📊 Total: ${runs.length} | Deleting: ${runsToDelete.length} | Keeping: ${
-                  runs.length - runsToDelete.length
-                }`
-              );
-
-              for (const { run, reason } of runsToDelete) {
-                try {
-                  await github.rest.actions.deleteWorkflowRun({ owner, repo, run_id: run.id });
-                  console.log(`  🗑️ Deleted run #${run.run_number} [${reason}]`);
-                  await new Promise(r => setTimeout(r, SLEEP_MS));
-                } catch (err) {
-                  console.log(`  ❌ Could not delete run #${run.run_number}: ${err.message}`);
-                }
-              }
+              
+              totalKept += runsToKeep.length;
             }
-
-            console.log("\n✅ Cleanup completed successfully.");
+            
+            // Final summary
+            console.log(`\n${'='.repeat(80)}`);
+            console.log(`✅ CLEANUP COMPLETE`);
+            console.log(`${'='.repeat(80)}`);
+            console.log(`📊 Final Statistics:`);
+            console.log(`   • Total Deleted: ${totalDeleted}`);
+            console.log(`   • Total Kept:    ${totalKept}`);
+            console.log(`   • Errors:        ${totalErrors}`);
+            if (DRY_RUN) {
+              console.log(`\n⚠️  DRY RUN - No runs were actually deleted`);
+              console.log(`   Set DRY_RUN = false to delete runs`);
+            }
+            console.log(`${'='.repeat(80)}\n`);
+            
