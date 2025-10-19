@@ -1156,10 +1156,10 @@ jobs:
               if engine.state.get('mode') is None:
                   report_content = f"""# Ultimate Job Search Progress
 
-**Generated:** {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+              **Generated:** {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
 **Status:** Not Initialized
 
-                  ---
+---
 
 ## 🚀 Getting Started
 
