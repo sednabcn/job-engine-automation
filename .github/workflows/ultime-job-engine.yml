@@ -155,7 +155,7 @@ jobs:
             echo "✅ State restored from previous run"
             echo "state_restored=true" >> $GITHUB_OUTPUT
           else
-            echo "ℹ️  Starting fresh - no previous state"
+            echo "ℹ️  First run - starting fresh (this is normal)"
             echo "state_restored=false" >> $GITHUB_OUTPUT
           fi
       
