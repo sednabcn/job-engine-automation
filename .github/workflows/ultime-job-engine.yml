@@ -948,8 +948,8 @@ jobs:
               # Create a highlights document
               highlights = f"""# CV Highlights for {analysis.get('company', 'Target Company')}
 
-## Top Matching Skills
-"""
+              ## Top Matching Skills
+              """
               for skill in analysis['matching']['matched_skills'][:10]:
                   highlights += f"- ✅ {skill}\n"
               
