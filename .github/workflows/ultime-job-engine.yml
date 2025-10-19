@@ -30,7 +30,6 @@ name: Ultimate Job Search Engine - Complete Automation
 on:
   schedule:
     - cron: '0 9,21 * * *'  # 9 AM and 9 PM daily
-  
   workflow_dispatch:
     inputs:
       action:
@@ -48,79 +47,37 @@ on:
           - quality_check
           - generate_materials
       
-      # CV and Job files
+      # File paths (combined for CV and job)
       cv_path:
         description: 'Path to CV file (.txt, .pdf, .docx)'
         required: false
         default: 'data/my_cv.pdf'
       
       job_path:
-        description: 'Path to job description (.txt, .pdf, .docx)'
+        description: 'Path to job description (.txt, .pdf, .docx) OR comma-separated job files for batch'
         required: false
         default: 'data/target_job.pdf'
       
-      job_files:
-        description: 'Comma-separated job files for batch analysis'
+      # Job metadata
+      job_metadata:
+        description: 'Job title and company (format: "Title|Company")'
         required: false
-        default: ''
+        default: 'Target Role|Target Company'
       
-      job_title:
-        description: 'Job title (optional)'
+      # Sprint tracking (JSON format for multiple values)
+      sprint_data:
+        description: 'Sprint data as JSON: {"hours": 3, "concepts": ["skill1"], "notes": "text", "project_url": "url", "test_scores": {}}'
         required: false
-        default: 'Target Role'
+        default: '{"hours": 3, "concepts": [], "notes": ""}'
       
-      company_name:
-        description: 'Company name (optional)'
+      # Options (combined boolean flags as comma-separated string)
+      options:
+        description: 'Options: generate_materials, generate_comparison, send_email (comma-separated)'
         required: false
-        default: 'Target Company'
-      
-      # Sprint tracking
-      hours:
-        description: 'Hours spent today (for log_daily)'
-        required: false
-        default: '3'
-      
-      concepts:
-        description: 'Concepts learned (comma-separated, for log_daily)'
-        required: false
-        default: ''
-      
-      notes:
-        description: 'Daily notes (for log_daily)'
-        required: false
-        default: ''
-      
-      project_url:
-        description: 'Project URL (for end_sprint)'
-        required: false
-        default: ''
-      
-      test_scores:
-        description: 'Test scores JSON: {"skill": score} (for end_sprint)'
-        required: false
-        default: '{}'
-      
-      # Options
-      generate_materials:
-        description: 'Generate application materials?'
-        required: false
-        type: boolean
-        default: true
-      
-      generate_comparison:
-        description: 'Generate comparison report? (batch_analysis)'
-        required: false
-        type: boolean
-        default: true
-      
-      send_email:
-        description: 'Send email notification?'
-        required: false
-        type: boolean
-        default: false
+        default: 'generate_materials'
       
       email_to:
-        description: 'Email address for notifications'
+        description: 'Email address for notifications (if send_email enabled)'
         required: false
         default: ''
   
@@ -209,6 +166,16 @@ jobs:
       - name: ✅ Validate Inputs
         id: validate
         run: |
+          JOB_METADATA="${{ github.event.inputs.job_metadata }}"
+          if [[ "$JOB_METADATA" == *"|"* ]]; then
+            JOB_TITLE="${JOB_METADATA%%|*}"
+            COMPANY_NAME="${JOB_METADATA##*|}"
+          else
+            JOB_TITLE="Target Role"
+            COMPANY_NAME="Target Company"
+          fi
+          
+          OPTIONS="${{ github.event.inputs.options }}"
           ACTION="${{ github.event.inputs.action }}"
           CV_PATH="${{ github.event.inputs.cv_path }}"
           JOB_PATH="${{ github.event.inputs.job_path }}"
@@ -386,8 +353,13 @@ jobs:
               
               cv_path = "${{ github.event.inputs.cv_path }}"
               job_path = "${{ github.event.inputs.job_path }}"
-              job_title = "${{ github.event.inputs.job_title }}"
-              company = "${{ github.event.inputs.company_name }}"
+
+              job_metadata = "${{ github.event.inputs.job_metadata }}"
+              if '|' in job_metadata:
+                  job_title, company = job_metadata.split('|', 1)
+              else:
+                  job_title = "Target Role"
+                  company = "Target Company"
               
               print("\n" + "="*80)
               print("🎯 FULL JOB ANALYSIS")
@@ -478,7 +450,10 @@ jobs:
               
               cv_file = "${{ github.event.inputs.cv_path }}"
               job_files_input = "${{ github.event.inputs.job_files }}"
-              generate_comparison = "${{ github.event.inputs.generate_comparison }}" == "true"
+
+              options_str = "${{ github.event.inputs.options }}"
+              options = [opt.strip() for opt in options_str.split(',') if opt.strip()]
+              generate_comparison = 'generate_comparison' in options
               
               job_files = [f.strip() for f in job_files_input.split(',') if f.strip()]
               
@@ -714,7 +689,7 @@ jobs:
         if: github.event.inputs.action == 'log_daily'
         run: |
           python << 'PYTHON_EOF'
-          import sys
+          import sys, json
           
           try:
               sys.path.insert(0, 'src')
@@ -730,11 +705,13 @@ jobs:
               if not isinstance(last_sprint, dict) or last_sprint.get('completed', False):
                   print("❌ No active sprint. Current sprint is completed.")
                   exit(1)
-              
-              hours = float("${{ github.event.inputs.hours }}")
-              concepts_str = "${{ github.event.inputs.concepts }}"
-              concepts = [c.strip() for c in concepts_str.split(',') if c.strip()]
-              notes = "${{ github.event.inputs.notes }}"
+
+
+              sprint_data_str = "${{ github.event.inputs.sprint_data }}"
+              sprint_data = json.loads(sprint_data_str) if sprint_data_str else {}
+              hours = float(sprint_data.get('hours', 3))
+              concepts = sprint_data.get('concepts', [])
+              notes = sprint_data.get('notes', '')
               
               if not concepts:
                   concepts = ["Daily learning progress"]
@@ -787,17 +764,18 @@ jobs:
               print("\n" + "="*80)
               print(f"ENDING SPRINT {current_sprint['sprint_number']}")
               print("="*80)
+
+              sprint_data_str = "${{ github.event.inputs.sprint_data }}"
+              sprint_data = json.loads(sprint_data_str) if sprint_data_str else {}
               
-              project_url = "${{ github.event.inputs.project_url }}"
-              test_scores_str = "${{ github.event.inputs.test_scores }}"
+              project_url = sprint_data.get('project_url', '')
+              test_scores = sprint_data.get('test_scores', {})
               
               if not project_url:
                   project_url = "https://github.com/user/sprint-project"
                   print("⚠️  Using default project URL")
               
-              if test_scores_str and test_scores_str != '{}':
-                  test_scores = json.loads(test_scores_str)
-              else:
+              if not test_scores or test_scores == {}:
                   test_scores = {
                       skill: 70.0
                       for skill in current_sprint['skills_targeted']
@@ -1519,7 +1497,7 @@ jobs:
       
       - name: 📧 Send Email Notification
         if: |
-          (github.event.inputs.send_email == 'true') && 
+          contains(github.event.inputs.options, 'send_email') &&
           (github.event.inputs.email_to != '')
         uses: dawidd6/action-send-mail@v3
         with:
