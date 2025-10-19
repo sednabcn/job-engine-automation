@@ -1186,29 +1186,29 @@ jobs:
               
               report_content = f"""# Ultimate Job Search Progress Report
 
-**Generated:** {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}  
-**Mode:** {state.get('mode', 'N/A').upper()}  
-**Action Performed:** ${{ github.event.inputs.action || 'scheduled' }}
+              **Generated:** {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}  
+              **Mode:** {state.get('mode', 'N/A').upper()}  
+              **Action Performed:** ${{ github.event.inputs.action || 'scheduled' }}
 
----
+              ---
 
-## 📊 Match Score Progress
+              ## 📊 Match Score Progress
 
-| Metric | Value |
-|--------|-------|
-| Baseline Score | {baseline}% |
-| Current Score | {score}% |
-| Improvement | +{improvement}% |
-| Target Score | {state.get('target_score', 90)}% |
-| Remaining | {state.get('target_score', 90) - score}% |
+              | Metric | Value |
+              |--------|-------|
+              | Baseline Score | {baseline}% |
+              | Current Score | {score}% |
+              | Improvement | +{improvement}% |
+              | Target Score | {state.get('target_score', 90)}% |
+              | Remaining | {state.get('target_score', 90) - score}% |
 
-{"🎉 **TARGET ACHIEVED!**" if score >= state.get('target_score', 90) else ""}
+              {"🎉 **TARGET ACHIEVED!**" if score >= state.get('target_score', 90) else ""}
 
----
+              ---
 
-## 🎯 Skills Mastered ({len(state.get('skills_mastered', []))})
-
-"""
+              ## 🎯 Skills Mastered ({len(state.get('skills_mastered', []))})
+              
+              """
               
               if state.get('skills_mastered'):
                   for skill in state.get('skills_mastered', []):
@@ -1218,11 +1218,11 @@ jobs:
               
               report_content += f"""
 
----
+              ---
 
-## 🗂️ Projects Completed ({len(state.get('projects_completed', []))})
+              ## 🗂️ Projects Completed ({len(state.get('projects_completed', []))})
 
-"""
+              """
               
               if state.get('projects_completed'):
                   for i, proj in enumerate(state.get('projects_completed', []), 1):
@@ -1234,88 +1234,88 @@ jobs:
               
               report_content += f"""
 
----
+              ---
 
-## 🚪 Quality Gates
+              ## 🚪 Quality Gates
 
-| Gate | Status | Required |
-|------|--------|----------|
-| Foundation | {'✅ Passed' if 'foundation' in state.get('quality_gates_passed', []) else '⏳ Pending'} | 65% score, 2 projects |
-| Competency | {'✅ Passed' if 'competency' in state.get('quality_gates_passed', []) else '⏳ Pending'} | 80% score, 4 projects |
-| Mastery | {'✅ Passed' if 'mastery' in state.get('quality_gates_passed', []) else '⏳ Pending'} | 90% score, 5 projects |
-| Application Ready | {'✅ Passed' if state.get('application_ready') else '⏳ Pending'} | All gates + branding |
+              | Gate | Status | Required |
+              |------|--------|----------|
+              | Foundation | {'✅ Passed' if 'foundation' in state.get('quality_gates_passed', []) else '⏳ Pending'} | 65% score, 2 projects |
+              | Competency | {'✅ Passed' if 'competency' in state.get('quality_gates_passed', []) else '⏳ Pending'} | 80% score, 4 projects |
+              | Mastery | {'✅ Passed' if 'mastery' in state.get('quality_gates_passed', []) else '⏳ Pending'} | 90% score, 5 projects |
+              | Application Ready | {'✅ Passed' if state.get('application_ready') else '⏳ Pending'} | All gates + branding |
 
----
+              ---
 
-## 📈 Sprint Progress
+              ## 📈 Sprint Progress
 
-- **Total Sprints:** {state.get('current_sprint', 0)}
-- **Completed Sprints:** {len([s for s in engine.sprint_history if isinstance(s, dict) and s.get('completed')])}
-- **Current Stage:** {state.get('current_stage', 'baseline').replace('_', ' ').title()}
-- **Started:** {state.get('started_date', 'N/A')[:10] if state.get('started_date') else 'N/A'}
+              - **Total Sprints:** {state.get('current_sprint', 0)}
+              - **Completed Sprints:** {len([s for s in engine.sprint_history if isinstance(s, dict) and s.get('completed')])}
+              - **Current Stage:** {state.get('current_stage', 'baseline').replace('_', ' ').title()}
+              - **Started:** {state.get('started_date', 'N/A')[:10] if state.get('started_date') else 'N/A'}
 
----
+              ---
 
-## 🎯 Current Status & Focus
+              ## 🎯 Current Status & Focus
 
-"""
+              """
               
               if score < 65:
                   report_content += """**Phase:** Foundation Building  
-**Priority:** High  
+              **Priority:** High  
 
-### Actions Required:
-1. ✅ Master Tier 1 critical skills
-2. ✅ Build 2 foundational projects
-3. ✅ Pass beginner-level tests
-4. ✅ Log daily progress consistently
+              ### Actions Required:
+              1. ✅ Master Tier 1 critical skills
+              2. ✅ Build 2 foundational projects
+              3. ✅ Pass beginner-level tests
+              4. ✅ Log daily progress consistently
 
-### Estimated Time: 8-12 weeks
-"""
+              ### Estimated Time: 8-12 weeks
+              """
               elif score < 80:
                   report_content += """**Phase:** Skill Development  
-**Priority:** Medium  
+              **Priority:** Medium  
 
-### Actions Required:
-1. ✅ Deepen intermediate skills
-2. ✅ Build 2-3 complex projects
-3. ✅ Pass intermediate tests
-4. ✅ Contribute to open source
+              ### Actions Required:
+              1. ✅ Deepen intermediate skills
+              2. ✅ Build 2-3 complex projects
+              3. ✅ Pass intermediate tests
+              4. ✅ Contribute to open source
 
-### Estimated Time: 6-10 weeks
-"""
+              ### Estimated Time: 6-10 weeks
+              """
               elif score < 90:
                   report_content += """**Phase:** Advanced Mastery  
-**Priority:** Medium  
+              **Priority:** Medium  
 
-### Actions Required:
-1. ✅ Master advanced concepts
-2. ✅ Build 2 production-grade projects
-3. ✅ Pass advanced tests
-4. ✅ Start networking
+              ### Actions Required:
+              1. ✅ Master advanced concepts
+              2. ✅ Build 2 production-grade projects
+              3. ✅ Pass advanced tests
+              4. ✅ Start networking
 
-### Estimated Time: 4-8 weeks
-"""
+              ### Estimated Time: 4-8 weeks
+              """
               else:
                   report_content += """**Phase:** Application Preparation  
-**Priority:** High - Ready to Apply!  
+              **Priority:** High - Ready to Apply!  
 
-### Actions Required:
-1. ✅ Polish LinkedIn profile
-2. ✅ Build professional brand
-3. ✅ Network actively
-4. ✅ **START APPLYING! 🚀**
+              ### Actions Required:
+              1. ✅ Polish LinkedIn profile
+              2. ✅ Build professional brand
+              3. ✅ Network actively
+              4. ✅ **START APPLYING! 🚀**
 
-### You're Ready Now!
-"""
+              ### You're Ready Now!
+              """
               
               report_content += f"""
 
----
+              ---
 
-## 📝 Tests Passed
+              ## 📝 Tests Passed
 
-"""
+              """
               
               tests_passed = state.get('tests_passed', {})
               if tests_passed:
@@ -1326,21 +1326,21 @@ jobs:
               
               report_content += f"""
 
----
+              ---
 
-## 🎯 Readiness Indicators
+              ## 🎯 Readiness Indicators
 
-| Indicator | Status | Progress |
-|-----------|--------|----------|
-| Brand Ready | {'✅ Complete' if state.get('brand_ready') else '⏳ In Progress'} | LinkedIn, Portfolio, GitHub |
-| Network Ready | {'✅ Complete' if state.get('network_ready') else '⏳ In Progress'} | Industry Connections |
-| Application Ready | {'✅ Complete' if state.get('application_ready') else '⏳ In Progress'} | All Gates Passed |
+              | Indicator | Status | Progress |
+              |-----------|--------|----------|
+              | Brand Ready | {'✅ Complete' if state.get('brand_ready') else '⏳ In Progress'} | LinkedIn, Portfolio, GitHub |
+              | Network Ready | {'✅ Complete' if state.get('network_ready') else '⏳ In Progress'} | Industry Connections |
+              | Application Ready | {'✅ Complete' if state.get('application_ready') else '⏳ In Progress'} | All Gates Passed |
 
----
+              ---
 
-## 📊 Recent Sprint Activity
+              ## 📊 Recent Sprint Activity
 
-"""
+              """
               
               if engine.sprint_history:
                   completed = [
@@ -1351,12 +1351,12 @@ jobs:
                   if completed:
                       for sprint in completed[-3:]:
                           report_content += f"""
-### Sprint {sprint.get('sprint_number', '?')}
-- **Goal:** {sprint.get('project_goal', 'N/A')}
-- **Skills:** {', '.join(sprint.get('skills_targeted', []))}
-- **Hours:** {sprint.get('total_hours', 0):.1f}h
-- **Completed:** {sprint.get('completion_date', 'N/A')[:10]}
-"""
+              ### Sprint {sprint.get('sprint_number', '?')}
+              - **Goal:** {sprint.get('project_goal', 'N/A')}
+              - **Skills:** {', '.join(sprint.get('skills_targeted', []))}
+              - **Hours:** {sprint.get('total_hours', 0):.1f}h
+              - **Completed:** {sprint.get('completion_date', 'N/A')[:10]}
+              """
                   else:
                       report_content += "\n*No completed sprints yet - start your first sprint!*\n"
               else:
@@ -1364,44 +1364,44 @@ jobs:
               
               report_content += """
 
----
+              ---
 
-## 💡 Recommended Next Actions
+              ## 💡 Recommended Next Actions
 
-"""
+              """
               
               # Get next actions based on current state
               if not engine.sprint_history or all(isinstance(s, dict) and s.get('completed') for s in engine.sprint_history):
                   report_content += """
-1. **Start New Sprint** - Run workflow with action: `start_sprint`
-2. **Choose 2 skills** from your learning plan
-3. **Define project goal** to demonstrate those skills
-4. **Commit to 14 days** of consistent learning
-"""
+              1. **Start New Sprint** - Run workflow with action: `start_sprint`
+              2. **Choose 2 skills** from your learning plan
+              3. **Define project goal** to demonstrate those skills
+              4. **Commit to 14 days** of consistent learning
+              """
               elif engine.sprint_history:
                   current = engine.sprint_history[-1]
                   if isinstance(current, dict) and not current.get('completed'):
                       days_logged = len(current.get('daily_logs', []))
                       report_content += f"""
-**Current Sprint in Progress:** Sprint {current.get('sprint_number', '?')}
+              **Current Sprint in Progress:** Sprint {current.get('sprint_number', '?')}
 
-1. **Log Today's Progress** - Run workflow with action: `log_daily`
-   - Days logged: {days_logged}/14
-   - Hours, concepts, and notes
-2. **Stay Consistent** - Daily practice is key
-3. **Build Project** - Work towards sprint goal
-4. **End Sprint** - When complete (14 days or project done)
-"""
+              1. **Log Today's Progress** - Run workflow with action: `log_daily`
+              - Days logged: {days_logged}/14
+                - Hours, concepts, and notes
+                2. **Stay Consistent** - Daily practice is key
+                3. **Build Project** - Work towards sprint goal
+                4. **End Sprint** - When complete (14 days or project done)
+                """
               
               if score >= 75:
                   report_content += """
 
-### 🎯 Application Strategy
-- **Priority:** Start applying to jobs now!
-- **Target:** Companies matching your current skill level
-- **Approach:** Highlight completed projects and skills mastered
-- **Timeline:** Apply to 5-10 positions per week
-"""
+              ### 🎯 Application Strategy
+              - **Priority:** Start applying to jobs now!
+              - **Target:** Companies matching your current skill level
+              - **Approach:** Highlight completed projects and skills mastered
+              - **Timeline:** Apply to 5-10 positions per week
+              """
               
               report_content += f"""
 
