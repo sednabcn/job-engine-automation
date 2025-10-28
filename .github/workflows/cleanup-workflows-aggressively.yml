@@ -2,7 +2,7 @@ name: Cleanup Workflow Runs Aggressively
 
 on:
   push:
-    branches: ["dev", "master"]
+    branches: ["master"]
   workflow_dispatch:
   schedule:
     - cron: '0 */6 * * *'  # Every 6 hours
